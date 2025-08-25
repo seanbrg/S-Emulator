@@ -8,7 +8,7 @@ public class Increase extends AbstractInstruction {
 
     private Var v;
 
-    Increase(Var v, int num) {
+    public Increase(Var v, int num) {
         super(InstructionData.INCREASE, num);
         this.v = v;
     }

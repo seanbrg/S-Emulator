@@ -9,11 +9,11 @@ public abstract class AbstractInstruction implements Instruction {
     private final Label label;
     private final InstructionData data;
 
-    AbstractInstruction(InstructionData data, int num) {
+    public AbstractInstruction(InstructionData data, int num) {
         this(data, num, FixedLabel.EMPTY);
     }
 
-    AbstractInstruction(InstructionData data, int num, Label label) {
+    public AbstractInstruction(InstructionData data, int num, Label label) {
         this.data = data;
         this.num = num;
         this.label = label;

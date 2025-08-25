@@ -3,7 +3,7 @@ package logic.labels;
 public class NumericLabel implements Label {
     private int num;
 
-    NumericLabel(int num) {
+    public NumericLabel(int num) {
         this.num = num;
     }
 

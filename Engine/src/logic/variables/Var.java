@@ -5,13 +5,13 @@ public class Var implements Variable {
     private long value;
     private VariableType type;
 
-    Var(VariableType type, int num, long value) {
+    public Var(VariableType type, int num, long value) {
         this.type = type;
         this.num = num;
         this.value = value;
     }
 
-    Var(VariableType type, int num) {
+    public Var(VariableType type, int num) {
         this(type, num, 0);
     }
 

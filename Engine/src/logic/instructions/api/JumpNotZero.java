@@ -9,7 +9,7 @@ public class JumpNotZero extends AbstractInstruction {
     private Var v;
     private Label target;
 
-    JumpNotZero(Var v, Label target, int num) {
+    public JumpNotZero(Var v, Label target, int num) {
         super(InstructionData.JUMP_NOT_ZERO, num);
         this.v = v;
         this.target = target;

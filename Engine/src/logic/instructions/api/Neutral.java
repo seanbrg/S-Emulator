@@ -9,7 +9,7 @@ public class Neutral extends AbstractInstruction {
 
     private Var v;
 
-    Neutral(Var v, int num) {
+    public Neutral(Var v, int num) {
         super(InstructionData.NO_OP, num);
         this.v = v;
     }
