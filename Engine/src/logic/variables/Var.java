@@ -12,9 +12,7 @@ public class Var implements Variable {
     }
 
     Var(VariableType type, int num) {
-        this.type = type;
-        this.num = num;
-        this.value = 0;
+        this(type, num, 0);
     }
 
     @Override
@@ -22,8 +20,8 @@ public class Var implements Variable {
 
     @Override
     public String getName() {
-        if (type == VariableType.INPUT) return String.format("x%d", num);
-        else if (type == VariableType.TEMP) return String.format("z%d", num);
+        if (type == VariableType.INPUT) return "x" + num;
+        else if (type == VariableType.TEMP) return "z" + num;
         else if (type == VariableType.OUTPUT) return "y";
         else return null;
     }
