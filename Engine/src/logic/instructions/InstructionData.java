@@ -18,4 +18,5 @@ public enum InstructionData {
 
     public int getCycles() { return cycles; }
     public InstructionType getInstructionType() { return type; }
+    public String toString() { return name; }
 }

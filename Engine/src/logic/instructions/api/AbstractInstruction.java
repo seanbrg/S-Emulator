@@ -1,4 +1,6 @@
-package logic.instructions;
+package logic.instructions.api;
+import logic.instructions.Instruction;
+import logic.instructions.InstructionData;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 
@@ -29,6 +31,4 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public int getCycles() { return data.getCycles(); }
-
-    public String print() { return ""; }
 }

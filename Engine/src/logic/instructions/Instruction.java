@@ -3,7 +3,12 @@ import logic.labels.Label;
 
 public interface Instruction {
     String getRepresentation();
-    void execute();
+
+    String print();
+
+    Label execute();
+
     int getCycles();
+
     Label getLabel();
 }
