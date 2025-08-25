@@ -1,13 +1,14 @@
-package logic.instructions.api;
+package logic.instructions.api.basic;
 import logic.instructions.InstructionData;
+import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.variables.Var;
 import logic.labels.Label;
 
 public class JumpNotZero extends AbstractInstruction {
 
-    private Var v;
-    private Label target;
+    private final Var v;
+    private final Label target;
 
     public JumpNotZero(Var v, Label target, int num) {
         super(InstructionData.JUMP_NOT_ZERO, num);
@@ -23,6 +24,6 @@ public class JumpNotZero extends AbstractInstruction {
 
     @Override
     public String print() {
-        return "IF " + v.getValue() + " != 0 GOTO " + target.getLabel();
+        return "IF " + v.getName() + " != 0 GOTO " + target.getLabel();
     }
 }

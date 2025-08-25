@@ -1,5 +1,6 @@
-package logic.instructions.api;
+package logic.instructions.api.basic;
 import logic.instructions.InstructionData;
+import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.variables.Var;
 import logic.labels.Label;
@@ -7,7 +8,7 @@ import logic.labels.Label;
 
 public class Neutral extends AbstractInstruction {
 
-    private Var v;
+    private final Var v;
 
     public Neutral(Var v, int num) {
         super(InstructionData.NO_OP, num);
@@ -16,7 +17,6 @@ public class Neutral extends AbstractInstruction {
 
     @Override
     public Label execute() {
-        v.setValue(v.getValue());
         return FixedLabel.EMPTY;
     }
 
