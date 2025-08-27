@@ -15,7 +15,10 @@ public class ConsoleUI {
             System.out.println("\n==== S-Emulator ====");
             System.out.println("1. Load Program from XML");
             System.out.println("2. Show Program");
-            System.out.println("3. Exit");
+            System.out.println("3. Expand Program");
+            System.out.println("4. Run Program");
+            System.out.println("5. Show History/Statistics");
+            System.out.println("6. Exit");
             System.out.print("Choose option: ");
 
             String choice = scanner.nextLine().trim();
@@ -23,23 +26,32 @@ public class ConsoleUI {
             switch (choice) {
                 case "1" -> loadXml();
                 case "2" -> engine.printProgram();
-                case "3" -> {
-                    System.out.println("Exiting S-Emulator");
-                    return;
-                }
+                case "3" -> {}
                 case "4" -> {
                     int input = 0;
+                    long result;
+                    int degree = engine.maxDegree();
+                    System.out.printf("Current Program maximum degree is: %d.%n", degree);
+                    System.out.printf("Please choose Program degree from 0 to %d:%n", degree);
+
                     try {
                         input = Integer.parseInt(scanner.nextLine().trim());
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid choice, please try again.");
                         break;
                     }
-                    if (0 <= input && input <= engine.maxDegree())
-                        engine.runProgram(input);
+                    if (0 <= input && input <= degree) {
+                        result = engine.runProgram(input);
+                        System.out.println(String.format("Program exited with result y = %d", result));
+                    }
                     else {
                         System.out.println("Invalid choice, please try again.");
                     }
+                }
+                case "5" -> {}
+                case "6" -> {
+                    System.out.println("Exiting S-Emulator");
+                    return;
                 }
                 default -> System.out.println("Invalid choice, please try again.");
             }
