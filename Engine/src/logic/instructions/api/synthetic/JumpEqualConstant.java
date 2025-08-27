@@ -5,15 +5,16 @@ import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Var;
+import logic.variables.Variable;
 
 public class JumpEqualConstant extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
     private final Label target;
     private final int k;
 
-    public JumpEqualConstant(Var v, int k, Label target, int num) {
-        super(InstructionData.JUMP_EQUAL_CONSTANT, num);
+    public JumpEqualConstant(Variable v, int k, Label target) {
+        super(InstructionData.JUMP_EQUAL_CONSTANT);
         this.v = v;
         this.target = target;
         this.k = k;

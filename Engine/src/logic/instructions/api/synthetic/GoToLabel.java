@@ -9,8 +9,8 @@ public class GoToLabel extends AbstractInstruction {
 
     private final Label target;
 
-    public GoToLabel(Label target, int num) {
-        super(InstructionData.GOTO_LABEL, num);
+    public GoToLabel(Label target) {
+        super(InstructionData.GOTO_LABEL);
         this.target = target;
     }
 

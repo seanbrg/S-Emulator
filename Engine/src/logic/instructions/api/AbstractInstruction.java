@@ -5,17 +5,15 @@ import logic.labels.FixedLabel;
 import logic.labels.Label;
 
 public abstract class AbstractInstruction implements Instruction {
-    private int num;
     private final Label label;
     private final InstructionData data;
 
-    public AbstractInstruction(InstructionData data, int num) {
-        this(data, num, FixedLabel.EMPTY);
+    public AbstractInstruction(InstructionData data) {
+        this(data, FixedLabel.EMPTY);
     }
 
-    public AbstractInstruction(InstructionData data, int num, Label label) {
+    public AbstractInstruction(InstructionData data, Label label) {
         this.data = data;
-        this.num = num;
         this.label = label;
     }
 
@@ -23,7 +21,7 @@ public abstract class AbstractInstruction implements Instruction {
     public Label getLabel() { return label; }
 
     @Override
-    public String getRepresentation() {
+    public String getRepresentation(int num) {
         return "#" + num + " (" + data.getInstructionType().toString() + ") " +
                 " [ " + label.getLabel() + " ] " + this.print() +
                 " (" + data.getCycles() + ")";
@@ -31,4 +29,7 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public int getCycles() { return data.getCycles(); }
+
+    @Override
+    public int getDegree() { return data.getDegree(); }
 }

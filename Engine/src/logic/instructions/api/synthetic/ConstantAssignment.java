@@ -5,15 +5,16 @@ import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Var;
+import logic.variables.Variable;
 
 
 public class ConstantAssignment extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
     private final int k;
 
-    public ConstantAssignment(Var v, int k, int num) {
-        super(InstructionData.CONSTANT_ASSIGNMENT, num);
+    public ConstantAssignment(Variable v, int k) {
+        super(InstructionData.CONSTANT_ASSIGNMENT);
         this.v = v;
         this.k = k;
     }

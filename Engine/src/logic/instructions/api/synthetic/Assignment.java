@@ -4,15 +4,15 @@ import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
-import logic.variables.Var;
+import logic.variables.Variable;
 
 
 public class Assignment extends AbstractInstruction {
 
-    private final Var x, y;
+    private final Variable x, y;
 
-    public Assignment(Var x, Var y, int num) {
-        super(InstructionData.ASSIGNMENT, num);
+    public Assignment(Variable x, Variable y) {
+        super(InstructionData.ASSIGNMENT);
         this.x = x;
         this.y = y;
     }

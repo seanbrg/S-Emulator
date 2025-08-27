@@ -26,6 +26,9 @@ public class Var implements Variable {
         else return null;
     }
 
+    @Override
     public long getValue() { return value; }
+
+    @Override
     public void setValue(long value) { this.value = value; }
 }

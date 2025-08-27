@@ -2,15 +2,15 @@ package logic.instructions.api.basic;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
-import logic.variables.Var;
 import logic.labels.Label;
+import logic.variables.Variable;
 
 public class Decrease extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
 
-    public Decrease(Var v, int num) {
-        super(InstructionData.DECREASE, num);
+    public Decrease(Variable v) {
+        super(InstructionData.DECREASE);
         this.v = v;
     }
 

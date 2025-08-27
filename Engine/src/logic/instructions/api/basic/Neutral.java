@@ -2,16 +2,16 @@ package logic.instructions.api.basic;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
-import logic.variables.Var;
 import logic.labels.Label;
+import logic.variables.Variable;
 
 
 public class Neutral extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
 
-    public Neutral(Var v, int num) {
-        super(InstructionData.NO_OP, num);
+    public Neutral(Variable v) {
+        super(InstructionData.NO_OP);
         this.v = v;
     }
 

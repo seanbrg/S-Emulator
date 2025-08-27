@@ -2,16 +2,16 @@ package logic.instructions.api.synthetic;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
-import logic.variables.Var;
 import logic.labels.Label;
+import logic.variables.Variable;
 
 
 public class ZeroVariable extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
 
-    public ZeroVariable(Var v, int num) {
-        super(InstructionData.ZERO_VARIABLE, num);
+    public ZeroVariable(Variable v) {
+        super(InstructionData.ZERO_VARIABLE);
         this.v = v;
     }
 

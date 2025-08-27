@@ -5,14 +5,15 @@ import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Var;
+import logic.variables.Variable;
 
 public class JumpZero extends AbstractInstruction {
 
-    private final Var v;
+    private final Variable v;
     private final Label target;
 
-    public JumpZero(Var v, Label target, int num) {
-        super(InstructionData.JUMP_ZERO, num);
+    public JumpZero(Variable v, Label target) {
+        super(InstructionData.JUMP_ZERO);
         this.v = v;
         this.target = target;
     }
