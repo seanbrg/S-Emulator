@@ -50,7 +50,7 @@ public class SProgram implements Program {
     public void addInstruction(Instruction instruction) {
         // the variables in instruction must be the same instances saved in
         // tempVars and inputVars - the provided lists of variables in the program
-        Label selfLabel = instruction.getLabel();
+        Label selfLabel = instruction.getSelfLabel();
         if (selfLabel != FixedLabel.EMPTY) {
             labels.put(selfLabel, instruction);
         }

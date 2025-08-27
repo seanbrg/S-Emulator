@@ -13,8 +13,8 @@ public class JumpEqualConstant extends AbstractInstruction {
     private final Label target;
     private final int k;
 
-    public JumpEqualConstant(Variable v, int k, Label target) {
-        super(InstructionData.JUMP_EQUAL_CONSTANT);
+    public JumpEqualConstant(Label selfLabel, Variable v, int k, Label target) {
+        super(InstructionData.JUMP_EQUAL_CONSTANT, selfLabel);
         this.v = v;
         this.target = target;
         this.k = k;

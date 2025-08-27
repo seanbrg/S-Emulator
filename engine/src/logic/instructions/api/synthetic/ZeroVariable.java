@@ -10,8 +10,8 @@ public class ZeroVariable extends AbstractInstruction {
 
     private final Variable v;
 
-    public ZeroVariable(Variable v) {
-        super(InstructionData.ZERO_VARIABLE);
+    public ZeroVariable(Label selfLabel, Variable v) {
+        super(InstructionData.ZERO_VARIABLE,  selfLabel);
         this.v = v;
     }
 

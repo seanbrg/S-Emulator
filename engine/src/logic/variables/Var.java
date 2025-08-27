@@ -1,9 +1,12 @@
 package logic.variables;
 
+import java.util.Locale;
+
 public class Var implements Variable {
     private int num;
     private long value;
     private VariableType type;
+    private String name;
 
     public Var(VariableType type, int num, long value) {
         this.type = type;
@@ -15,15 +18,48 @@ public class Var implements Variable {
         this(type, num, 0);
     }
 
+    public Var(String name) {
+        int num = Integer.parseInt(name.substring(1));
+
+
+        switch(name.toLowerCase().charAt(0)){
+            case 'x':
+                this.type = VariableType.INPUT;
+                this.num = num;
+                this.name = String.format("x%d", num);
+                break;
+            case 'z':
+                this.type = VariableType.TEMP;
+                this.num = num;
+                this.name = String.format("z%d", num);
+                break;
+            case 'y':
+                this.type = VariableType.OUTPUT;
+                this.name = "y";
+                break;
+        }
+        this.value = 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Variable v)) return false;
+        return java.util.Objects.equals(name, v.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(name);
+    }
+
+
     @Override
     public VariableType getType() { return type; }
 
     @Override
     public String getName() {
-        if (type == VariableType.INPUT) return "x" + num;
-        else if (type == VariableType.TEMP) return "z" + num;
-        else if (type == VariableType.OUTPUT) return "y";
-        else return null;
+        return name;
     }
 
     @Override

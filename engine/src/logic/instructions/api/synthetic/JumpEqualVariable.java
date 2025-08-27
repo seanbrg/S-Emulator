@@ -13,8 +13,8 @@ public class JumpEqualVariable extends AbstractInstruction {
     private final Label target;
     private final Variable y;
 
-    public JumpEqualVariable(Variable x, Variable y, Label target) {
-        super(InstructionData.JUMP_EQUAL_VARIABLE);
+    public JumpEqualVariable(Label selfLabel, Variable x, Variable y, Label target) {
+        super(InstructionData.JUMP_EQUAL_VARIABLE, selfLabel);
         this.x = x;
         this.y = y;
         this.target = target;

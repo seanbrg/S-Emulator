@@ -3,7 +3,7 @@ package logic.variables;
 public interface Variable {
     VariableType getType();
 
-    String getName();
+    public String getName();
 
     public long getValue();
 

@@ -10,8 +10,8 @@ public class Neutral extends AbstractInstruction {
 
     private final Variable v;
 
-    public Neutral(Variable v) {
-        super(InstructionData.NO_OP);
+    public Neutral(Label selfLabel, Variable v) {
+        super(InstructionData.NO_OP, selfLabel);
         this.v = v;
     }
 

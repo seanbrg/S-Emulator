@@ -13,8 +13,8 @@ public class ConstantAssignment extends AbstractInstruction {
     private final Variable v;
     private final int k;
 
-    public ConstantAssignment(Variable v, int k) {
-        super(InstructionData.CONSTANT_ASSIGNMENT);
+    public ConstantAssignment(Label selfLabel, Variable v, int k) {
+        super(InstructionData.CONSTANT_ASSIGNMENT,  selfLabel);
         this.v = v;
         this.k = k;
     }

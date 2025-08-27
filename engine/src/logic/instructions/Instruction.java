@@ -10,7 +10,7 @@ public interface Instruction {
 
     int getCycles();
 
-    Label getLabel();
+    Label getSelfLabel();
 
     int getDegree();
 }

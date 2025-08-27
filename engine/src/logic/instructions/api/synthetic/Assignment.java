@@ -11,8 +11,8 @@ public class Assignment extends AbstractInstruction {
 
     private final Variable x, y;
 
-    public Assignment(Variable x, Variable y) {
-        super(InstructionData.ASSIGNMENT);
+    public Assignment(Label selfLabel, Variable x, Variable y) {
+        super(InstructionData.ASSIGNMENT,  selfLabel);
         this.x = x;
         this.y = y;
     }

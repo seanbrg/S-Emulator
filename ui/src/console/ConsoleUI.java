@@ -1,9 +1,9 @@
 package console;
-import execute.sengine.SEngineAPI;
+import execute.sengine.EngineImpl;
 import java.util.Scanner;
 
 public class ConsoleUI {
-    private final SEngineAPI engine = new SEngineAPI();
+    private final EngineImpl engine = new EngineImpl();
     private final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class ConsoleUI {
 
             switch (choice) {
                 case "1" -> loadXml();
-                case "2" -> engine.showProgram();
+                case "2" -> engine.printProgram();
                 case "3" -> {
                     System.out.println("Exiting S-Emulator");
                     return;

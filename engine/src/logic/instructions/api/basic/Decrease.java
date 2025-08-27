@@ -9,8 +9,8 @@ public class Decrease extends AbstractInstruction {
 
     private final Variable v;
 
-    public Decrease(Variable v) {
-        super(InstructionData.DECREASE);
+    public Decrease(Label selfLabel, Variable v) {
+        super(InstructionData.DECREASE, selfLabel);
         this.v = v;
     }
 

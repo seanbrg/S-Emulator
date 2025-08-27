@@ -12,8 +12,8 @@ public class JumpZero extends AbstractInstruction {
     private final Variable v;
     private final Label target;
 
-    public JumpZero(Variable v, Label target) {
-        super(InstructionData.JUMP_ZERO);
+    public JumpZero(Label selfLabel, Variable v, Label target) {
+        super(InstructionData.JUMP_ZERO,  selfLabel);
         this.v = v;
         this.target = target;
     }
