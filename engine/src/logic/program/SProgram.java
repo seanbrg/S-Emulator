@@ -29,18 +29,24 @@ public class SProgram implements Program {
         Label currentLabel = FixedLabel.EMPTY;
         ListIterator<Instruction> iterator = instructions.listIterator();
 
-        while (iterator.hasNext() && currentLabel != FixedLabel.EXIT) {
+
+        while (currentLabel != FixedLabel.EXIT &&
+                (iterator.hasNext() || currentLabel != FixedLabel.EMPTY)) {
             Instruction currentInstruction;
 
             if (currentLabel == FixedLabel.EMPTY) {
-                currentInstruction =  iterator.next();
+                currentInstruction = iterator.next();
             }
             else {
                 currentInstruction = labels.get(currentLabel);
-                int idx = instructions.indexOf(currentInstruction);
-                if (idx == -1) {
-                    iterator =  instructions.listIterator(idx);
+                if (currentInstruction == null) {
+                    throw new IllegalStateException("Unknown label: " + currentLabel.getLabel());
                 }
+                int idx = instructions.indexOf(currentInstruction);
+                if (idx < 0) {
+                    throw new IllegalStateException("Label not in instruction list: " + currentLabel.getLabel());
+                }
+                iterator = instructions.listIterator(Math.min(idx + 1, instructions.size()));
             }
             currentLabel = currentInstruction.execute();
         }

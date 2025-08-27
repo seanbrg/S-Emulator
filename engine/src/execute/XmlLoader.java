@@ -101,12 +101,13 @@ public class XmlLoader {
                 Instruction instr = createInstruction(instrName, var, selfLabel, targetLabel);
                 if (instr != null) {
                     instructions.add(instr);
-                    labels.put(selfLabel, instr);
+                    if (selfLabel != FixedLabel.EMPTY) {
+                        labels.put(selfLabel, instr);
+                    }
                 } else {
                     System.out.println("Unknown instruction name: " + instrName + " (type=" + type + ")");
                 }
             }
-
             return new SProgram(programName, labels, instructions);
 
         } catch (Exception e) {

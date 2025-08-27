@@ -67,5 +67,7 @@ public class Var implements Variable {
     public long getValue() { return value; }
 
     @Override
-    public void setValue(long value) { this.value = value; }
+    public void setValue(long value) {
+        this.value = Math.abs(value);
+    }
 }
