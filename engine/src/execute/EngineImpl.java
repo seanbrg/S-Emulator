@@ -4,6 +4,7 @@ import logic.instructions.Instruction;
 import logic.program.Program;
 import logic.variables.Variable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EngineImpl implements Engine {
@@ -33,7 +34,11 @@ public class EngineImpl implements Engine {
             System.out.println("No program loaded.");
             return;
         }
-        currentProgram.getInstructions().forEach(Instruction::print);
+        List<Instruction> instrList = currentProgram.getInstructions();
+        for (int i = 0; i < instrList.size(); i++) {
+            Instruction instr = instrList.get(i);
+            System.out.println(instr.getRepresentation(i));
+        }
     }
 
     @Override
