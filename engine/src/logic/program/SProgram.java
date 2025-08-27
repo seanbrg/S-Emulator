@@ -32,7 +32,7 @@ public class SProgram implements Program {
         while (0 <= pc && pc < instructions.size()) {
             Instruction current = instructions.get(pc);
             nextLabel = current.execute();
-            System.out.println("pc = " + pc);
+            //System.out.println("pc = " + pc); // for debugging
             if (FixedLabel.EXIT == nextLabel) {
                 break;
             }

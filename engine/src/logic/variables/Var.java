@@ -71,6 +71,6 @@ public class Var implements Variable {
 
     @Override
     public void setValue(long value) {
-        this.value = Math.abs(value);
+        this.value = Math.max(value, 0);
     }
 }
