@@ -3,31 +3,22 @@ package logic.program;
 import logic.instructions.Instruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
-import logic.variables.Var;
-import logic.variables.Variable;
-import logic.variables.VariableType;
 
 import java.util.*;
 
 public class SProgram implements Program {
     private String name;
     private List<Instruction> instructions;
-    private VariablesList tempVars;
     private Map<Label, Instruction> labels;
 
-    public SProgram(String name, VariablesList tempVars, Map<Label, Instruction> labels) {
+    public SProgram(String name, Map<Label, Instruction> labels) {
         this.name = name;
         this.instructions = new ArrayList<>();
-        this.tempVars = tempVars;
-        // tempVars is a VariablesList( () -> new Var(VariableType.TEMP, tempVariables.size()) )
-        // a list of Vars that creates a new Var equal to 0 when it is first added
         this.labels = labels; // labels must map each label to its instruction
     }
 
     @Override
-    public Variable run(int degree, VariablesList inputVars) {
-        Variable result = new Var(VariableType.OUTPUT, -1);
-
+    public void run(int degree) {
         Label currentLabel = FixedLabel.EMPTY;
         ListIterator<Instruction> iterator = instructions.listIterator();
 
@@ -46,8 +37,6 @@ public class SProgram implements Program {
             }
             currentLabel = currentInstruction.execute();
         }
-
-        return result;
     }
 
     @Override
@@ -69,11 +58,6 @@ public class SProgram implements Program {
     @Override
     public List<Instruction> getInstructions() {
         return instructions;
-    }
-
-    @Override
-    public VariablesList getVars() {
-        return tempVars;
     }
 
     @Override
