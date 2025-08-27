@@ -22,9 +22,12 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public String getRepresentation(int num) {
-        return "#" + num + " (" + data.getInstructionType().toString() + ") " +
-                " [ " + selfLabel.getLabel() + " ] " + this.print() +
-                " (" + data.getCycles() + ")";
+        return String.format("#%d (%s) [ %-3s ] %s (%d)",
+                num,
+                data.getInstructionType(),
+                selfLabel.getLabel(),
+                this.print(),
+                data.getCycles());
     }
 
     @Override
