@@ -2,29 +2,37 @@ package logic.program;
 
 import logic.instructions.Instruction;
 import logic.labels.Label;
+import logic.variables.Var;
 import logic.variables.Variable;
+import logic.variables.VariableType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class SProgram implements Program {
     String name;
     List<Instruction> instructions;
-    Map<String, Variable> variables;
+    VariablesList tempVariables;
     Map<Label, Instruction> labels;
 
     public SProgram(String name) {
         this.name = name;
         instructions = new ArrayList<>();
-        variables = new HashMap<>();
+        tempVariables = new VariablesList
+                (() -> new Var(VariableType.TEMP, tempVariables.size()));
         labels = new HashMap<>();
     }
 
     @Override
-    public Variable run() {
-        return null;
+    public Variable run(int degree, VariablesList inputVariables) {
+        Variable result = new Var(VariableType.OUTPUT, -1);
+
+
+
+        return result;
     }
 
     @Override
@@ -43,18 +51,13 @@ public class SProgram implements Program {
     }
 
     @Override
-    public Map<String, Variable> getVars() {
-        return variables;
+    public VariablesList getVars() {
+        return tempVariables;
     }
 
     @Override
     public Map<Label, Instruction> getLabels() {
         return labels;
-    }
-
-    @Override
-    public boolean validate() {
-        return false;
     }
 
     @Override
