@@ -1,35 +1,40 @@
 package logic.program;
 
 import logic.instructions.Instruction;
+import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class SProgram implements Program {
-    String name;
-    List<Instruction> instructions;
-    VariablesList tempVariables;
-    Map<Label, Instruction> labels;
+    private String name;
+    private List<Instruction> instructions;
+    private VariablesList tempVars;
+    private Map<Label, Instruction> labels;
 
-    public SProgram(String name) {
+    public SProgram(String name, VariablesList tempVars, Map<Label, Instruction> labels) {
         this.name = name;
-        instructions = new ArrayList<>();
-        tempVariables = new VariablesList
-                (() -> new Var(VariableType.TEMP, tempVariables.size()));
-        labels = new HashMap<>();
+        this.instructions = new ArrayList<>();
+        this.tempVars = tempVars;
+        // tempVars is a VariablesList( () -> new Var(VariableType.TEMP, tempVariables.size()) )
+        // a list of Vars that creates a new Var equal to 0 when it is first added
+        this.labels = labels; // labels must map each label to its instruction
     }
 
     @Override
-    public Variable run(int degree, VariablesList inputVariables) {
+    public Variable run(int degree, VariablesList inputVars) {
         Variable result = new Var(VariableType.OUTPUT, -1);
 
+        Label currentLabel = FixedLabel.EMPTY;
+
+        while (currentLabel != FixedLabel.EXIT) {
+
+        }
 
 
         return result;
@@ -37,6 +42,12 @@ public class SProgram implements Program {
 
     @Override
     public void addInstruction(Instruction instruction) {
+        // the variables in instruction must be the same instances saved in
+        // tempVars and inputVars - the provided lists of variables in the program
+        Label selfLabel = instruction.getLabel();
+        if (selfLabel != FixedLabel.EMPTY) {
+            labels.put(selfLabel, instruction);
+        }
         instructions.add(instruction);
     }
 
@@ -52,7 +63,7 @@ public class SProgram implements Program {
 
     @Override
     public VariablesList getVars() {
-        return tempVariables;
+        return tempVars;
     }
 
     @Override
