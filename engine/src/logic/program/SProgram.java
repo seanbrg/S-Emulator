@@ -17,12 +17,19 @@ public class SProgram implements Program {
         this.labels = labels; // labels must map each label to its instruction
     }
 
+    public SProgram(String name, Map<Label, Instruction> labels, List<Instruction> instructions) {
+        this.name = name;
+        this.instructions = instructions;
+        this.labels = labels; // labels must map each label to its instruction
+    }
+
+
     @Override
     public void run(int degree) {
         Label currentLabel = FixedLabel.EMPTY;
         ListIterator<Instruction> iterator = instructions.listIterator();
 
-        while (iterator.hasNext() && currentLabel != FixedLabel.EMPTY) {
+        while (iterator.hasNext() && currentLabel != FixedLabel.EXIT) {
             Instruction currentInstruction;
 
             if (currentLabel == FixedLabel.EMPTY) {
