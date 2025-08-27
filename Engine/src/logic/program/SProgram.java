@@ -7,9 +7,7 @@ import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SProgram implements Program {
     private String name;
@@ -31,11 +29,23 @@ public class SProgram implements Program {
         Variable result = new Var(VariableType.OUTPUT, -1);
 
         Label currentLabel = FixedLabel.EMPTY;
+        ListIterator<Instruction> iterator = instructions.listIterator();
 
-        while (currentLabel != FixedLabel.EXIT) {
+        while (iterator.hasNext() && currentLabel != FixedLabel.EMPTY) {
+            Instruction currentInstruction;
 
+            if (currentLabel == FixedLabel.EMPTY) {
+                currentInstruction =  iterator.next();
+            }
+            else {
+                currentInstruction = labels.get(currentLabel);
+                int idx = instructions.indexOf(currentInstruction);
+                if (idx == -1) {
+                    iterator =  instructions.listIterator(idx);
+                }
+            }
+            currentLabel = currentInstruction.execute();
         }
-
 
         return result;
     }
