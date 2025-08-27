@@ -19,18 +19,18 @@ public class Var implements Variable {
     }
 
     public Var(String name) {
-        int num = Integer.parseInt(name.substring(1));
-
+        int num = 0;
+        if (name.length() > 1) {
+            num = Integer.parseInt(name.substring(1));
+        }
 
         switch(name.toLowerCase().charAt(0)){
             case 'x':
                 this.type = VariableType.INPUT;
-                this.num = num;
                 this.name = String.format("x%d", num);
                 break;
             case 'z':
                 this.type = VariableType.TEMP;
-                this.num = num;
                 this.name = String.format("z%d", num);
                 break;
             case 'y':
@@ -39,6 +39,7 @@ public class Var implements Variable {
                 break;
         }
         this.value = 0;
+        this.num = num;
     }
 
     @Override
