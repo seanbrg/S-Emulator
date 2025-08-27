@@ -9,6 +9,9 @@ public class Var implements Variable {
     private String name;
 
     public Var(VariableType type, int num, long value) {
+        if (num < 0 || value < 0) {
+            throw new IllegalArgumentException("Num or value of new Var is negative.");
+        }
         this.type = type;
         this.num = num;
         this.value = value;

@@ -43,6 +43,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public long runProgram(int degree) {
+        //currentVars.forEach((s, variable) -> {System.out.println(s+" = "+variable.getValue());});
         currentProgram.run(degree);
         return currentVars.get("y").getValue();
     }

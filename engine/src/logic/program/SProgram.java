@@ -26,29 +26,30 @@ public class SProgram implements Program {
 
     @Override
     public void run(int degree) {
-        Label currentLabel = FixedLabel.EMPTY;
-        ListIterator<Instruction> iterator = instructions.listIterator();
+        Label nextLabel;
+        int pc = 0;
 
-
-        while (currentLabel != FixedLabel.EXIT &&
-                (iterator.hasNext() || currentLabel != FixedLabel.EMPTY)) {
-            Instruction currentInstruction;
-
-            if (currentLabel == FixedLabel.EMPTY) {
-                currentInstruction = iterator.next();
+        while (0 <= pc && pc < instructions.size()) {
+            Instruction current = instructions.get(pc);
+            nextLabel = current.execute();
+            System.out.println("pc = " + pc);
+            if (FixedLabel.EXIT == nextLabel) {
+                break;
             }
-            else {
-                currentInstruction = labels.get(currentLabel);
-                if (currentInstruction == null) {
-                    throw new IllegalStateException("Unknown label: " + currentLabel.getLabel());
+
+            if (FixedLabel.EMPTY != nextLabel) {
+                Instruction target = labels.get(nextLabel);
+                if (target == null) {
+                    throw new IllegalStateException("Unknown label: " + nextLabel.getLabel());
                 }
-                int idx = instructions.indexOf(currentInstruction);
+                int idx = instructions.indexOf(target);
                 if (idx < 0) {
-                    throw new IllegalStateException("Label not in instruction list: " + currentLabel.getLabel());
+                    throw new IllegalStateException("Label not in instruction list: " + nextLabel.getLabel());
                 }
-                iterator = instructions.listIterator(Math.min(idx + 1, instructions.size()));
+                pc = idx;
+            } else {
+                pc += 1;
             }
-            currentLabel = currentInstruction.execute();
         }
     }
 

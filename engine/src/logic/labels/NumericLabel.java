@@ -4,6 +4,9 @@ public class NumericLabel implements Label {
     private int num;
 
     public NumericLabel(int num) {
+        if  (num < 0) {
+            throw new IllegalArgumentException("Num of new Label is negative.");
+        }
         this.num = num;
     }
 
