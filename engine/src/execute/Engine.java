@@ -1,5 +1,10 @@
 package execute;
 
+import logic.variables.Variable;
+
+import java.util.List;
+import java.util.Set;
+
 public interface Engine {
     boolean loadFromXML(String filePath);
 
@@ -8,4 +13,6 @@ public interface Engine {
     long runProgram(int degree);
 
     int maxDegree();
+
+    List<Variable> getInputs();
 }

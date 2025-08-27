@@ -3,9 +3,10 @@ package execute;
 import logic.instructions.Instruction;
 import logic.program.Program;
 import logic.variables.Variable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import logic.variables.VariableType;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     Program currentProgram;
@@ -54,5 +55,15 @@ public class EngineImpl implements Engine {
     @Override
     public int maxDegree() {
         return currentProgram.maxDegree();
+    }
+
+    @Override
+    public List<Variable> getInputs() {
+
+        return currentVars.values().stream()
+                .filter(Objects::nonNull)
+                .filter( v -> { return v.getType() == VariableType.INPUT; } )
+                .sorted( Comparator.comparing(Variable::getName) )
+                .collect(Collectors.toList());
     }
 }

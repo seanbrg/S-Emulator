@@ -1,5 +1,7 @@
 package console;
 import execute.EngineImpl;
+import logic.variables.Variable;
+
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -28,20 +30,37 @@ public class ConsoleUI {
                 case "2" -> engine.printProgram();
                 case "3" -> {}
                 case "4" -> {
-                    int input = 0;
+                    int inputDegree = 0;
+                    long inputVar = 0;
                     long result;
                     int degree = engine.maxDegree();
                     System.out.printf("Current Program maximum degree is: %d.%n", degree);
                     System.out.printf("Please choose Program degree from 0 to %d:%n", degree);
 
                     try {
-                        input = Integer.parseInt(scanner.nextLine().trim());
+                        inputDegree = Integer.parseInt(scanner.nextLine().trim());
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid choice, please try again.");
                         break;
                     }
-                    if (0 <= input && input <= degree) {
-                        result = engine.runProgram(input);
+
+                    if (0 <= inputDegree && inputDegree <= degree) {
+                        System.out.println("Please enter inputs:");
+                        for (Variable var : engine.getInputs()) {
+                            System.out.print(var.getName() + ": ");
+                            try {
+                                inputVar = Integer.parseInt(scanner.nextLine().trim());
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid choice, please try again.");
+                                break;
+                            }
+                            if (inputVar < 0) {
+                                System.out.println("Invalid input, please try again.");
+                                break;
+                            }
+                            var.setValue(inputVar);
+                        }
+                        result = engine.runProgram(inputDegree);
                         System.out.println(String.format("Program exited with result y = %d", result));
                     }
                     else {
