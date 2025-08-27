@@ -1,5 +1,5 @@
 package console;
-import execute.sengine.EngineImpl;
+import execute.EngineImpl;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -27,7 +27,21 @@ public class ConsoleUI {
                     System.out.println("Exiting S-Emulator");
                     return;
                 }
-                default -> System.out.println("⚠ Invalid choice, please try again.");
+                case "4" -> {
+                    int input = 0;
+                    try {
+                        input = Integer.parseInt(scanner.nextLine().trim());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid choice, please try again.");
+                        break;
+                    }
+                    if (0 <= input && input <= engine.maxDegree())
+                        engine.runProgram(input);
+                    else {
+                        System.out.println("Invalid choice, please try again.");
+                    }
+                }
+                default -> System.out.println("Invalid choice, please try again.");
             }
         }
     }

@@ -1,27 +1,24 @@
-package execute.sengine;
+package execute;
 
-import execute.components.XmlLoader;
 import logic.instructions.Instruction;
-import logic.labels.Label;
 import logic.program.Program;
 import logic.variables.Variable;
-
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class EngineImpl implements Engine {
-    List<Instruction> instructions;
-    Map<Label, Instruction> labels;
     Program currentProgram;
-    Map<String, Variable> vars;
+    Map<String, Variable> currentVars;
 
     public EngineImpl() {}
 
     @Override
     public boolean loadFromXML(String filePath) {
-        Program program = XmlLoader.parse(filePath, vars, instructions, labels);
+        Map<String, Variable> vars = new HashMap<>();
+        Program program = XmlLoader.parse(filePath, vars);
         if (program != null) {
             this.currentProgram = program;
+            this.currentVars = vars;
             System.out.println("Program '" + program.getName() + "' loaded successfully!");
             return true;
         } else {
@@ -37,5 +34,16 @@ public class EngineImpl implements Engine {
             return;
         }
         currentProgram.getInstructions().forEach(Instruction::print);
+    }
+
+    @Override
+    public long runProgram(int degree) {
+        currentProgram.run(degree);
+        return currentVars.get("y").getValue();
+    }
+
+    @Override
+    public int maxDegree() {
+        return currentProgram.maxDegree();
     }
 }

@@ -1,4 +1,4 @@
-package execute.components;
+package execute;
 
 import logic.instructions.*;
 import logic.instructions.api.basic.*;
@@ -14,13 +14,14 @@ import logic.variables.Variable;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class XmlLoader {
 
-    public static Program parse(String filePath, Map<String, Variable> vars,
-                                List<Instruction> instructions, Map<Label, Instruction> labels) {
+    public static Program parse(String filePath, Map<String, Variable> vars) {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("Error: File does not exist.");
@@ -36,6 +37,9 @@ public class XmlLoader {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
+
+            List<Instruction> instructions = new ArrayList<Instruction>();
+            Map<Label, Instruction> labels = new HashMap<Label, Instruction>();
 
             String programName = doc.getDocumentElement().getAttribute("name");
 
