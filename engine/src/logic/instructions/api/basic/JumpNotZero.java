@@ -26,4 +26,9 @@ public class JumpNotZero extends AbstractInstruction {
     public String print() {
         return "IF " + v.getName() + " != 0 GOTO " + target.getLabel();
     }
+
+    @Override
+    public Label getTargetLabel() {
+        return target;
+    }
 }

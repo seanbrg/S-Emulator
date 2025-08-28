@@ -16,4 +16,6 @@ public interface Program {
 
     int maxDegree();
     int cycles();
+
+    boolean checkLabels();
 }

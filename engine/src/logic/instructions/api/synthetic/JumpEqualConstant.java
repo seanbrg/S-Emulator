@@ -32,5 +32,9 @@ public class JumpEqualConstant extends AbstractInstruction {
     }
     public Variable getVariable() { return v; }
     public int getConstant() { return k; }
-    public Label getTargetLabel() { return target; }
+
+    @Override
+    public Label getTargetLabel() {
+        return target;
+    }
 }

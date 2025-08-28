@@ -13,4 +13,6 @@ public interface Instruction {
     Label getSelfLabel();
 
     int getDegree();
+
+    Label getTargetLabel();
 }

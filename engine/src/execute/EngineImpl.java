@@ -61,6 +61,11 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public boolean validateProgram() {
+        return currentProgram.checkLabels();
+    }
+
+    @Override
     public int maxDegree() {
         return currentProgram.maxDegree();
     }

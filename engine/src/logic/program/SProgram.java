@@ -93,4 +93,22 @@ public class SProgram implements Program {
                 .sum();
     }
 
+    @Override
+    public boolean checkLabels() {
+        List<Label> usedLabels = new ArrayList<>();
+        for (Instruction instruction : instructions) {
+            Label usedLabel = instruction.getTargetLabel();
+            if (usedLabel != FixedLabel.EMPTY) {
+                usedLabels.add(usedLabel);
+            }
+        }
+
+        for  (Label label : usedLabels) {
+            if (!labels.containsKey(label)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

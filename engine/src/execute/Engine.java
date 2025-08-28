@@ -12,6 +12,8 @@ public interface Engine {
 
     long runProgram(int degree);
 
+    boolean validateProgram();
+
     int maxDegree();
 
     List<Variable> getInputs();

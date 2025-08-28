@@ -35,4 +35,7 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public int getDegree() { return data.getDegree(); }
+
+    @Override
+    public Label getTargetLabel() { return FixedLabel.EMPTY; }
 }
