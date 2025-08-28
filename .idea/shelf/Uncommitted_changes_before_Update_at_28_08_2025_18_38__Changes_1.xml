@@ -1,0 +1,169 @@
+<changelist name="Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1" date="1756395503036" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 28/08/2025 18:38 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpZero.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpZero.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/JumpZero.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpEqualConstant.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpEqualConstant.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/JumpEqualConstant.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/labels/FixedLabel$1.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/labels/FixedLabel$1.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/FixedLabel$1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/labels/NumericLabel.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/labels/NumericLabel.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/NumericLabel.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/InstructionType$2.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/InstructionType$2.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/InstructionType$2.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/basic/JumpNotZero.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/basic/JumpNotZero.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/JumpNotZero.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/ZeroVariable.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/ZeroVariable.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/ZeroVariable.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/program/SProgram.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/program/SProgram.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/SProgram.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/GoToLabel.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/GoToLabel.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/GoToLabel.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/Assignment.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/Assignment.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Assignment.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/ui/console/ConsoleUI.class" />
+    <option name="AFTER_PATH" value="out/production/ui/console/ConsoleUI.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/ConsoleUI.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpEqualVariable.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/JumpEqualVariable.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/JumpEqualVariable.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/InstructionType$1.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/InstructionType$1.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/InstructionType$1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/basic/Decrease.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/basic/Decrease.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Decrease.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/basic/Increase.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/basic/Increase.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Increase.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/Instruction.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/Instruction.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Instruction.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/labels/Label.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/labels/Label.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Label.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/InstructionData.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/InstructionData.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/InstructionData.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/variables/VariableType.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/variables/VariableType.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/VariableType.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/execute/ExpandedInstruction.class" />
+    <option name="AFTER_PATH" value="out/production/engine/execute/ExpandedInstruction.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/ExpandedInstruction.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/variables/Variable.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/variables/Variable.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Variable.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/labels/FixedLabel$2.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/labels/FixedLabel$2.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/FixedLabel$2.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/variables/Var.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/variables/Var.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Var.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/InstructionType.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/InstructionType.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/InstructionType.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/AbstractInstruction.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/AbstractInstruction.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/AbstractInstruction.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/execute/EngineImpl$ExpandedInstruction.class" />
+    <option name="AFTER_PATH" value="out/production/engine/execute/EngineImpl$ExpandedInstruction.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/EngineImpl$ExpandedInstruction.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/synthetic/ConstantAssignment.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/synthetic/ConstantAssignment.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/ConstantAssignment.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/labels/FixedLabel.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/labels/FixedLabel.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/FixedLabel.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/instructions/api/basic/Neutral.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/instructions/api/basic/Neutral.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Neutral.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/execute/XmlLoader.class" />
+    <option name="AFTER_PATH" value="out/production/engine/execute/XmlLoader.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/XmlLoader.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/execute/EngineImpl.class" />
+    <option name="AFTER_PATH" value="out/production/engine/execute/EngineImpl.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/EngineImpl.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/logic/program/Program.class" />
+    <option name="AFTER_PATH" value="out/production/engine/logic/program/Program.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Program.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/engine/execute/Engine.class" />
+    <option name="AFTER_PATH" value="out/production/engine/execute/Engine.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_08_2025_18_38_[Changes]1/Engine.class" />
+  </binary>
+</changelist>

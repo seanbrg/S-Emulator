@@ -1,0 +1,83 @@
+Index: .idea/artifacts/engine_jar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/artifacts/engine_jar.xml b/.idea/artifacts/engine_jar.xml
+new file mode 100644
+--- /dev/null	(date 1756392491352)
++++ b/.idea/artifacts/engine_jar.xml	(date 1756392491352)
+@@ -0,0 +1,8 @@
++<component name="ArtifactManager">
++  <artifact type="jar" name="engine:jar">
++    <output-path>$PROJECT_DIR$/out/artifacts</output-path>
++    <root id="archive" name="engine.jar">
++      <element id="module-output" name="engine" />
++    </root>
++  </artifact>
++</component>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_24\" default=\"true\" project-jdk-name=\"openjdk-24\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision b69c8794702bdfbfacd3497d62b67d2d3285aab4)
++++ b/.idea/misc.xml	(date 1756390162183)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="openjdk-24" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="openjdk-24" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: ui/src/META-INF/MANIFEST.MF
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ui/src/META-INF/MANIFEST.MF b/ui/src/META-INF/MANIFEST.MF
+new file mode 100644
+--- /dev/null	(date 1756392248659)
++++ b/ui/src/META-INF/MANIFEST.MF	(date 1756392248659)
+@@ -0,0 +1,4 @@
++Manifest-Version: 1.0
++Main-Class: console.ConsoleUI
++Class-Path: engine.jar
++
+Index: engine/META-INF/MANIFEST.MF
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/engine/META-INF/MANIFEST.MF b/engine/META-INF/MANIFEST.MF
+new file mode 100644
+--- /dev/null	(date 1756392056746)
++++ b/engine/META-INF/MANIFEST.MF	(date 1756392056746)
+@@ -0,0 +1,2 @@
++Manifest-Version: 1.0
++
+Index: .idea/artifacts/ui_jar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/artifacts/ui_jar.xml b/.idea/artifacts/ui_jar.xml
+new file mode 100644
+--- /dev/null	(date 1756392491355)
++++ b/.idea/artifacts/ui_jar.xml	(date 1756392491355)
+@@ -0,0 +1,8 @@
++<component name="ArtifactManager">
++  <artifact type="jar" name="ui:jar">
++    <output-path>$PROJECT_DIR$/out/artifacts</output-path>
++    <root id="archive" name="ui.jar">
++      <element id="module-output" name="ui" />
++    </root>
++  </artifact>
++</component>
+\ No newline at end of file
