@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ExpandedInstruction {
     private final Instruction instruction;
-    private final List<Instruction> history; // כל השרשרת עד כאן
+    private final List<Instruction> history;
 
     public ExpandedInstruction(Instruction instr) {
         this.instruction = instr;
