@@ -100,9 +100,9 @@ public class EngineImpl implements Engine {
                 .collect(Collectors.toList());
     }
 
-    // ========= expandProgram =========
+    // ========= printExpandProgram =========
 
-    public void expandProgram(int degree) {
+    public void printExpandProgram(int degree) {
         if (currentProgram == null) {
             System.out.println("No program loaded.");
             return;

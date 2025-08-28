@@ -10,11 +10,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="fixed numbering in extend">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="added expand to run in engine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/program/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/program/Program.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/program/SProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/program/SProgram.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/ExpandedInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/ExpandedInstruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,12 +35,12 @@
     &quot;assignee&quot;: &quot;seanbrg&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/seanbrg/S-Emulator&quot;,
-    &quot;accountId&quot;: &quot;389f1a35-563a-44b9-8e08-3b87b929ca19&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/8anna8b6/S-Emulator",
+    "accountId": "389f1a35-563a-44b9-8e08-3b87b929ca19"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -115,7 +115,7 @@
       <workItem from="1756397118568" duration="966000" />
       <workItem from="1756398154191" duration="467000" />
       <workItem from="1756398669875" duration="7000" />
-      <workItem from="1756398685425" duration="5029000" />
+      <workItem from="1756398685425" duration="6429000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -165,13 +165,51 @@
       <option name="project" value="LOCAL" />
       <updated>1756403228746</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="added expand to run in engine">
+      <option name="closed" value="true" />
+      <created>1756404035043</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1756404035043</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="seansemulator/master" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="HEAD" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="annasemulator/master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -182,7 +220,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="seansemulator/HEAD" />
                       </list>
                     </value>
                   </entry>
@@ -201,6 +239,7 @@
     <MESSAGE value="updated XMLloader for label tests" />
     <MESSAGE value="updated XMLloader again" />
     <MESSAGE value="fixed numbering in extend" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed numbering in extend" />
+    <MESSAGE value="added expand to run in engine" />
+    <option name="LAST_COMMIT_MESSAGE" value="added expand to run in engine" />
   </component>
 </project>

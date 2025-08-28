@@ -27,8 +27,8 @@ public class ExpandedInstruction {
 
     public String getRepresentation() {
         StringBuilder sb = new StringBuilder(instruction.getRepresentation());
-        for (Instruction h : history) {
-            sb.append("  <<<  ").append(h.getRepresentation());
+        for (int i = history.size() - 1; 0 <= i; i--) {
+            sb.append("  <<<  ").append(history.get(i).getRepresentation());
         }
         return sb.toString();
     }
