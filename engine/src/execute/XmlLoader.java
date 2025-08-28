@@ -78,27 +78,41 @@ public class XmlLoader {
                 }
 
                 // Extract <S-Instruction-Argument> (e.g., JNZLabel)
-                Label targetLabel = FixedLabel.EMPTY;  // default if no targetLabel provided
+                Label argLabel = FixedLabel.EMPTY;  // default if no argLabel provided
+                Variable argVar = null;
+                int argConst = 0;
                 NodeList argParents = instrElem.getElementsByTagName("S-Instruction-Arguments");
                 if (argParents.getLength() > 0) {
                     Element argsElem = (Element) argParents.item(0);
                     NodeList argNodes = argsElem.getElementsByTagName("S-Instruction-Argument");
                     for (int j = 0; j < argNodes.getLength(); j++) {
                         Element argElem = (Element) argNodes.item(j);
-                        String argName  = argElem.getAttribute("name");
+                        String argName = argElem.getAttribute("name");
                         String argValue = argElem.getAttribute("value");
 
                         // Handle known arguments
-                        if ("JNZLabel".equalsIgnoreCase(argName)) {
-                            targetLabel = parseLabel(argValue);
+                        if ("JNZLabel".equals(argName) || "gotoLabel".equals(argName) ||
+                        "JZLabel".equals(argName) || "JEConstantLabel".equals(argName) ||
+                        "JEVariableLabel".equals(argName)) {
+                            argLabel = parseLabel(argValue);
                         }
 
-                        // Add more arguments here as needed:
-                        // else if ("SomeOtherArg".equalsIgnoreCase(argName)) { ... }
+                        if ("assignedVariable".equals(argName) || "variableName".equals(argName)) {
+                            if (!vars.containsKey(argValue)) {
+                                vars.put(argValue, new Var(argValue));
+                            }
+                            argVar = vars.get(argValue);
+                        }
+
+                        if ("constantValue".equals(argName) || "JEConstantValue".equals(argName)) {
+                            argConst = Integer.parseInt(argValue.trim());
+                        }
                     }
                 }
 
-                Instruction instr = createInstruction(instrName, var, selfLabel, targetLabel);
+                Instruction instr = createInstruction(
+                        instrName, var, selfLabel,
+                        argLabel, argVar, argConst);
                 if (instr != null) {
                     instructions.add(instr);
                     if (selfLabel != FixedLabel.EMPTY) {
@@ -116,19 +130,27 @@ public class XmlLoader {
         }
     }
 
-    private static Instruction createInstruction(String name, Variable var, Label selfLabel, Label target) {
+    private static Instruction createInstruction(
+            String name, Variable var, Label selfLabel,
+            Label argLabel, Variable argVar, int argConst) {
+        System.out.print("Creating instruction: " + name + " (" + selfLabel.getLabel()
+                + " " + var.getName() + ") args: " + argLabel.getLabel() + " ");
+        if (argVar != null) System.out.print(argVar.getName() + " ");
+        else System.out.print("null ");
+        System.out.println(argConst);
+
         return switch (name.toUpperCase()) {
             case "INCREASE" -> new Increase(selfLabel,var);
             case "DECREASE" -> new Decrease(selfLabel, var);
-            case "JUMP_NOT_ZERO" -> new JumpNotZero(selfLabel, var, target);
+            case "JUMP_NOT_ZERO" -> new JumpNotZero(selfLabel, var, argLabel);
             case "NEUTRAL" -> new Neutral(selfLabel, var);
             case "ZERO_VARIABLE" -> new ZeroVariable(selfLabel, var);
-            case "GOTO_LABEL" -> new GoToLabel(selfLabel, target);
-            //case "ASSIGNMENT" -> new Assignment(selfLabel, ); needs 2 variables
-            //case "CONSTANT_ASSIGNMENT" ->  new ConstantAssignment(selfLabel, var); needs constant
-            case "JUMP_ZERO" -> new JumpZero(selfLabel, var, target);
-            //case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant() needs constant
-            //case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable() needs 2 variables
+            case "GOTO_LABEL" -> new GoToLabel(selfLabel, argLabel);
+            case "ASSIGNMENT" -> new Assignment(selfLabel, var, argVar);
+            case "CONSTANT_ASSIGNMENT" ->  new ConstantAssignment(selfLabel, var, argConst);
+            case "JUMP_ZERO" -> new JumpZero(selfLabel, var, argLabel);
+            case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant(selfLabel, var, argConst, argLabel);
+            case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, var, argVar, argLabel);
             default -> null;
         };
     }
