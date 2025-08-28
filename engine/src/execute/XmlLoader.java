@@ -99,6 +99,7 @@ public class XmlLoader {
                     System.out.println("Unknown instruction name: " + instrName + " (type=" + type + ")");
                 }
             }
+
             Program program = new SProgram(programName, labels, instructions);
 
             if (!program.checkLabels()) {

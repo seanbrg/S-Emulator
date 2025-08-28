@@ -1,6 +1,4 @@
-package execute;
-
-import logic.instructions.Instruction;
+package logic.instructions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +25,13 @@ public class ExpandedInstruction {
         return history;
     }
 
-    public String getRepresentation(int num) {
-        StringBuilder sb = new StringBuilder(instruction.getRepresentation(num));
+    public String getRepresentation() {
+        StringBuilder sb = new StringBuilder(instruction.getRepresentation());
         for (Instruction h : history) {
-            sb.append("  <<<  ").append(h.getRepresentation(-1));
+            sb.append("  <<<  ").append(h.getRepresentation());
         }
         return sb.toString();
     }
+
+    public void setNum(int num) { this.instruction.setNum(num); }
 }

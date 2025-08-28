@@ -1,12 +1,12 @@
 package execute;
 
 import logic.instructions.Instruction;
-import logic.instructions.InstructionData;
 import logic.instructions.api.basic.Decrease;
 import logic.instructions.api.basic.Increase;
 import logic.instructions.api.basic.JumpNotZero;
 import logic.instructions.api.basic.Neutral;
 import logic.instructions.api.synthetic.*;
+import logic.instructions.ExpandedInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.labels.NumericLabel;
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class EngineImpl implements Engine {
     Program currentProgram;
     Map<String, Variable> currentVars;
+    private static int labelCounter = 1;
+    private static int tempCounter = 1;
 
     public EngineImpl() {}
 
@@ -48,12 +50,22 @@ public class EngineImpl implements Engine {
         List<Instruction> instrList = currentProgram.getInstructions();
         for (int i = 0; i < instrList.size(); i++) {
             Instruction instr = instrList.get(i);
-            System.out.println(instr.getRepresentation(i + 1));
+            System.out.println(instr.getRepresentation());
         }
     }
 
     @Override
     public long runProgram(int degree) {
+        Program program = currentProgram; /*
+        if (degree > 0) {
+            List<ExpandedInstruction> expanded = expandRecursive(
+                    currentProgram.getInstructions(), degree, new ArrayList<>()
+            );
+            List<Instruction> instrList = expanded.stream()
+                    .map(ExpandedInstruction::getInstruction).toList();
+
+            program = new SProgram(currentProgram.getName(), )
+        } */
         currentProgram.run(degree);
         long result = currentVars.get("y").getValue();
         currentVars.values().forEach(v -> v.setValue(0)); // reset vars
@@ -91,8 +103,12 @@ public class EngineImpl implements Engine {
                 currentProgram.getInstructions(), degree, new ArrayList<>()
         );
 
+        for (int i = 0; i < expanded.size(); i++) { // number instructions
+            expanded.get(i).setNum(i + 1);
+        }
+
         for (int i = 0; i < expanded.size(); i++) {
-            System.out.println(expanded.get(i).getRepresentation(i + 1));
+            System.out.println(expanded.get(i).getRepresentation());
         }
     }
 
@@ -101,10 +117,12 @@ public class EngineImpl implements Engine {
                                                       List<Instruction> history) {
         List<ExpandedInstruction> result = new ArrayList<>();
 
+        int lineNum = 1;
         for (Instruction instr : instrs) {
             if (instr.getDegree() > 0 && degree > 0) {
                 // expand synthetic instruction
-                List<Instruction> expansion = expandOne(instr); //todoo
+                List<Instruction> expansion = expandOne(instr, lineNum);
+                lineNum += expansion.size();
                 for (Instruction child : expansion) {
                     List<Instruction> newHistory = new ArrayList<>(history);
                     newHistory.add(instr);
@@ -117,7 +135,7 @@ public class EngineImpl implements Engine {
         return result;
     }
 
-    private List<Instruction> expandOne(Instruction instr) {
+    private List<Instruction> expandOne(Instruction instr, int lineNum) {
         List<Instruction> result = new ArrayList<>();
         Label self = instr.getSelfLabel();
 
@@ -125,18 +143,18 @@ public class EngineImpl implements Engine {
         if (instr instanceof ZeroVariable zv) {
             Variable v = zv.getVariable();
             Label loop = freshLabel();
-            result.add(new JumpNotZero(self, v, loop));
-            result.add(new Decrease(loop, v));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, v, loop));
+            result.add(new JumpNotZero(self, v, loop, lineNum++));
+            result.add(new Decrease(loop, v, lineNum++));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, v, loop, lineNum++));
         }
 
         // ---- CONSTANT_ASSIGNMENT ----
         else if (instr instanceof ConstantAssignment ca) {
             Variable v = ca.getVariable();
             int k = ca.getConstant();
-            result.add(new ZeroVariable(self, v));
+            result.add(new ZeroVariable(self, v, lineNum++));
             for (int i = 0; i < k; i++) {
-                result.add(new Increase(FixedLabel.EMPTY, v));
+                result.add(new Increase(FixedLabel.EMPTY, v, lineNum++));
             }
         }
 
@@ -145,19 +163,19 @@ public class EngineImpl implements Engine {
             Variable x = asg.getX();
             Variable y = asg.getY();
             Label loop = freshLabel();
-            result.add(new ZeroVariable(self, x));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop));
-            result.add(new Decrease(loop, y));
-            result.add(new Increase(FixedLabel.EMPTY, x));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop));
+            result.add(new ZeroVariable(self, x, lineNum++));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum++));
+            result.add(new Decrease(loop, y, lineNum++));
+            result.add(new Increase(FixedLabel.EMPTY, x, lineNum++));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum++));
         }
 
         // ---- GOTO_LABEL ----
         else if (instr instanceof GoToLabel gtl) {
             Label target = gtl.getTargetLabel();
             Variable dummy = freshTemp();
-            result.add(new Increase(self, dummy));      // dummy = 1
-            result.add(new JumpNotZero(FixedLabel.EMPTY, dummy, target));
+            result.add(new Increase(self, dummy, lineNum++));      // dummy = 1
+            result.add(new JumpNotZero(FixedLabel.EMPTY, dummy, target, lineNum++));
         }
 
         // ---- JUMP_ZERO ----
@@ -165,9 +183,9 @@ public class EngineImpl implements Engine {
             Variable v = jz.getVariable();
             Label target = jz.getTargetLabel();
             Label skip = freshLabel();
-            result.add(new JumpNotZero(self, v, skip));
-            result.add(new GoToLabel(FixedLabel.EMPTY, target));
-            result.add(new Neutral(skip, v)); // skip:
+            result.add(new JumpNotZero(self, v, skip, lineNum++));
+            result.add(new GoToLabel(FixedLabel.EMPTY, target, lineNum++));
+            result.add(new Neutral(skip, v, lineNum++)); // skip:
         }
 
         // ---- JUMP_EQUAL_CONSTANT ----
@@ -177,14 +195,14 @@ public class EngineImpl implements Engine {
             Label target = jec.getTargetLabel();
 
             Variable tmp = freshTemp();
-            result.add(new Assignment(self, tmp, v));
-            result.add(new ConstantAssignment(FixedLabel.EMPTY, tmp, k));
+            result.add(new Assignment(self, tmp, v, lineNum++));
+            result.add(new ConstantAssignment(FixedLabel.EMPTY, tmp, k, lineNum++));
             // subtract tmp - k loop
             Label loop = freshLabel();
-            result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop));
-            result.add(new Decrease(loop, tmp));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop));
-            result.add(new JumpZero(FixedLabel.EMPTY, tmp, target));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
+            result.add(new Decrease(loop, tmp, lineNum++));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
+            result.add(new JumpZero(FixedLabel.EMPTY, tmp, target, lineNum++));
         }
 
         // ---- JUMP_EQUAL_VARIABLE ----
@@ -195,44 +213,21 @@ public class EngineImpl implements Engine {
 
             Variable t1 = freshTemp();
             Variable t2 = freshTemp();
-            result.add(new Assignment(self, t1, v1));
-            result.add(new Assignment(FixedLabel.EMPTY, t2, v2));
+            result.add(new Assignment(self, t1, v1, lineNum++));
+            result.add(new Assignment(FixedLabel.EMPTY, t2, v2, lineNum++));
 
             Label loop = freshLabel();
-            result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop));
-            result.add(new Decrease(loop, t1));
-            result.add(new Decrease(FixedLabel.EMPTY, t2));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop));
-            result.add(new JumpZero(FixedLabel.EMPTY, t1, target));
-        }
-
-        else {
+            result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop, lineNum++));
+            result.add(new Decrease(loop, t1, lineNum++));
+            result.add(new Decrease(FixedLabel.EMPTY, t2, lineNum++));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop, lineNum++));
+            result.add(new JumpZero(FixedLabel.EMPTY, t1, target, lineNum++));
+        } else {
             result.add(instr);
         }
 
         return result;
     }
-
-
-    private static class ExpandedInstruction {
-        private final Instruction instruction;
-        private final List<Instruction> history;
-
-        ExpandedInstruction(Instruction instr, List<Instruction> parentHistory) {
-            this.instruction = instr;
-            this.history = new ArrayList<>(parentHistory);
-        }
-
-        String getRepresentation(int num) {
-            StringBuilder sb = new StringBuilder(instruction.getRepresentation(num));
-            for (Instruction h : history) {
-                sb.append("  <<<  ").append(h.getRepresentation(-1));
-            }
-            return sb.toString();
-        }
-    }
-    private static int labelCounter = 1;
-    private static int tempCounter = 1;
 
     private static Label freshLabel() {
         return new NumericLabel(labelCounter++);
@@ -243,3 +238,24 @@ public class EngineImpl implements Engine {
     }
 
 }
+
+/*
+    private static class ExpandedInstruction {
+        private final Instruction instruction;
+        private final List<Instruction> history;
+
+        ExpandedInstruction(Instruction instr, List<Instruction> parentHistory) {
+            this.instruction = instr;
+            this.history = new ArrayList<>(parentHistory);
+        }
+
+        String getRepresentation() {
+            StringBuilder sb = new StringBuilder(instruction.getRepresentation());
+            for (Instruction h : history) {
+                sb.append("  <<<  ").append(h.getRepresentation());
+            }
+            return sb.toString();
+        }
+    }
+
+} */

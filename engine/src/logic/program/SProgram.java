@@ -21,6 +21,10 @@ public class SProgram implements Program {
         this.name = name;
         this.instructions = instructions;
         this.labels = labels; // labels must map each label to its instruction
+
+        for (int i = 0; i < instructions.size(); i++) { // number instructions
+            instructions.get(i).setNum(i + 1);
+        }
     }
 
 
@@ -62,6 +66,7 @@ public class SProgram implements Program {
             labels.put(selfLabel, instruction);
         }
         instructions.add(instruction);
+        instruction.setNum(instructions.size());
     }
 
     @Override

@@ -9,9 +9,13 @@ public class Increase extends AbstractInstruction {
 
     private final Variable v;
 
-    public Increase(Label selfLabel, Variable v) {
-        super(InstructionData.INCREASE, selfLabel);
+    public Increase(Label selfLabel, Variable v, int num) {
+        super(InstructionData.INCREASE, selfLabel, num);
         this.v = v;
+    }
+
+    public Increase(Label selfLabel, Variable v) {
+        this(selfLabel, v, 1);
     }
 
     @Override

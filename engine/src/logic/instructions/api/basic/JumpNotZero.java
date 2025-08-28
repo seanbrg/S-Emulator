@@ -10,10 +10,14 @@ public class JumpNotZero extends AbstractInstruction {
     private final Variable v;
     private final Label target;
 
-    public JumpNotZero(Label selfLabel, Variable v, Label target) {
-        super(InstructionData.JUMP_NOT_ZERO, selfLabel);
+    public JumpNotZero(Label selfLabel, Variable v, Label target, int num) {
+        super(InstructionData.JUMP_NOT_ZERO, selfLabel, num);
         this.v = v;
         this.target = target;
+    }
+
+    public JumpNotZero(Label selfLabel, Variable v, Label target) {
+        this(selfLabel, v, target, 1);
     }
 
     @Override

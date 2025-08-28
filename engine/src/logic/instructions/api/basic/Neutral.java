@@ -10,9 +10,13 @@ public class Neutral extends AbstractInstruction {
 
     private final Variable v;
 
-    public Neutral(Label selfLabel, Variable v) {
-        super(InstructionData.NO_OP, selfLabel);
+    public Neutral(Label selfLabel, Variable v, int num) {
+        super(InstructionData.NO_OP, selfLabel, num);
         this.v = v;
+    }
+
+    public Neutral(Label selfLabel, Variable v) {
+        this(selfLabel, v, 1);
     }
 
     @Override

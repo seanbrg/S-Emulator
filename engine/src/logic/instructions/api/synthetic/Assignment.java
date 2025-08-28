@@ -11,10 +11,14 @@ public class Assignment extends AbstractInstruction {
 
     private final Variable x, y;
 
-    public Assignment(Label selfLabel, Variable x, Variable y) {
-        super(InstructionData.ASSIGNMENT,  selfLabel);
+    public Assignment(Label selfLabel, Variable x, Variable y, int num) {
+        super(InstructionData.ASSIGNMENT,  selfLabel, num);
         this.x = x;
         this.y = y;
+    }
+
+    public Assignment(Label selfLabel, Variable x, Variable y) {
+        this(selfLabel, x, y, 1);
     }
 
     @Override

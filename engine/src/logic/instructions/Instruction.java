@@ -2,7 +2,7 @@ package logic.instructions;
 import logic.labels.Label;
 
 public interface Instruction {
-    String getRepresentation(int num);
+    String getRepresentation();
 
     String print();
 
@@ -14,5 +14,9 @@ public interface Instruction {
 
     int getDegree();
 
+    void setNum(int num);
+
     Label getTargetLabel();
+
+    int getNum();
 }

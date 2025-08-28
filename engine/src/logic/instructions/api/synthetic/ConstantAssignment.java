@@ -4,7 +4,6 @@ import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
-import logic.variables.Var;
 import logic.variables.Variable;
 
 
@@ -13,10 +12,14 @@ public class ConstantAssignment extends AbstractInstruction {
     private final Variable v;
     private final int k;
 
-    public ConstantAssignment(Label selfLabel, Variable v, int k) {
-        super(InstructionData.CONSTANT_ASSIGNMENT, selfLabel);
+    public ConstantAssignment(Label selfLabel, Variable v, int k, int num) {
+        super(InstructionData.CONSTANT_ASSIGNMENT, selfLabel, num);
         this.v = v;
         this.k = k;
+    }
+
+    public ConstantAssignment(Label selfLabel, Variable v, int k) {
+        this(selfLabel, v, k, 1);
     }
 
     @Override
