@@ -23,9 +23,5 @@ public class GoToLabel extends AbstractInstruction {
     public String print() {
         return "GOTO " + target.getLabel();
     }
-
-    @Override
-    public Label getTargetLabel() {
-        return target;
-    }
+    public Label getTargetLabel() { return target; }
 }

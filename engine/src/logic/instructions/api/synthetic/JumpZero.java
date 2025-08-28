@@ -29,9 +29,5 @@ public class JumpZero extends AbstractInstruction {
         return "IF " + v.getName() + " = 0 GOTO " + target.getLabel();
     }
     public Variable getVariable() { return v; }
-
-    @Override
-    public Label getTargetLabel() {
-        return target;
-    }
+    public Label getTargetLabel() { return target; }
 }

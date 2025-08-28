@@ -41,8 +41,6 @@ public class ConsoleUI {
                         break;
                     }
 
-
-
                     if (chosen < 0 || chosen > degree) {
                         System.out.println("Invalid degree, please try again.");
                     } else {

@@ -32,9 +32,5 @@ public class JumpEqualVariable extends AbstractInstruction {
     }
     public Variable getVar1() { return x; }
     public Variable getVar2() { return y; }
-
-    @Override
-    public Label getTargetLabel() {
-        return target;
-    }
+    public Label getTargetLabel() { return target; }
 }
