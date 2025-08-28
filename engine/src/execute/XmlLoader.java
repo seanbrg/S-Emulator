@@ -2,6 +2,7 @@ package execute;
 
 import logic.instructions.*;
 import logic.instructions.api.basic.*;
+
 import logic.instructions.api.synthetic.*;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
@@ -11,10 +12,12 @@ import logic.program.SProgram;
 import logic.variables.Var;
 import logic.variables.Variable;
 import org.w3c.dom.*;
-
 import javax.xml.parsers.*;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XmlLoader {
 
@@ -35,21 +38,22 @@ public class XmlLoader {
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
 
-            List<Instruction> instructions = new ArrayList<>();
-            Map<Label, Instruction> labels = new HashMap<>();
+            List<Instruction> instructions = new ArrayList<Instruction>();
+            Map<Label, Instruction> labels = new HashMap<Label, Instruction>();
 
             String programName = doc.getDocumentElement().getAttribute("name");
 
+            // Match the actual XML tag <S-Instruction>
             NodeList instrNodes = doc.getElementsByTagName("S-Instruction");
             System.out.println("Found " + instrNodes.getLength() + " instructions in XML");
 
             for (int i = 0; i < instrNodes.getLength(); i++) {
                 Element instrElem = (Element) instrNodes.item(i);
 
-                String instrName = instrElem.getAttribute("name");
-                String type = instrElem.getAttribute("type");
+                String instrName = instrElem.getAttribute("name");   // e.g. DECREASE, INCREASE
+                String type = instrElem.getAttribute("type");        // e.g. basic / synthetic
 
-                // variable (main one if exists)
+                // Extract <S-Variable>
                 String varName = "";
                 Variable var = null;
                 NodeList varNodes = instrElem.getElementsByTagName("S-Variable");
@@ -61,16 +65,22 @@ public class XmlLoader {
                     var = vars.get(varName);
                 }
 
-                // label of the instruction
-                Label selfLabel = FixedLabel.EMPTY;
+                // Extract <S-Label>
+                String labelName = "";
+                Label selfLabel = null;
                 NodeList labelNodes = instrElem.getElementsByTagName("S-Label");
                 if (labelNodes.getLength() > 0) {
-                    String labelName = labelNodes.item(0).getTextContent().trim();
+                    labelName = labelNodes.item(0).getTextContent().trim();
                     selfLabel = parseLabel(labelName);
                 }
+                else {
+                    selfLabel = FixedLabel.EMPTY;
+                }
 
-                // collect all arguments into a map
-                Map<String, String> args = new HashMap<>();
+                // Extract <S-Instruction-Argument> (e.g., JNZLabel)
+                Label argLabel = FixedLabel.EMPTY;  // default if no argLabel provided
+                Variable argVar = null;
+                int argConst = 0;
                 NodeList argParents = instrElem.getElementsByTagName("S-Instruction-Arguments");
                 if (argParents.getLength() > 0) {
                     Element argsElem = (Element) argParents.item(0);
@@ -79,17 +89,30 @@ public class XmlLoader {
                         Element argElem = (Element) argNodes.item(j);
                         String argName = argElem.getAttribute("name");
                         String argValue = argElem.getAttribute("value");
-                        args.put(argName, argValue);
+
+                        // Handle known arguments
+                        if ("JNZLabel".equals(argName) || "gotoLabel".equals(argName) ||
+                        "JZLabel".equals(argName) || "JEConstantLabel".equals(argName) ||
+                        "JEVariableLabel".equals(argName)) {
+                            argLabel = parseLabel(argValue);
+                        }
+
+                        if ("assignedVariable".equals(argName) || "variableName".equals(argName)) {
+                            if (!vars.containsKey(argValue)) {
+                                vars.put(argValue, new Var(argValue));
+                            }
+                            argVar = vars.get(argValue);
+                        }
+
+                        if ("constantValue".equals(argName) || "JEConstantValue".equals(argName)) {
+                            argConst = Integer.parseInt(argValue.trim());
+                        }
                     }
                 }
 
-                // some instructions have a target label directly
-                Label targetLabel = FixedLabel.EMPTY;
-                if (args.containsKey("JNZLabel")) {
-                    targetLabel = parseLabel(args.get("JNZLabel"));
-                }
-
-                Instruction instr = createInstruction(instrName, var, selfLabel, targetLabel, args, vars);
+                Instruction instr = createInstruction(
+                        instrName, var, selfLabel,
+                        argLabel, argVar, argConst);
                 if (instr != null) {
                     instructions.add(instr);
                     if (selfLabel != FixedLabel.EMPTY) {
@@ -109,76 +132,38 @@ public class XmlLoader {
 
         } catch (Exception e) {
             System.out.println("Error parsing XML: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
 
-    private static Instruction createInstruction(String name,
-                                                 Variable var,
-                                                 Label selfLabel,
-                                                 Label target,
-                                                 Map<String, String> args,
-                                                 Map<String, Variable> vars) {
+    private static Instruction createInstruction(
+            String name, Variable var, Label selfLabel,
+            Label argLabel, Variable argVar, int argConst) {
+        System.out.print("Creating instruction: " + name + " (" + selfLabel.getLabel()
+                + " " + var.getName() + ") args: " + argLabel.getLabel() + " ");
+        if (argVar != null) System.out.print(argVar.getName() + " ");
+        else System.out.print("null ");
+        System.out.println(argConst);
+
         return switch (name.toUpperCase()) {
-            case "INCREASE" -> new Increase(selfLabel, var);
+            case "INCREASE" -> new Increase(selfLabel,var);
             case "DECREASE" -> new Decrease(selfLabel, var);
-            case "JUMP_NOT_ZERO", "JNZ" -> new JumpNotZero(selfLabel, var, target);
-            case "NEUTRAL", "NO_OP" -> new Neutral(selfLabel, var);
-
-            // ---- Synthetic ----
+            case "JUMP_NOT_ZERO" -> new JumpNotZero(selfLabel, var, argLabel);
+            case "NEUTRAL" -> new Neutral(selfLabel, var);
             case "ZERO_VARIABLE" -> new ZeroVariable(selfLabel, var);
-
-            case "GOTO_LABEL" -> {
-                String lbl = args.get("gotoLabel");
-                Label tgt = parseLabel(lbl);
-                yield new GoToLabel(selfLabel, tgt);
-            }
-
-            case "ASSIGNMENT" -> {
-                // main variable from <S-Variable> is target (y)
-                String assignedVarName = args.get("assignedVariable");
-                Variable targetVar = var; // <S-Variable> → y
-                Variable sourceVar = vars.computeIfAbsent(assignedVarName, Var::new);
-                yield new Assignment(selfLabel, targetVar, sourceVar);
-            }
-
-            case "CONSTANT_ASSIGNMENT" -> {
-                int k = Integer.parseInt(args.get("constantValue"));
-                yield new ConstantAssignment(selfLabel, var, k);
-            }
-
-            case "JUMP_ZERO" -> {
-                String lbl = args.get("JZLabel");
-                Label tgt = parseLabel(lbl);
-                yield new JumpZero(selfLabel, var, tgt);
-            }
-
-            case "JUMP_EQUAL_CONSTANT" -> {
-                String lbl = args.get("JEConstantLabel");
-                int k = Integer.parseInt(args.get("constantValue"));
-                Label tgt = parseLabel(lbl);
-                yield new JumpEqualConstant(selfLabel, var, k, tgt);
-            }
-
-            case "JUMP_EQUAL_VARIABLE" -> {
-                String otherVarName = args.get("variableName");
-                Variable otherVar = vars.computeIfAbsent(otherVarName, Var::new);
-                String lbl = args.get("JEVariableLabel");
-                Label tgt = parseLabel(lbl);
-                yield new JumpEqualVariable(selfLabel, var, otherVar, tgt);
-            }
-
+            case "GOTO_LABEL" -> new GoToLabel(selfLabel, argLabel);
+            case "ASSIGNMENT" -> new Assignment(selfLabel, var, argVar);
+            case "CONSTANT_ASSIGNMENT" ->  new ConstantAssignment(selfLabel, var, argConst);
+            case "JUMP_ZERO" -> new JumpZero(selfLabel, var, argLabel);
+            case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant(selfLabel, var, argConst, argLabel);
+            case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, var, argVar, argLabel);
             default -> null;
         };
     }
 
-
     private static Label parseLabel(String labelValue) {
-        if (labelValue == null || labelValue.isEmpty()) return FixedLabel.EMPTY;
-
         String v = labelValue.trim();
-        Label target;
+        Label target = null;
         char c0 = Character.toUpperCase(v.charAt(0));
         switch (c0) {
             case 'L' -> {
@@ -186,8 +171,10 @@ public class XmlLoader {
                 target = new NumericLabel(n);
             }
             case 'E' -> target = FixedLabel.EXIT;
-            default -> target = FixedLabel.EMPTY;
+            default  -> target = FixedLabel.EMPTY;
         }
+
         return target;
     }
+
 }
