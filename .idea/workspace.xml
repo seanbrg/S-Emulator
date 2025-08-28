@@ -10,8 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="tests">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="updated XMLloader for label tests">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/XmlLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/XmlLoader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,9 +48,6 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="31s67aDcVI3LcmryfhLmiDVAo1A" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -111,8 +110,11 @@
       <workItem from="1756395825284" duration="8000" />
       <workItem from="1756395840696" duration="33000" />
       <workItem from="1756395875673" duration="142000" />
-      <workItem from="1756396031296" duration="428000" />
-      <workItem from="1756398093486" duration="59000" />
+      <workItem from="1756396031296" duration="1031000" />
+      <workItem from="1756397118568" duration="966000" />
+      <workItem from="1756398154191" duration="467000" />
+      <workItem from="1756398669875" duration="7000" />
+      <workItem from="1756398685425" duration="7000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -130,7 +132,23 @@
       <option name="project" value="LOCAL" />
       <updated>1756395596424</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="repaired project files, finished labels testing">
+      <option name="closed" value="true" />
+      <created>1756397038389</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1756397038389</updated>
+    </task>
+    <task id="LOCAL-00004" summary="updated XMLloader for label tests">
+      <option name="closed" value="true" />
+      <created>1756398378497</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1756398378497</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -147,7 +165,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="origin/master" />
                       </list>
                     </value>
                   </entry>
@@ -162,6 +180,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="gitignore" />
     <MESSAGE value="tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="tests" />
+    <MESSAGE value="repaired project files, finished labels testing" />
+    <MESSAGE value="updated XMLloader for label tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated XMLloader for label tests" />
   </component>
 </project>
