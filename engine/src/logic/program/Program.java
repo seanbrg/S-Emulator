@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface Program {
-    public void run(int degree);
+    public void run();
     void addInstruction(Instruction instruction);
 
     String getName();

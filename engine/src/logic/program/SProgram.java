@@ -29,7 +29,7 @@ public class SProgram implements Program {
 
 
     @Override
-    public void run(int degree) {
+    public void run() {
         Label nextLabel;
         int pc = 0;
 
@@ -103,7 +103,7 @@ public class SProgram implements Program {
         List<Label> usedLabels = new ArrayList<>();
         for (Instruction instruction : instructions) {
             Label usedLabel = instruction.getTargetLabel();
-            if (usedLabel != FixedLabel.EMPTY) {
+            if (usedLabel != FixedLabel.EMPTY && usedLabel != FixedLabel.EXIT) {
                 usedLabels.add(usedLabel);
             }
         }

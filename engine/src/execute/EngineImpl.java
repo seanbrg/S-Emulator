@@ -11,6 +11,7 @@ import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.labels.NumericLabel;
 import logic.program.Program;
+import logic.program.SProgram;
 import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
@@ -56,17 +57,25 @@ public class EngineImpl implements Engine {
 
     @Override
     public long runProgram(int degree) {
-        Program program = currentProgram; /*
+        Program program = currentProgram;
         if (degree > 0) {
             List<ExpandedInstruction> expanded = expandRecursive(
                     currentProgram.getInstructions(), degree, new ArrayList<>()
             );
-            List<Instruction> instrList = expanded.stream()
+            List<Instruction> expandedInstrList = expanded.stream()
                     .map(ExpandedInstruction::getInstruction).toList();
 
-            program = new SProgram(currentProgram.getName(), )
-        } */
-        currentProgram.run(degree);
+            Map<Label, Instruction> expandedLabels = new HashMap<>();
+            for (Instruction instr : expandedInstrList) {
+                Label selfLabel = instr.getSelfLabel();
+                if (selfLabel != FixedLabel.EMPTY && selfLabel != FixedLabel.EXIT) {
+                    expandedLabels.put(selfLabel, instr);
+                }
+            }
+
+            program = new SProgram(currentProgram.getName(), expandedLabels, expandedInstrList);
+        }
+        program.run();
         long result = currentVars.get("y").getValue();
         currentVars.values().forEach(v -> v.setValue(0)); // reset vars
         return result;
