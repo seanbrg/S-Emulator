@@ -99,13 +99,7 @@ public class XmlLoader {
                     System.out.println("Unknown instruction name: " + instrName + " (type=" + type + ")");
                 }
             }
-            Program program = new SProgram(programName, labels, instructions);
-
-            if (!program.checkLabels()) {
-                System.out.println("Error: Program has invalid labels.");
-                return null;
-            }
-            else return program;
+            return new SProgram(programName, labels, instructions);
 
         } catch (Exception e) {
             System.out.println("Error parsing XML: " + e.getMessage());
