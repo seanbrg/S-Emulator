@@ -27,4 +27,6 @@ public class Assignment extends AbstractInstruction {
     public String print() {
         return x.getName() + " <- " + y.getName();
     }
+    public Variable getX() { return x; }
+    public Variable getY() { return y; }
 }

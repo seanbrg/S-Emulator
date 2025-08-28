@@ -30,4 +30,7 @@ public class JumpEqualVariable extends AbstractInstruction {
     public String print() {
         return "IF " + x.getName() + " = " + y.getName() + " GOTO " + target.getLabel();
     }
+    public Variable getVar1() { return x; }
+    public Variable getVar2() { return y; }
+    public Label getTargetLabel() { return target; }
 }

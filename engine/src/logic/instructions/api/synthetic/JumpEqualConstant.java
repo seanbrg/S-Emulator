@@ -30,4 +30,7 @@ public class JumpEqualConstant extends AbstractInstruction {
     public String print() {
         return "IF " + v.getName() + " = " + k + " GOTO " + target.getLabel();
     }
+    public Variable getVariable() { return v; }
+    public int getConstant() { return k; }
+    public Label getTargetLabel() { return target; }
 }

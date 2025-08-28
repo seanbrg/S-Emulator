@@ -14,7 +14,7 @@ public class ConstantAssignment extends AbstractInstruction {
     private final int k;
 
     public ConstantAssignment(Label selfLabel, Variable v, int k) {
-        super(InstructionData.CONSTANT_ASSIGNMENT,  selfLabel);
+        super(InstructionData.CONSTANT_ASSIGNMENT, selfLabel);
         this.v = v;
         this.k = k;
     }
@@ -29,4 +29,7 @@ public class ConstantAssignment extends AbstractInstruction {
     public String print() {
         return v.getName() + " <- " + k;
     }
+    public Variable getVariable() { return v; }
+    public int getConstant() { return k; }
+
 }

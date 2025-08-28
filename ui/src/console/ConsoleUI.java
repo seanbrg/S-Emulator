@@ -28,7 +28,25 @@ public class ConsoleUI {
             switch (choice) {
                 case "1" -> loadXml();
                 case "2" -> engine.printProgram();
-                case "3" -> {}
+                case "3" -> {
+                    int degree = engine.maxDegree();
+                    System.out.printf("Program maximum degree is: %d.%n", degree);
+                    System.out.print("Please choose expansion degree (0.." + degree + "): ");
+
+                    int chosen;
+                    try {
+                        chosen = Integer.parseInt(scanner.nextLine().trim());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid choice.");
+                        break;
+                    }
+
+                    if (chosen < 0 || chosen > degree) {
+                        System.out.println("Invalid degree, please try again.");
+                    } else {
+                        engine.expandProgram(chosen);
+                    }
+                }
                 case "4" -> {
                     int inputDegree = 0;
                     long inputVar = 0;

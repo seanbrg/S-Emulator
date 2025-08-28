@@ -25,4 +25,5 @@ public class ZeroVariable extends AbstractInstruction {
     public String print() {
         return v.getName() + " <- 0";
     }
+    public Variable getVariable() { return v; }
 }
