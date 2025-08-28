@@ -133,11 +133,6 @@ public class XmlLoader {
     private static Instruction createInstruction(
             String name, Variable var, Label selfLabel,
             Label argLabel, Variable argVar, int argConst) {
-        System.out.print("Creating instruction: " + name + " (" + selfLabel.getLabel()
-                + " " + var.getName() + ") args: " + argLabel.getLabel() + " ");
-        if (argVar != null) System.out.print(argVar.getName() + " ");
-        else System.out.print("null ");
-        System.out.println(argConst);
 
         return switch (name.toUpperCase()) {
             case "INCREASE" -> new Increase(selfLabel,var);
