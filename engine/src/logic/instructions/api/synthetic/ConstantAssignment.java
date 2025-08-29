@@ -35,4 +35,6 @@ public class ConstantAssignment extends AbstractInstruction {
     public Variable getVariable() { return v; }
     public int getConstant() { return k; }
 
+
+
 }
