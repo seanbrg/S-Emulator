@@ -1,6 +1,7 @@
 package console;
 
 import execute.EngineImpl;
+import logic.labels.Label;
 import logic.variables.Variable;
 
 import java.util.*;
@@ -115,8 +116,21 @@ public class ConsoleUI {
 
             long result = engine.runProgram(inputDegree, inputNumbers);
             System.out.println("Program ran successfully:");
-            engine.printProgram();
+
+            if (inputDegree > 0) engine.printExpandProgram(inputDegree);
+            else engine.printProgram();
+
             System.out.printf("Output: y = %d%n", result);
+            System.out.println("Variables:");
+
+            List<List<Variable>> varByType = engine.getVarByType();
+            varByType.forEach(list ->
+                    list.forEach(var ->
+                            System.out.println(var.getName() + " = " + var.getValue())));
+
+            engine.resetVars();
+
+            System.out.printf("Cycles: %d", engine.getCycles(inputDegree));
         } else {
             System.out.println("Invalid choice, please try again.");
         }

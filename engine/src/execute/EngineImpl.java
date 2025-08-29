@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     Program currentProgram;
+    Program currentExpandedProgram;
     Map<String, Variable> currentVars;
     List<Label> currentLabels;
     private static int tempCounter = 1;
@@ -64,6 +65,9 @@ public class EngineImpl implements Engine {
     public long runProgram(int degree, List<Long> inputs) {
         Program program = currentProgram;
         if (degree > 0) {
+            currentLabels = currentProgram.getLabels().keySet().stream().collect(Collectors.toList());
+            if (currentLabels == null) { currentLabels = new ArrayList<>(); }
+
             List<ExpandedInstruction> expanded = expandRecursive(
                     currentProgram.getInstructions(), degree, new ArrayList<>()
             );
@@ -73,7 +77,6 @@ public class EngineImpl implements Engine {
                     .map(Instruction::getSelfLabel)
                     .filter(label -> label instanceof NumericLabel)
                     .collect(Collectors.toList());
-            if (currentLabels == null) { currentLabels = new ArrayList<>(); }
 
             List<Instruction> expandedInstrList = expanded.stream()
                     .map(ExpandedInstruction::getInstruction).toList();
@@ -87,6 +90,7 @@ public class EngineImpl implements Engine {
             }
 
             program = new SProgram(currentProgram.getName(), expandedLabels, expandedInstrList);
+            currentExpandedProgram = program;
         }
         program.run();
 
@@ -96,8 +100,12 @@ public class EngineImpl implements Engine {
         runCounter++;
         history.add(new RunRecord(runCounter, degree, inputs, result, cycles));
 
-        currentVars.values().forEach(v -> v.setValue(0)); // reset vars
         return result;
+    }
+
+    @Override
+    public void resetVars() {
+        currentVars.values().forEach(v -> v.setValue(0)); // reset vars
     }
 
     @Override
@@ -117,6 +125,34 @@ public class EngineImpl implements Engine {
                 .filter(v -> v.getType() == VariableType.INPUT)
                 .sorted(Comparator.comparing(Variable::getName))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<List<Variable>> getVarByType() {
+        Variable y = currentVars.values().stream()
+                .filter(var -> var.getType().equals(VariableType.OUTPUT))
+                .findFirst()
+                .orElse(new Var(VariableType.OUTPUT, 0));
+
+        List<Variable> yList = List.of(y);
+
+        List<Variable> xList = currentVars.values().stream()
+                .filter(var -> var.getType().equals(VariableType.INPUT))
+                .sorted(Comparator.comparing(Variable::getName))
+                .toList();
+
+        List<Variable> zList = currentVars.values().stream()
+                .filter(var -> var.getType().equals(VariableType.TEMP))
+                .sorted(Comparator.comparing(Variable::getName))
+                .toList();
+
+        return List.of(yList, xList, zList);
+    }
+
+    @Override
+    public int getCycles(int degree) {
+        if (degree == 0) return currentProgram.cycles();
+        else return currentExpandedProgram.cycles();
     }
 
     // ========= printExpandProgram =========
@@ -268,10 +304,13 @@ public class EngineImpl implements Engine {
     }
 
     private static Label freshLabel(List<Label> labels) {
-        int maxLabel = labels.stream()
-                .map(Label::getNum)
-                .max(Integer::compareTo)
-                .orElse(0);
+        int maxLabel = 0;
+        if (labels != null) {
+            maxLabel = labels.stream()
+                    .map(Label::getNum)
+                    .max(Integer::compareTo)
+                    .orElse(0);
+        }
         return new NumericLabel(maxLabel + 1);
     }
 
