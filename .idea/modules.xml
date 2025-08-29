@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Anna-SEmulator.iml" filepath="$PROJECT_DIR$/.idea/Anna-SEmulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/S-Emulator.iml" filepath="$PROJECT_DIR$/.idea/S-Emulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" />
     </modules>
   </component>
 </project>

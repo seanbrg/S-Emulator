@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
-    Program currentProgram;
+    Program currentProgram = null;
     Program currentExpandedProgram;
     Map<String, Variable> currentVars;
     List<Label> currentLabels;
@@ -39,6 +39,7 @@ public class EngineImpl implements Engine {
         if (program != null) {
             this.currentProgram = program;
             this.currentVars = vars;
+            this.history.clear();
             System.out.println("Program '" + program.getName() + "' loaded successfully!");
             return true;
         } else {
@@ -328,5 +329,9 @@ public class EngineImpl implements Engine {
             System.out.printf("#%d | degree=%d | inputs=%s | y=%d | cycles=%d%n",
                     r.getRunId(), r.getDegree(), r.getInputs(), r.getResultY(), r.getCycles());
         }
+    }
+
+    public boolean isLoaded() {
+        return currentProgram != null;
     }
 }
