@@ -12,7 +12,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="added expand to run in engine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +26,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -47,6 +48,9 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="31s67aDcVI3LcmryfhLmiDVAo1A" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />

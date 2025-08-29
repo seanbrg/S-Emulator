@@ -3,9 +3,7 @@ package console;
 import execute.EngineImpl;
 import logic.variables.Variable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleUI {
     private final EngineImpl engine = new EngineImpl();
@@ -87,28 +85,38 @@ public class ConsoleUI {
         }
 
         if (0 <= inputDegree && inputDegree <= degree) {
-            System.out.println("Please enter inputs:");
-            List<Long> inputs = new ArrayList<>();
+            List<Variable> inputVariables = engine.getInputs();
+            System.out.println("The current program's input variables are:");
+            inputVariables.stream().map(Variable::getName).forEach(s -> System.out.print(s + " "));
+            System.out.println('\n' + "Please enter inputs separated by commas:");
+            String input =  scanner.nextLine();
+            List<Long> inputNumbers;
+            if (!input.isEmpty()) {
+                inputNumbers = Arrays.stream(input.split(","))
+                        .map(String::trim)          // remove spaces
+                        .map(Long::parseLong)     // convert to int
+                        .toList();                  // Java 16+, else use Collectors.toList()
 
-            for (Variable var : engine.getInputs()) {
-                System.out.print(var.getName() + ": ");
-                long inputVal;
-                try {
-                    inputVal = Long.parseLong(scanner.nextLine().trim());
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input, please try again.");
-                    return;
-                }
-                if (inputVal < 0) {
-                    System.out.println("Invalid input, please try again.");
-                    return;
-                }
-                var.setValue(inputVal);
-                inputs.add(inputVal);
+            }
+            else inputNumbers = new ArrayList<>();
+
+            int diff = inputNumbers.size() - inputVariables.size();
+            if (diff < 0) {
+                // inputNumbers is shorter -> pad with zeros
+                inputNumbers.addAll(Collections.nCopies(-diff, 0L));
+            } else if (diff > 0) {
+                // inputNumbers is longer -> trim
+                inputNumbers = inputNumbers.subList(0, inputVariables.size());
             }
 
-            long result = engine.runProgram(inputDegree, inputs);
-            System.out.printf("Program exited with result y = %d%n", result);
+            for (int i = 0; i < inputNumbers.size(); i++) {
+                inputVariables.get(i).setValue(inputNumbers.get(i));
+            }
+
+            long result = engine.runProgram(inputDegree, inputNumbers);
+            System.out.println("Program ran successfully:");
+            engine.printProgram();
+            System.out.printf("Output: y = %d%n", result);
         } else {
             System.out.println("Invalid choice, please try again.");
         }
