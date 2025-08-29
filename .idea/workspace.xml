@@ -10,7 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="improved input logic for vars">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="implemented negative values testing for inputs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
@@ -218,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756505545891</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="implemented negative values testing for inputs">
+      <option name="closed" value="true" />
+      <created>1756506827979</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1756506827979</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -290,6 +298,7 @@
     <MESSAGE value="cycles in run ui" />
     <MESSAGE value="slight changes to ui" />
     <MESSAGE value="improved input logic for vars" />
-    <option name="LAST_COMMIT_MESSAGE" value="improved input logic for vars" />
+    <MESSAGE value="implemented negative values testing for inputs" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented negative values testing for inputs" />
   </component>
 </project>

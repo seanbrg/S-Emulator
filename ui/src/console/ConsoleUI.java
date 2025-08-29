@@ -98,13 +98,18 @@ public class ConsoleUI {
                 System.out.println('\n' + "Please enter inputs separated by commas:");
                 String input = scanner.nextLine();
                 List<Long> inputNumbers;
-                if (!input.isEmpty()) {
-                    inputNumbers = Arrays.stream(input.split(","))
-                            .map(String::trim)          // remove spaces
-                            .map(Long::parseLong)     // convert to int
-                            .collect(Collectors.toList());
+                try {
+                    if (!input.isEmpty()) {
+                        inputNumbers = Arrays.stream(input.split(","))
+                                .map(String::trim)          // remove spaces
+                                .map(Long::parseLong)     // convert to int
+                                .collect(Collectors.toList());
 
-                } else inputNumbers = new ArrayList<>();
+                    } else inputNumbers = new ArrayList<>();
+                } catch (Exception e) {
+                    System.out.println("Invalid input, please try again.");
+                    return;
+                }
 
                 inputVariables.forEach(v -> v.setValue(0));
                 for (int i = 1; i <= inputVariables.getLast().getNum(); i++) {
