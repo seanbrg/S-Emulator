@@ -13,8 +13,9 @@
     <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="added expand to run in engine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/ExpandedInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/ExpandedInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/labels/FixedLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/labels/FixedLabel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/labels/Label.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/labels/Label.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/labels/NumericLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/labels/NumericLabel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,12 +36,12 @@
     &quot;assignee&quot;: &quot;seanbrg&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/8anna8b6/S-Emulator",
-    "accountId": "389f1a35-563a-44b9-8e08-3b87b929ca19"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/8anna8b6/S-Emulator&quot;,
+    &quot;accountId&quot;: &quot;389f1a35-563a-44b9-8e08-3b87b929ca19&quot;
   }
-}]]></component>
+}</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true

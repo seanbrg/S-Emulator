@@ -14,6 +14,9 @@ public class NumericLabel implements Label {
     public String getLabel() { return "L" + num; }
 
     @Override
+    public int getNum() { return num; }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof NumericLabel other)) return false;
