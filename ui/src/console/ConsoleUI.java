@@ -28,6 +28,8 @@ public class ConsoleUI {
 
             String choice = scanner.nextLine().trim();
 
+
+
             switch (choice) {
                 case "1" -> loadXml();
                 case "2" -> engine.printProgram();
