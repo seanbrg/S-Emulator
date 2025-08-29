@@ -10,7 +10,8 @@ public interface Engine {
 
     void printProgram();
 
-    long runProgram(int degree);
+    public long runProgram(int degree, List<Long> inputs);
+
 
     boolean validateProgram();
 

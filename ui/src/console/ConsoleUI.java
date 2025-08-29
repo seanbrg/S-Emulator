@@ -1,7 +1,10 @@
 package console;
+
 import execute.EngineImpl;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -28,66 +31,9 @@ public class ConsoleUI {
             switch (choice) {
                 case "1" -> loadXml();
                 case "2" -> engine.printProgram();
-                case "3" -> {
-                    int degree = engine.maxDegree();
-                    System.out.printf("Program maximum degree is: %d.%n", degree);
-                    System.out.print("Please choose expansion degree (0.." + degree + "): ");
-
-                    int chosen;
-                    try {
-                        chosen = Integer.parseInt(scanner.nextLine().trim());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid choice.");
-                        break;
-                    }
-
-
-
-                    if (chosen < 0 || chosen > degree) {
-                        System.out.println("Invalid degree, please try again.");
-                    } else {
-                        engine.printExpandProgram(chosen);
-                    }
-                }
-                case "4" -> {
-                    int inputDegree = 0;
-                    long inputVar = 0;
-                    long result;
-                    int degree = engine.maxDegree();
-                    System.out.printf("Current Program maximum degree is: %d.%n", degree);
-                    System.out.printf("Please choose Program degree from 0 to %d:%n", degree);
-
-                    try {
-                        inputDegree = Integer.parseInt(scanner.nextLine().trim());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid choice, please try again.");
-                        break;
-                    }
-
-                    if (0 <= inputDegree && inputDegree <= degree) {
-                        System.out.println("Please enter inputs:");
-                        for (Variable var : engine.getInputs()) {
-                            System.out.print(var.getName() + ": ");
-                            try {
-                                inputVar = Integer.parseInt(scanner.nextLine().trim());
-                            } catch (NumberFormatException e) {
-                                System.out.println("Invalid choice, please try again.");
-                                break;
-                            }
-                            if (inputVar < 0) {
-                                System.out.println("Invalid input, please try again.");
-                                break;
-                            }
-                            var.setValue(inputVar);
-                        }
-                        result = engine.runProgram(inputDegree);
-                        System.out.println(String.format("Program exited with result y = %d", result));
-                    }
-                    else {
-                        System.out.println("Invalid choice, please try again.");
-                    }
-                }
-                case "5" -> {}
+                case "3" -> expandProgram();
+                case "4" -> runProgram();
+                case "5" -> engine.printHistory();
                 case "6" -> {
                     System.out.println("Exiting S-Emulator");
                     return;
@@ -101,5 +47,68 @@ public class ConsoleUI {
         System.out.print("Enter full XML file path: ");
         String path = scanner.nextLine();
         engine.loadFromXML(path);
+    }
+
+
+    private void expandProgram() {
+        int degree = engine.maxDegree();
+        System.out.printf("Program maximum degree is: %d.%n", degree);
+        System.out.print("Please choose expansion degree (0.." + degree + "): ");
+
+        int chosen;
+        try {
+            chosen = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        if (chosen < 0 || chosen > degree) {
+            System.out.println("Invalid degree, please try again.");
+        } else {
+            engine.printExpandProgram(chosen);
+        }
+    }
+
+
+    private void runProgram() {
+        int degree = engine.maxDegree();
+        System.out.printf("Current Program maximum degree is: %d.%n", degree);
+        System.out.printf("Please choose Program degree from 0 to %d:%n", degree);
+
+        int inputDegree;
+        try {
+            inputDegree = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid choice, please try again.");
+            return;
+        }
+
+        if (0 <= inputDegree && inputDegree <= degree) {
+            System.out.println("Please enter inputs:");
+            List<Long> inputs = new ArrayList<>();
+
+            for (Variable var : engine.getInputs()) {
+                System.out.print(var.getName() + ": ");
+                long inputVal;
+                try {
+                    inputVal = Long.parseLong(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input, please try again.");
+                    return;
+                }
+                if (inputVal < 0) {
+                    System.out.println("Invalid input, please try again.");
+                    return;
+                }
+                var.setValue(inputVal);
+                inputs.add(inputVal);
+            }
+
+            long result = engine.runProgram(inputDegree, inputs);
+            System.out.printf("Program exited with result y = %d%n", result);
+        } else {
+            System.out.println("Invalid choice, please try again.");
+        }
     }
 }

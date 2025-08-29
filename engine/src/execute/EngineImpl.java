@@ -25,6 +25,10 @@ public class EngineImpl implements Engine {
     private static int labelCounter = 1;
     private static int tempCounter = 1;
 
+
+    private final List<RunRecord> history = new ArrayList<>();
+    private int runCounter = 0;
+
     public EngineImpl() {}
 
     @Override
@@ -55,8 +59,9 @@ public class EngineImpl implements Engine {
         }
     }
 
+
     @Override
-    public long runProgram(int degree) {
+    public long runProgram(int degree, List<Long> inputs) {
         Program program = currentProgram;
         if (degree > 0) {
             List<ExpandedInstruction> expanded = expandRecursive(
@@ -76,7 +81,13 @@ public class EngineImpl implements Engine {
             program = new SProgram(currentProgram.getName(), expandedLabels, expandedInstrList);
         }
         program.run();
+
         long result = currentVars.get("y").getValue();
+        int cycles = program.cycles();
+
+        runCounter++;
+        history.add(new RunRecord(runCounter, degree, inputs, result, cycles));
+
         currentVars.values().forEach(v -> v.setValue(0)); // reset vars
         return result;
     }
@@ -246,25 +257,15 @@ public class EngineImpl implements Engine {
         return new Var("z" + (tempCounter++));
     }
 
-}
 
-/*
-    private static class ExpandedInstruction {
-        private final Instruction instruction;
-        private final List<Instruction> history;
-
-        ExpandedInstruction(Instruction instr, List<Instruction> parentHistory) {
-            this.instruction = instr;
-            this.history = new ArrayList<>(parentHistory);
+    public void printHistory() {
+        if (history.isEmpty()) {
+            System.out.println("No runs recorded yet.");
+            return;
         }
-
-        String getRepresentation() {
-            StringBuilder sb = new StringBuilder(instruction.getRepresentation());
-            for (Instruction h : history) {
-                sb.append("  <<<  ").append(h.getRepresentation());
-            }
-            return sb.toString();
+        for (RunRecord r : history) {
+            System.out.printf("#%d | degree=%d | inputs=%s | y=%d | cycles=%d%n",
+                    r.getRunId(), r.getDegree(), r.getInputs(), r.getResultY(), r.getCycles());
         }
     }
-
-} */
+}
