@@ -10,15 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="cycles in run ui">
-      <change beforePath="$PROJECT_DIR$/.idea/Anna-SEmulator.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="slight changes to ui">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/engine.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/run.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/ui.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/variables/Variable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/variables/Variable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -209,7 +204,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756501503968</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="slight changes to ui">
+      <option name="closed" value="true" />
+      <created>1756504621737</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1756504621737</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -279,6 +282,7 @@
     <MESSAGE value="added history" />
     <MESSAGE value="finished run UI" />
     <MESSAGE value="cycles in run ui" />
-    <option name="LAST_COMMIT_MESSAGE" value="cycles in run ui" />
+    <MESSAGE value="slight changes to ui" />
+    <option name="LAST_COMMIT_MESSAGE" value="slight changes to ui" />
   </component>
 </project>

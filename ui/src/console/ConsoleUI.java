@@ -5,6 +5,7 @@ import logic.labels.Label;
 import logic.variables.Variable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConsoleUI {
     private final EngineImpl engine = new EngineImpl();
@@ -101,9 +102,18 @@ public class ConsoleUI {
                     inputNumbers = Arrays.stream(input.split(","))
                             .map(String::trim)          // remove spaces
                             .map(Long::parseLong)     // convert to int
-                            .toList();                  // Java 16+, else use Collectors.toList()
+                            .collect(Collectors.toList());
 
                 } else inputNumbers = new ArrayList<>();
+
+                inputVariables.forEach(v -> v.setValue(0));
+                for (int i = 1; i < inputVariables.getLast().getNum(); i++) {
+                    if (i <= inputNumbers.size()) {
+                        for (Variable var : inputVariables) {
+                            if (var.getNum() == i) var.setValue(inputNumbers.get(i - 1));
+                        }
+                    }
+                }
 
                 int diff = inputNumbers.size() - inputVariables.size();
                 if (diff < 0) {
@@ -112,10 +122,6 @@ public class ConsoleUI {
                 } else if (diff > 0) {
                     // inputNumbers is longer -> trim
                     inputNumbers = inputNumbers.subList(0, inputVariables.size());
-                }
-
-                for (int i = 0; i < inputNumbers.size(); i++) {
-                    inputVariables.get(i).setValue(inputNumbers.get(i));
                 }
 
                 long result = engine.runProgram(inputDegree, inputNumbers);

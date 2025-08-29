@@ -70,6 +70,9 @@ public class Var implements Variable {
     public long getValue() { return value; }
 
     @Override
+    public int getNum() { return num; }
+
+    @Override
     public void setValue(long value) {
         this.value = Math.max(value, 0);
     }

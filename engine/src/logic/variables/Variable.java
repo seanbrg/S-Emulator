@@ -8,4 +8,6 @@ public interface Variable {
     public long getValue();
 
     public void setValue(long value);
+
+    int getNum();
 }
