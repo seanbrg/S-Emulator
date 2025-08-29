@@ -67,6 +67,14 @@ public class EngineImpl implements Engine {
             List<ExpandedInstruction> expanded = expandRecursive(
                     currentProgram.getInstructions(), degree, new ArrayList<>()
             );
+
+            currentLabels = expanded.stream()
+                    .map(ExpandedInstruction::getInstruction)
+                    .map(Instruction::getSelfLabel)
+                    .filter(label -> label instanceof NumericLabel)
+                    .collect(Collectors.toList());
+            if (currentLabels == null) { currentLabels = new ArrayList<>(); }
+
             List<Instruction> expandedInstrList = expanded.stream()
                     .map(ExpandedInstruction::getInstruction).toList();
 
