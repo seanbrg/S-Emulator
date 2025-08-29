@@ -107,10 +107,17 @@ public class ConsoleUI {
                 } else inputNumbers = new ArrayList<>();
 
                 inputVariables.forEach(v -> v.setValue(0));
-                for (int i = 1; i < inputVariables.getLast().getNum(); i++) {
+                for (int i = 1; i <= inputVariables.getLast().getNum(); i++) {
                     if (i <= inputNumbers.size()) {
                         for (Variable var : inputVariables) {
-                            if (var.getNum() == i) var.setValue(inputNumbers.get(i - 1));
+                            if (var.getNum() == i) {
+                                long value = inputNumbers.get(i - 1);
+                                if (value <= 0) {
+                                    System.out.println("Invalid input. Please try again.");
+                                    return;
+                                }
+                                var.setValue(value);
+                            }
                         }
                     }
                 }
