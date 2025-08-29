@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class EngineImpl implements Engine {
     Program currentProgram;
     Map<String, Variable> currentVars;
-    private static int labelCounter = 1;
+    List<Label> currentLabels;
     private static int tempCounter = 1;
 
 
@@ -119,6 +119,11 @@ public class EngineImpl implements Engine {
             return;
         }
 
+        currentLabels = currentProgram.getInstructions().stream()
+                .map(Instruction::getSelfLabel)
+                .filter(label -> label instanceof NumericLabel)
+                .collect(Collectors.toList());
+
         List<ExpandedInstruction> expanded = expandRecursive(
                 currentProgram.getInstructions(), degree, new ArrayList<>()
         );
@@ -162,7 +167,8 @@ public class EngineImpl implements Engine {
         // ---- ZERO_VARIABLE ----
         if (instr instanceof ZeroVariable zv) {
             Variable v = zv.getVariable();
-            Label loop = freshLabel();
+            Label loop = freshLabel(currentLabels);
+            currentLabels.add(loop);
             result.add(new JumpNotZero(self, v, loop, lineNum++));
             result.add(new Decrease(loop, v, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, v, loop, lineNum++));
@@ -182,7 +188,8 @@ public class EngineImpl implements Engine {
         else if (instr instanceof Assignment asg) {
             Variable x = asg.getX();
             Variable y = asg.getY();
-            Label loop = freshLabel();
+            Label loop = freshLabel(currentLabels);
+            currentLabels.add(loop);
             result.add(new ZeroVariable(self, x, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum++));
             result.add(new Decrease(loop, y, lineNum++));
@@ -202,7 +209,8 @@ public class EngineImpl implements Engine {
         else if (instr instanceof JumpZero jz) {
             Variable v = jz.getVariable();
             Label target = jz.getTargetLabel();
-            Label skip = freshLabel();
+            Label skip = freshLabel(currentLabels);
+            currentLabels.add(skip);
             result.add(new JumpNotZero(self, v, skip, lineNum++));
             result.add(new GoToLabel(FixedLabel.EMPTY, target, lineNum++));
             result.add(new Neutral(skip, v, lineNum++)); // skip:
@@ -218,7 +226,8 @@ public class EngineImpl implements Engine {
             result.add(new Assignment(self, tmp, v, lineNum++));
             result.add(new ConstantAssignment(FixedLabel.EMPTY, tmp, k, lineNum++));
             // subtract tmp - k loop
-            Label loop = freshLabel();
+            Label loop = freshLabel(currentLabels);
+            currentLabels.add(loop);
             result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
             result.add(new Decrease(loop, tmp, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
@@ -236,7 +245,8 @@ public class EngineImpl implements Engine {
             result.add(new Assignment(self, t1, v1, lineNum++));
             result.add(new Assignment(FixedLabel.EMPTY, t2, v2, lineNum++));
 
-            Label loop = freshLabel();
+            Label loop = freshLabel(currentLabels);
+            currentLabels.add(loop);
             result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop, lineNum++));
             result.add(new Decrease(loop, t1, lineNum++));
             result.add(new Decrease(FixedLabel.EMPTY, t2, lineNum++));
@@ -249,8 +259,12 @@ public class EngineImpl implements Engine {
         return result;
     }
 
-    private static Label freshLabel() {
-        return new NumericLabel(labelCounter++);
+    private static Label freshLabel(List<Label> labels) {
+        int maxLabel = labels.stream()
+                .map(Label::getNum)
+                .max(Integer::compareTo)
+                .orElse(0);
+        return new NumericLabel(maxLabel + 1);
     }
 
     private static Variable freshTemp() {
