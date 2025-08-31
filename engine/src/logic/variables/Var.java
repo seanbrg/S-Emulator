@@ -1,5 +1,7 @@
 package logic.variables;
 
+import execute.dto.VariableDTO;
+
 import java.util.Locale;
 
 public class Var implements Variable {
@@ -20,6 +22,8 @@ public class Var implements Variable {
     public Var(VariableType type, int num) {
         this(type, num, 0);
     }
+
+    public Var(VariableDTO dto) { this(dto.getType(), dto.getNum(), dto.getValue()); }
 
     public Var(String name) {
         int num = 0;

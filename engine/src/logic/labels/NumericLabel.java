@@ -10,6 +10,14 @@ public class NumericLabel implements Label {
         this.num = num;
     }
 
+    public NumericLabel(String name) {
+        try {
+            this.num = Integer.parseInt(name.substring(1));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Num of new Label is numeric.");
+        }
+    }
+
     @Override
     public String getLabel() { return "L" + num; }
 

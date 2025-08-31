@@ -1,5 +1,6 @@
 package execute;
 
+import execute.dto.VariableDTO;
 import logic.labels.Label;
 import logic.variables.Variable;
 
@@ -11,8 +12,7 @@ public interface Engine {
 
     void printProgram();
 
-    public long runProgram(int degree, List<Long> inputs);
-
+    long runProgram(int degree, List<Long> inputs);
 
     void resetVars();
 
@@ -20,9 +20,11 @@ public interface Engine {
 
     int maxDegree();
 
-    List<Variable> getInputs();
+    List<List<VariableDTO>> getVarByType();
 
-    public List<List<Variable>> getVarByType();
+    List<VariableDTO> getInputs();
 
     int getCycles(int degree);
+
+    void loadInputs(List<VariableDTO> inputVars);
 }

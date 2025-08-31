@@ -1,5 +1,6 @@
 package execute;
 
+import execute.dto.VariableDTO;
 import logic.instructions.Instruction;
 import logic.instructions.api.basic.Decrease;
 import logic.instructions.api.basic.Increase;
@@ -58,6 +59,18 @@ public class EngineImpl implements Engine {
         for (int i = 0; i < instrList.size(); i++) {
             Instruction instr = instrList.get(i);
             System.out.println(instr.getRepresentation());
+        }
+    }
+
+    @Override
+    public void loadInputs(List<VariableDTO> inputVars) {
+        for (VariableDTO variableDTO : inputVars) {
+            if (currentVars.containsKey(variableDTO.getName())) {
+                currentVars.get(variableDTO.getName()).setValue(variableDTO.getValue());
+            }
+            else {
+                currentVars.put(variableDTO.getName(), new Var(variableDTO));
+            }
         }
     }
 
@@ -120,34 +133,38 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<Variable> getInputs() {
-        return currentVars.values().stream()
+    public List<List<VariableDTO>> getVarByType() {
+
+        List<VariableDTO> xList = new ArrayList<>(currentVars.values()) // snapshot
+                .stream()
                 .filter(Objects::nonNull)
                 .filter(v -> v.getType() == VariableType.INPUT)
                 .sorted(Comparator.comparing(Variable::getName))
-                .collect(Collectors.toList());
+                .map(VariableDTO::new)
+                .toList();
+
+
+        List<VariableDTO> yList = List.of(currentVars.values().stream()
+                .filter(Objects::nonNull)
+                .filter(var -> var.getType().equals(VariableType.OUTPUT))
+                .map(VariableDTO::new)
+                .findFirst()
+                .orElse(new VariableDTO(VariableType.OUTPUT, 0, 0)));
+
+        List<VariableDTO> zList = new ArrayList<>(currentVars.values())
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(var -> var.getType().equals(VariableType.TEMP))
+                .sorted(Comparator.comparing(Variable::getName))
+                .map(VariableDTO::new)
+                .toList();
+
+        return List.of(xList, yList, zList);
     }
 
     @Override
-    public List<List<Variable>> getVarByType() {
-        Variable y = currentVars.values().stream()
-                .filter(var -> var.getType().equals(VariableType.OUTPUT))
-                .findFirst()
-                .orElse(new Var(VariableType.OUTPUT, 0));
-
-        List<Variable> yList = List.of(y);
-
-        List<Variable> xList = currentVars.values().stream()
-                .filter(var -> var.getType().equals(VariableType.INPUT))
-                .sorted(Comparator.comparing(Variable::getName))
-                .toList();
-
-        List<Variable> zList = currentVars.values().stream()
-                .filter(var -> var.getType().equals(VariableType.TEMP))
-                .sorted(Comparator.comparing(Variable::getName))
-                .toList();
-
-        return List.of(yList, xList, zList);
+    public List<VariableDTO> getInputs() {
+        return this.getVarByType().getFirst();
     }
 
     @Override

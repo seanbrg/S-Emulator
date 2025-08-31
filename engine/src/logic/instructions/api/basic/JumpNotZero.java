@@ -1,9 +1,13 @@
 package logic.instructions.api.basic;
+import execute.dto.LabelDTO;
+import execute.dto.VariableDTO;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
+
+import java.util.List;
 
 public class JumpNotZero extends AbstractInstruction {
 
@@ -19,6 +23,12 @@ public class JumpNotZero extends AbstractInstruction {
     public JumpNotZero(Label selfLabel, Variable v, Label target) {
         this(selfLabel, v, target, 1);
     }
+
+    @Override
+    public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
+
+    @Override
+    public LabelDTO getArgLabelDTO() { return new LabelDTO(target.getLabel()); }
 
     @Override
     public Label execute() {

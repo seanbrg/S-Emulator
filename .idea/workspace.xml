@@ -10,14 +10,41 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="implemented negative values testing for inputs">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="added try block for input">
+      <change afterPath="$PROJECT_DIR$/engine/src/execute/dto/InstructionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/engine/src/execute/dto/LabelDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/engine/src/execute/dto/VariableDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/Engine.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/Engine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/labels/NumericLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/labels/NumericLabel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -36,7 +63,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/8anna8b6/S-Emulator&quot;,
+    &quot;url&quot;: &quot;https://github.com/seanbrg/S-Emulator&quot;,
     &quot;accountId&quot;: &quot;389f1a35-563a-44b9-8e08-3b87b929ca19&quot;
   }
 }</component>
@@ -101,6 +128,14 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.28293.22" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.28293.22" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="" />
@@ -129,6 +164,9 @@
       <workItem from="1756398154191" duration="467000" />
       <workItem from="1756398669875" duration="7000" />
       <workItem from="1756398685425" duration="6429000" />
+      <workItem from="1756646867232" duration="66000" />
+      <workItem from="1756647147682" duration="24000" />
+      <workItem from="1756675270000" duration="6448000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -226,7 +264,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756506827979</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="added try block for input">
+      <option name="closed" value="true" />
+      <created>1756507285132</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1756507285132</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -299,6 +345,7 @@
     <MESSAGE value="slight changes to ui" />
     <MESSAGE value="improved input logic for vars" />
     <MESSAGE value="implemented negative values testing for inputs" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented negative values testing for inputs" />
+    <MESSAGE value="added try block for input" />
+    <option name="LAST_COMMIT_MESSAGE" value="added try block for input" />
   </component>
 </project>

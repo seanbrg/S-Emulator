@@ -1,9 +1,7 @@
 package console;
 
 import execute.EngineImpl;
-import logic.labels.Label;
-import logic.variables.Variable;
-
+import execute.dto.VariableDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,9 +90,9 @@ public class ConsoleUI {
             }
 
             if (0 <= inputDegree && inputDegree <= degree) {
-                List<Variable> inputVariables = engine.getInputs();
+                List<VariableDTO> requiredInputVars = engine.getInputs();
                 System.out.println("The current program's input variables are:");
-                inputVariables.stream().map(Variable::getName).forEach(s -> System.out.print(s + " "));
+                requiredInputVars.forEach(s -> System.out.print(s.getName() + " "));
                 System.out.println('\n' + "Please enter inputs separated by commas:");
                 String input = scanner.nextLine();
                 List<Long> inputNumbers;
@@ -111,31 +109,38 @@ public class ConsoleUI {
                     return;
                 }
 
-                inputVariables.forEach(v -> v.setValue(0));
-                for (int i = 1; i <= inputVariables.getLast().getNum(); i++) {
+                List<VariableDTO> inputVars = new ArrayList<>();
+                List<Integer> inputNumbersIndexes = new ArrayList<>();
+                for (int i = 1; i <= requiredInputVars.getLast().getNum(); i++) {
                     if (i <= inputNumbers.size()) {
-                        for (Variable var : inputVariables) {
+                        for (VariableDTO var : requiredInputVars) {
                             if (var.getNum() == i) {
                                 long value = inputNumbers.get(i - 1);
                                 if (value <= 0) {
                                     System.out.println("Invalid input. Please try again.");
                                     return;
                                 }
-                                var.setValue(value);
+                                inputVars.add(new VariableDTO(var.getType(), var.getNum(), value));
+                                inputNumbersIndexes.add(i);
                             }
                         }
                     }
                 }
 
-                int diff = inputNumbers.size() - inputVariables.size();
+                requiredInputVars.stream()
+                        .filter(v -> !inputNumbersIndexes.contains(v.getNum()))
+                        .forEach(inputVars::add);
+
+                int diff = inputNumbers.size() - requiredInputVars.size();
                 if (diff < 0) {
                     // inputNumbers is shorter -> pad with zeros
                     inputNumbers.addAll(Collections.nCopies(-diff, 0L));
                 } else if (diff > 0) {
                     // inputNumbers is longer -> trim
-                    inputNumbers = inputNumbers.subList(0, inputVariables.size());
+                    inputNumbers = inputNumbers.subList(0, requiredInputVars.size());
                 }
 
+                engine.loadInputs(inputVars);
                 long result = engine.runProgram(inputDegree, inputNumbers);
                 System.out.println("Program ran successfully:");
 
@@ -145,7 +150,7 @@ public class ConsoleUI {
                 System.out.printf("Output: y = %d%n", result);
                 System.out.println("Variables:");
 
-                List<List<Variable>> varByType = engine.getVarByType();
+                List<List<VariableDTO>> varByType = engine.getVarByType();
                 varByType.forEach(list ->
                         list.forEach(var ->
                                 System.out.println(var.getName() + " = " + var.getValue())));

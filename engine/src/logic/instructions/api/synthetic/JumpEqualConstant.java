@@ -1,10 +1,14 @@
 package logic.instructions.api.synthetic;
 
+import execute.dto.LabelDTO;
+import execute.dto.VariableDTO;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
+
+import java.util.List;
 
 public class JumpEqualConstant extends AbstractInstruction {
 
@@ -22,6 +26,15 @@ public class JumpEqualConstant extends AbstractInstruction {
     public JumpEqualConstant(Label selfLabel, Variable v, int k, Label target) {
         this( selfLabel, v, k, target, 1);
     }
+
+    @Override
+    public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
+
+    @Override
+    public LabelDTO getArgLabelDTO() { return new LabelDTO(target.getLabel()); }
+
+    @Override
+    public int getConst() { return k; }
 
     @Override
     public Label execute() {

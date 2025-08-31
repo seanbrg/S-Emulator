@@ -1,10 +1,13 @@
 package logic.instructions.api.synthetic;
 
+import execute.dto.VariableDTO;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
+
+import java.util.List;
 
 
 public class Assignment extends AbstractInstruction {
@@ -20,6 +23,9 @@ public class Assignment extends AbstractInstruction {
     public Assignment(Label selfLabel, Variable x, Variable y) {
         this(selfLabel, x, y, 1);
     }
+
+    @Override
+    public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(x), new VariableDTO(y)); }
 
     @Override
     public Label execute() {

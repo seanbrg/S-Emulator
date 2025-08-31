@@ -1,4 +1,5 @@
 package logic.instructions.api;
+import execute.dto.LabelDTO;
 import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.labels.FixedLabel;
@@ -24,7 +25,22 @@ public abstract class AbstractInstruction implements Instruction {
     }
 
     @Override
+    public int getConst() { return 0; }
+
+    @Override
+    public LabelDTO getArgLabelDTO() { return new LabelDTO(""); }
+
+    @Override
+    public LabelDTO getSelfLabelDTO() { return new LabelDTO(selfLabel.getLabel()); }
+
+    @Override
     public Label getSelfLabel() { return selfLabel; }
+
+    @Override
+    public Label getTargetLabel() { return FixedLabel.EMPTY; }
+
+    @Override
+    public InstructionData getData() { return data; }
 
     @Override
     public String getRepresentation() {
@@ -44,9 +60,6 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public void setNum(int num) { this.num = num; }
-
-    @Override
-    public Label getTargetLabel() { return FixedLabel.EMPTY; }
 
     @Override
     public int getNum() { return num; }
