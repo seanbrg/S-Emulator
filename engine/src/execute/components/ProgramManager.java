@@ -51,7 +51,6 @@ public class ProgramManager {
         currentTemps++;
         Variable newVar = new Var(VariableType.TEMP, currentTemps, 0);
         tempVarsMap.put(newVar.getName(), newVar);
-        System.out.println("Variable generated: " + newVar.getName());
         return newVar;
     }
 
@@ -138,7 +137,6 @@ public class ProgramManager {
 
         int lineNum = 1;
         for (Instruction instr: currentInstructions) {
-            this.labelGenerator.addLabel(instr.getSelfLabel());
             List<Instruction> expansion = this.expandInstruction(instr, lineNum);
             lineNum += expansion.size();
             newInstructions.addAll(expansion);

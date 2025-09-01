@@ -10,25 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="refactor package">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="fixed handling of temp variables using a separate map">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/Engine.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/Engine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/components/LabelGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/components/LabelGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/src/execute/components/ProgramManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/components/ProgramManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/components/XmlLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/components/XmlLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/variables/Var.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +148,7 @@
       <workItem from="1756646867232" duration="66000" />
       <workItem from="1756647147682" duration="24000" />
       <workItem from="1756675270000" duration="22093000" />
-      <workItem from="1756727643497" duration="3240000" />
+      <workItem from="1756727643497" duration="7163000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -333,7 +318,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756723282007</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="fixed handling of temp variables using a separate map">
+      <option name="closed" value="true" />
+      <created>1756730997263</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1756730997263</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,6 +408,7 @@
     <MESSAGE value="encapsulated labelGenerator in ProgramManager" />
     <MESSAGE value="parent in DTO 2" />
     <MESSAGE value="refactor package" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor package" />
+    <MESSAGE value="fixed handling of temp variables using a separate map" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed handling of temp variables using a separate map" />
   </component>
 </project>

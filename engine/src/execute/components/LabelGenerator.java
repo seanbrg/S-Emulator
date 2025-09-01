@@ -20,7 +20,7 @@ public class LabelGenerator {
     }
 
     public void addLabel(Label label) {
-        if (label.getClass().equals(NumericLabel.class)) {
+        if (label.getClass().equals(NumericLabel.class) && !labels.containsKey(label.getLabel())) {
             labels.put(label.getLabel(), label);
             if (maxLabel <= label.getNum()) {
                 maxLabel = label.getNum();
@@ -35,7 +35,7 @@ public class LabelGenerator {
                 .forEach(instr -> { this.addLabel(instr.getSelfLabel()); } );
 
         maxLabel = labels.values().stream()
-                .max(Comparator.comparing(Label::getLabel))
+                .max(Comparator.comparing(Label::getNum))
                 .map(Label::getNum)
                 .orElse(0);
     }
@@ -49,7 +49,7 @@ public class LabelGenerator {
         labels.remove(label.getLabel());
         if (maxLabel == label.getNum()) {
             maxLabel = labels.values().stream()
-                    .max(Comparator.comparing(Label::getLabel))
+                    .max(Comparator.comparing(Label::getNum))
                     .map(Label::getNum)
                     .orElse(0);
         }
@@ -58,7 +58,7 @@ public class LabelGenerator {
     public Label newLabel() {
         maxLabel++;
         Label newLabel = new NumericLabel(maxLabel);
-        labels.put(newLabel.getLabel(), newLabel);
+        this.addLabel(newLabel);
         return newLabel;
     }
 }
