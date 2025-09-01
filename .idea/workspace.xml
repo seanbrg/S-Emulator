@@ -10,24 +10,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="implemented DTOs">
-      <change afterPath="$PROJECT_DIR$/engine/src/execute/managers/LabelManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/engine/src/execute/managers/ProgramManager.java" afterDir="false" />
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="expansion refactor WIP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/Engine.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/Engine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/XmlLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/managers/XmlLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Decrease.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Increase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/JumpNotZero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/basic/Neutral.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/Assignment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ConstantAssignment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/GoToLabel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualConstant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpEqualVariable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/JumpZero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/synthetic/ZeroVariable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/RunRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/managers/RunRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/managers/LabelManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/managers/LabelGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/managers/ProgramManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/managers/ProgramManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/ExpandedInstruction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/console/ConsoleUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +152,7 @@
       <workItem from="1756398685425" duration="6429000" />
       <workItem from="1756646867232" duration="66000" />
       <workItem from="1756647147682" duration="24000" />
-      <workItem from="1756675270000" duration="10268000" />
+      <workItem from="1756675270000" duration="16110000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -275,7 +266,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756681881835</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="expansion refactor WIP">
+      <option name="closed" value="true" />
+      <created>1756685849537</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1756685849537</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -350,6 +349,38 @@
     <MESSAGE value="implemented negative values testing for inputs" />
     <MESSAGE value="added try block for input" />
     <MESSAGE value="implemented DTOs" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented DTOs" />
+    <MESSAGE value="expansion refactor WIP" />
+    <option name="LAST_COMMIT_MESSAGE" value="expansion refactor WIP" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ui/src/console/ConsoleUI.java</url>
+          <line>129</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ui/src/console/ConsoleUI.java</url>
+          <line>113</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ui/src/console/ConsoleUI.java</url>
+          <line>142</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ui/src/console/ConsoleUI.java</url>
+          <line>145</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ui/src/console/ConsoleUI.java</url>
+          <line>143</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

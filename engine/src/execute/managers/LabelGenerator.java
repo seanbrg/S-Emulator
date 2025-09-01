@@ -1,28 +1,29 @@
 package execute.managers;
 
 import logic.instructions.Instruction;
-import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.labels.NumericLabel;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class LabelManager {
-    Label maxLabel = null;
-    Map<String, Label> labels;
+public class LabelGenerator {
+    private int maxLabel;
+    private Map<String, Label> labels;
 
-    public LabelManager() {
-        labels = new HashMap<>();
+    public LabelGenerator() {
+        this.labels = new HashMap<>();
+        this.maxLabel = 0;
+    }
+
+    public List<Label> getLabels() {
+        return new ArrayList<>(labels.values());
     }
 
     public void addLabel(Label label) {
-        if (label instanceof NumericLabel) {
+        if (label.getClass().equals(NumericLabel.class)) {
             labels.put(label.getLabel(), label);
-            if (maxLabel == null || maxLabel.getNum() < label.getNum()) {
-                maxLabel = label;
+            if (maxLabel <= label.getNum()) {
+                maxLabel = label.getNum();
             }
         }
     }
@@ -32,27 +33,32 @@ public class LabelManager {
                 .stream()
                 .filter(instr -> instr.getSelfLabel() instanceof NumericLabel)
                 .forEach(instr -> { this.addLabel(instr.getSelfLabel()); } );
+
+        maxLabel = labels.values().stream()
+                .max(Comparator.comparing(Label::getLabel))
+                .map(Label::getNum)
+                .orElse(0);
     }
 
     public void clear() {
         labels.clear();
-        maxLabel = null;
+        maxLabel = 0;
     }
 
     public void removeLabel(Label label) {
         labels.remove(label.getLabel());
-        if (maxLabel == label) {
+        if (maxLabel == label.getNum()) {
             maxLabel = labels.values().stream()
                     .max(Comparator.comparing(Label::getLabel))
-                    .orElse(null);
+                    .map(Label::getNum)
+                    .orElse(0);
         }
     }
 
-    public Label getFreshLabel() {
-        int max = maxLabel == null ? 0 : maxLabel.getNum();
-        Label newLabel = new NumericLabel(max + 1);
+    public Label newLabel() {
+        maxLabel++;
+        Label newLabel = new NumericLabel(maxLabel);
         labels.put(newLabel.getLabel(), newLabel);
-        maxLabel = newLabel;
         return newLabel;
     }
 }

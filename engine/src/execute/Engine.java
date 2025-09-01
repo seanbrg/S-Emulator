@@ -10,13 +10,13 @@ import java.util.Set;
 public interface Engine {
     boolean loadFromXML(String filePath);
 
-    void printProgram();
+    void printProgram(int degree);
 
     long runProgram(int degree, List<Long> inputs);
 
     void resetVars();
 
-    boolean validateProgram();
+    boolean validateProgram(int degree);
 
     int maxDegree();
 

@@ -30,7 +30,7 @@ public class ConsoleUI {
 
             switch (choice) {
                 case "1" -> loadXml();
-                case "2" -> engine.printProgram();
+                case "2" -> engine.printProgram(0);
                 case "3" -> expandProgram();
                 case "4" -> runProgram();
                 case "5" -> engine.printHistory();
@@ -68,7 +68,7 @@ public class ConsoleUI {
             if (chosen < 0 || chosen > degree) {
                 System.out.println("Invalid degree, please try again.");
             } else {
-                engine.printExpandProgram(chosen);
+                engine.printProgram(chosen);
             }
         }
         else System.out.println("Invalid choice: no program loaded.");
@@ -77,19 +77,19 @@ public class ConsoleUI {
 
     private void runProgram() {
         if (engine.isLoaded()) {
-            int degree = engine.maxDegree();
-            System.out.printf("Current Program maximum degree is: %d.%n", degree);
-            System.out.printf("Please choose Program degree from 0 to %d:%n", degree);
+            int maxDegree = engine.maxDegree();
+            System.out.printf("Current Program maximum degree is: %d.%n", maxDegree);
+            System.out.printf("Please choose Program degree from 0 to %d:%n", maxDegree);
 
-            int inputDegree;
+            int degree;
             try {
-                inputDegree = Integer.parseInt(scanner.nextLine().trim());
+                degree = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid choice, please try again.");
                 return;
             }
 
-            if (0 <= inputDegree && inputDegree <= degree) {
+            if (0 <= degree && degree <= maxDegree) {
                 List<VariableDTO> requiredInputVars = engine.getInputs();
                 System.out.println("The current program's input variables are:");
                 requiredInputVars.forEach(s -> System.out.print(s.getName() + " "));
@@ -141,11 +141,9 @@ public class ConsoleUI {
                 }
 
                 engine.loadInputs(inputVars);
-                long result = engine.runProgram(inputDegree, inputNumbers);
+                long result = engine.runProgram(degree, inputNumbers);
                 System.out.println("Program ran successfully:");
-
-                if (inputDegree > 0) engine.printExpandProgram(inputDegree);
-                else engine.printProgram();
+                engine.printProgram(degree);
 
                 System.out.printf("Output: y = %d%n", result);
                 System.out.println("Variables:");
@@ -157,7 +155,7 @@ public class ConsoleUI {
 
                 engine.resetVars();
 
-                System.out.printf("Cycles: %d \n", engine.getCycles(inputDegree));
+                System.out.printf("Cycles: %d \n", engine.getCycles(degree));
             } else {
                 System.out.println("Invalid choice, please try again.");
             }
