@@ -10,9 +10,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="encapsulated labelGenerator in ProgramManager">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="parent in DTO 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/dto/InstructionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/dto/InstructionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +146,7 @@
       <workItem from="1756398685425" duration="6429000" />
       <workItem from="1756646867232" duration="66000" />
       <workItem from="1756647147682" duration="24000" />
-      <workItem from="1756675270000" duration="17504000" />
+      <workItem from="1756675270000" duration="17720000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -300,7 +300,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756722734180</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="parent in DTO 2">
+      <option name="closed" value="true" />
+      <created>1756723157275</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1756723157275</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -380,6 +388,7 @@
     <MESSAGE value="revised run logic" />
     <MESSAGE value="added parent to instructionDTO" />
     <MESSAGE value="encapsulated labelGenerator in ProgramManager" />
-    <option name="LAST_COMMIT_MESSAGE" value="encapsulated labelGenerator in ProgramManager" />
+    <MESSAGE value="parent in DTO 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="parent in DTO 2" />
   </component>
 </project>

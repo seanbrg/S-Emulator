@@ -1,4 +1,4 @@
-package execute.managers;
+package execute.components;
 
 import logic.instructions.Instruction;
 import logic.labels.Label;

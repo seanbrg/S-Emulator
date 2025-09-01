@@ -1,27 +1,25 @@
 package execute;
 
 import execute.dto.VariableDTO;
-import execute.managers.LabelGenerator;
-import execute.managers.ProgramManager;
-import execute.managers.RunRecord;
-import execute.managers.XmlLoader;
+import execute.components.ProgramManager;
+import execute.components.RunRecord;
+import execute.components.XmlLoader;
 import logic.program.Program;
 import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private Map<String, Variable> currentVars;
     private ProgramManager pm;
-    private final List<RunRecord> history = new ArrayList<>();
+    private final List<RunRecord> history;
     private int runCounter = 0;
 
     public EngineImpl() {
         this.pm = new ProgramManager();
-
+        this.history = new ArrayList<>();
     }
 
     public boolean isLoaded() {
