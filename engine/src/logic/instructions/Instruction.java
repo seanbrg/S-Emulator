@@ -33,4 +33,6 @@ public interface Instruction {
     LabelDTO getArgLabelDTO();
 
     int getConst();
+
+    Instruction getParent();
 }

@@ -45,6 +45,9 @@ public abstract class AbstractInstruction implements Instruction {
     public InstructionData getData() { return data; }
 
     @Override
+    public Instruction getParent() { return parent; }
+
+    @Override
     public String getRepresentation() {
         String result = String.format("#%d (%s) [ %-3s ] %s (%d)",
                 num,

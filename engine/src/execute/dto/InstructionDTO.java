@@ -11,15 +11,17 @@ public class InstructionDTO {
     private final int k;
     private final List<VariableDTO> variables;
     private final LabelDTO argLabel;
+    private final InstructionDTO parent;
 
     public InstructionDTO(LabelDTO selfLabel, InstructionData data, int num, int k,
-                          List<VariableDTO> variables, LabelDTO argLabel) {
+                          List<VariableDTO> variables, LabelDTO argLabel,  InstructionDTO parent) {
         this.selfLabel = selfLabel;
         this.data = data;
         this.num = num;
         this.k = k;
         this.variables = variables;
         this.argLabel = argLabel;
+        this.parent = parent;
     }
 
     public InstructionDTO(Instruction instr) {
@@ -29,6 +31,9 @@ public class InstructionDTO {
         this.k = instr.getConst();
         this.variables = instr.getVarsDTO();
         this.argLabel = instr.getArgLabelDTO();
+
+        Instruction localParent = instr.getParent();
+        this.parent = localParent == null ? null : new InstructionDTO(localParent);
     }
 
     public LabelDTO getSelfLabel() { return selfLabel; }
