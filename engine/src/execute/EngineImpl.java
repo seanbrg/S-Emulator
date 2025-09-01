@@ -15,14 +15,12 @@ import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private Map<String, Variable> currentVars;
-    private LabelGenerator labelGenerator;
     private ProgramManager pm;
     private final List<RunRecord> history = new ArrayList<>();
     private int runCounter = 0;
 
     public EngineImpl() {
-        this.labelGenerator = new LabelGenerator();
-        this.pm = new ProgramManager(this.labelGenerator);
+        this.pm = new ProgramManager();
 
     }
 
@@ -87,14 +85,12 @@ public class EngineImpl implements Engine {
 
     @Override
     public boolean loadFromXML(String filePath) {
-        labelGenerator.clear();
         Map<String, Variable> vars = new HashMap<>();
         Program program = XmlLoader.parse(filePath, vars);
         if (program != null) {
             pm.loadNewProgram(program);
             this.currentVars = vars;
             this.history.clear();
-            labelGenerator.loadInstructionLabels(program.getInstructions());
             System.out.println("Program '" + program.getName() + "' loaded successfully!");
             return true;
         } else {

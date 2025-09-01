@@ -26,8 +26,8 @@ public class ProgramManager {
     private int maxDegree;
 
 
-    public ProgramManager(LabelGenerator labelGenerator) {
-        this.labelGenerator = labelGenerator;
+    public ProgramManager() {
+        this.labelGenerator = new  LabelGenerator();
         this.programExpansions = new ArrayList<Program>();
         this.currentTemps = 0;
         this.maxDegree = 0;
@@ -119,6 +119,7 @@ public class ProgramManager {
         List<Instruction> currentInstructions = currentProgram.getInstructions();
         List<Instruction> newInstructions = new ArrayList<>();
 
+        labelGenerator.clear();
         labelGenerator.loadInstructionLabels(currentInstructions);
 
         int lineNum = 1;

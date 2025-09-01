@@ -10,11 +10,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="revised run logic">
+    <list default="true" id="0f3f2b06-0af2-4a27-9a21-1374b9bd3dae" name="Changes" comment="added parent to instructionDTO">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/execute/dto/InstructionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/dto/InstructionDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/Instruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/logic/instructions/api/AbstractInstruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/EngineImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/execute/managers/ProgramManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/execute/managers/ProgramManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +147,7 @@
       <workItem from="1756398685425" duration="6429000" />
       <workItem from="1756646867232" duration="66000" />
       <workItem from="1756647147682" duration="24000" />
-      <workItem from="1756675270000" duration="16935000" />
+      <workItem from="1756675270000" duration="17218000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore">
       <option name="closed" value="true" />
@@ -286,7 +285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756722243760</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="added parent to instructionDTO">
+      <option name="closed" value="true" />
+      <created>1756722461978</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1756722461978</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -364,6 +371,7 @@
     <MESSAGE value="expansion refactor WIP" />
     <MESSAGE value="expansion refactor" />
     <MESSAGE value="revised run logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="revised run logic" />
+    <MESSAGE value="added parent to instructionDTO" />
+    <option name="LAST_COMMIT_MESSAGE" value="added parent to instructionDTO" />
   </component>
 </project>
