@@ -42,4 +42,5 @@ public class InstructionDTO {
     public int getConst() { return k; }
     public List<VariableDTO> getVariables() { return variables; }
     public LabelDTO getArgLabel() { return argLabel; }
+    public InstructionDTO getParent() { return parent; }
 }
