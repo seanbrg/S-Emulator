@@ -1,6 +1,7 @@
 package logic.instructions.api.synthetic;
 
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -14,10 +15,14 @@ public class Assignment extends AbstractInstruction {
 
     private final Variable x, y;
 
-    public Assignment(Label selfLabel, Variable x, Variable y, int num) {
-        super(InstructionData.ASSIGNMENT,  selfLabel, num);
+    public Assignment(Label selfLabel, Variable x, Variable y, int num, Instruction parent) {
+        super(InstructionData.ASSIGNMENT,  selfLabel, num, parent);
         this.x = x;
         this.y = y;
+    }
+
+    public Assignment(Label selfLabel, Variable x, Variable y, int num) {
+        this(selfLabel, x, y, num, null);
     }
 
     public Assignment(Label selfLabel, Variable x, Variable y) {

@@ -9,19 +9,21 @@ public abstract class AbstractInstruction implements Instruction {
     private final Label selfLabel;
     private final InstructionData data;
     private int num;
+    private final Instruction parent;
 
     public AbstractInstruction(InstructionData data) {
         this(data, FixedLabel.EMPTY);
     }
 
-    public AbstractInstruction(InstructionData data, Label selfLabel, int num) {
+    public AbstractInstruction(InstructionData data, Label selfLabel, int num, Instruction parent) {
         this.data = data;
         this.selfLabel = selfLabel;
         this.num = num;
+        this.parent = parent;
     }
 
     public AbstractInstruction(InstructionData data, Label selfLabel) {
-        this(data, selfLabel, 0);
+        this(data, selfLabel, 0, null);
     }
 
     @Override
@@ -44,13 +46,20 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public String getRepresentation() {
-        return String.format("#%d (%s) [ %-3s ] %s (%d)",
+        String result = String.format("#%d (%s) [ %-3s ] %s (%d)",
                 num,
                 data.getInstructionType(),
                 selfLabel.getLabel(),
                 this.print(),
                 data.getCycles());
+        if (parent != null) {
+            result += " >>> " + parent.getRepresentation();
+        }
+        return result;
     }
+
+    @Override
+    public String toString() { return this.getRepresentation(); }
 
     @Override
     public int getCycles() { return data.getCycles(); }

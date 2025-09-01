@@ -1,6 +1,8 @@
 package execute;
 
 import execute.dto.VariableDTO;
+import execute.managers.LabelManager;
+import execute.managers.XmlLoader;
 import logic.instructions.Instruction;
 import logic.instructions.api.basic.Decrease;
 import logic.instructions.api.basic.Increase;
@@ -24,7 +26,7 @@ public class EngineImpl implements Engine {
     Program currentProgram = null;
     Program currentExpandedProgram;
     Map<String, Variable> currentVars;
-    List<Label> currentLabels;
+    LabelManager labelManager = new LabelManager();
     private static int tempCounter = 1;
 
 
@@ -33,88 +35,8 @@ public class EngineImpl implements Engine {
 
     public EngineImpl() {}
 
-    @Override
-    public boolean loadFromXML(String filePath) {
-        Map<String, Variable> vars = new HashMap<>();
-        Program program = XmlLoader.parse(filePath, vars);
-        if (program != null) {
-            this.currentProgram = program;
-            this.currentVars = vars;
-            this.history.clear();
-            System.out.println("Program '" + program.getName() + "' loaded successfully!");
-            return true;
-        } else {
-            System.out.println("Program not loaded. Keeping previous program.");
-            return false;
-        }
-    }
-
-    @Override
-    public void printProgram() {
-        if (currentProgram == null) {
-            System.out.println("No program loaded.");
-            return;
-        }
-        List<Instruction> instrList = currentProgram.getInstructions();
-        for (int i = 0; i < instrList.size(); i++) {
-            Instruction instr = instrList.get(i);
-            System.out.println(instr.getRepresentation());
-        }
-    }
-
-    @Override
-    public void loadInputs(List<VariableDTO> inputVars) {
-        for (VariableDTO variableDTO : inputVars) {
-            if (currentVars.containsKey(variableDTO.getName())) {
-                currentVars.get(variableDTO.getName()).setValue(variableDTO.getValue());
-            }
-            else {
-                currentVars.put(variableDTO.getName(), new Var(variableDTO));
-            }
-        }
-    }
-
-
-    @Override
-    public long runProgram(int degree, List<Long> inputs) {
-        Program program = currentProgram;
-        if (degree > 0) {
-            currentLabels = currentProgram.getLabels().keySet().stream().collect(Collectors.toList());
-            if (currentLabels == null) { currentLabels = new ArrayList<>(); }
-
-            List<ExpandedInstruction> expanded = expandRecursive(
-                    currentProgram.getInstructions(), degree, new ArrayList<>()
-            );
-
-            currentLabels = expanded.stream()
-                    .map(ExpandedInstruction::getInstruction)
-                    .map(Instruction::getSelfLabel)
-                    .filter(label -> label instanceof NumericLabel)
-                    .collect(Collectors.toList());
-
-            List<Instruction> expandedInstrList = expanded.stream()
-                    .map(ExpandedInstruction::getInstruction).toList();
-
-            Map<Label, Instruction> expandedLabels = new HashMap<>();
-            for (Instruction instr : expandedInstrList) {
-                Label selfLabel = instr.getSelfLabel();
-                if (selfLabel != FixedLabel.EMPTY && selfLabel != FixedLabel.EXIT) {
-                    expandedLabels.put(selfLabel, instr);
-                }
-            }
-
-            program = new SProgram(currentProgram.getName(), expandedLabels, expandedInstrList);
-            currentExpandedProgram = program;
-        }
-        program.run();
-
-        long result = currentVars.get("y").getValue();
-        int cycles = program.cycles();
-
-        runCounter++;
-        history.add(new RunRecord(runCounter, degree, inputs, result, cycles));
-
-        return result;
+    public boolean isLoaded() {
+        return currentProgram != null;
     }
 
     @Override
@@ -173,6 +95,95 @@ public class EngineImpl implements Engine {
         else return currentExpandedProgram.cycles();
     }
 
+    @Override
+    public boolean loadFromXML(String filePath) {
+        labelManager.clear();
+        Map<String, Variable> vars = new HashMap<>();
+        Program program = XmlLoader.parse(filePath, vars);
+        if (program != null) {
+            this.currentProgram = program;
+            this.currentVars = vars;
+            this.history.clear();
+            labelManager.loadInstructionLabels(program.getInstructions());
+            System.out.println("Program '" + program.getName() + "' loaded successfully!");
+            return true;
+        } else {
+            System.out.println("Program not loaded. Keeping previous program.");
+            return false;
+        }
+    }
+
+    @Override
+    public void loadInputs(List<VariableDTO> inputVars) {
+        for (VariableDTO variableDTO : inputVars) {
+            if (currentVars.containsKey(variableDTO.getName())) {
+                currentVars.get(variableDTO.getName()).setValue(variableDTO.getValue());
+            }
+            else {
+                currentVars.put(variableDTO.getName(), new Var(variableDTO));
+            }
+        }
+    }
+
+    @Override
+    public void printProgram() {
+        if (currentProgram == null) {
+            System.out.println("No program loaded.");
+            return;
+        }
+        currentProgram.getInstructions().forEach(System.out::println);
+    }
+
+    public void printHistory() {
+        if (history.isEmpty()) {
+            System.out.println("No runs recorded yet.");
+            return;
+        }
+        for (RunRecord r : history) {
+            System.out.printf("#%d | degree = %d | inputs = %s | y = %d | cycles = %d%n",
+                    r.getRunId(), r.getDegree(), r.getInputs(), r.getResultY(), r.getCycles());
+        }
+    }
+
+    @Override
+    public long runProgram(int degree, List<Long> inputs) {
+        Program program = currentProgram;
+        if (degree > 0) {
+            List<ExpandedInstruction> expanded = expandRecursive(
+                    currentProgram.getInstructions(), degree, new ArrayList<>()
+            );
+
+            expanded.stream()
+                    .map(ExpandedInstruction::getInstruction)
+                    .map(Instruction::getSelfLabel)
+                    .filter(label -> label instanceof NumericLabel)
+                    .forEach(labelManager::addLabel);
+
+            List<Instruction> expandedInstrList = expanded.stream()
+                    .map(ExpandedInstruction::getInstruction).toList();
+
+            Map<Label, Instruction> expandedLabels = new HashMap<>();
+            for (Instruction instr : expandedInstrList) {
+                Label selfLabel = instr.getSelfLabel();
+                if (selfLabel != FixedLabel.EMPTY && selfLabel != FixedLabel.EXIT) {
+                    expandedLabels.put(selfLabel, instr);
+                }
+            }
+
+            program = new SProgram(currentProgram.getName(), expandedLabels, expandedInstrList);
+            currentExpandedProgram = program;
+        }
+        program.run();
+
+        long result = currentVars.get("y").getValue();
+        int cycles = program.cycles();
+
+        runCounter++;
+        history.add(new RunRecord(runCounter, degree, inputs, result, cycles));
+
+        return result;
+    }
+
     // ========= printExpandProgram =========
 
     public void printExpandProgram(int degree) {
@@ -181,10 +192,7 @@ public class EngineImpl implements Engine {
             return;
         }
 
-        currentLabels = currentProgram.getInstructions().stream()
-                .map(Instruction::getSelfLabel)
-                .filter(label -> label instanceof NumericLabel)
-                .collect(Collectors.toList());
+        labelManager.clear();
 
         List<ExpandedInstruction> expanded = expandRecursive(
                 currentProgram.getInstructions(), degree, new ArrayList<>()
@@ -225,12 +233,12 @@ public class EngineImpl implements Engine {
     private List<Instruction> expandOne(Instruction instr, int lineNum) {
         List<Instruction> result = new ArrayList<>();
         Label self = instr.getSelfLabel();
+        labelManager.addLabel(self);
 
         // ---- ZERO_VARIABLE ----
         if (instr instanceof ZeroVariable zv) {
             Variable v = zv.getVariable();
-            Label loop = freshLabel(currentLabels);
-            currentLabels.add(loop);
+            Label loop = labelManager.getFreshLabel();
             result.add(new JumpNotZero(self, v, loop, lineNum++));
             result.add(new Decrease(loop, v, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, v, loop, lineNum++));
@@ -250,8 +258,7 @@ public class EngineImpl implements Engine {
         else if (instr instanceof Assignment asg) {
             Variable x = asg.getX();
             Variable y = asg.getY();
-            Label loop = freshLabel(currentLabels);
-            currentLabels.add(loop);
+            Label loop = labelManager.getFreshLabel();
             result.add(new ZeroVariable(self, x, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum++));
             result.add(new Decrease(loop, y, lineNum++));
@@ -271,8 +278,7 @@ public class EngineImpl implements Engine {
         else if (instr instanceof JumpZero jz) {
             Variable v = jz.getVariable();
             Label target = jz.getTargetLabel();
-            Label skip = freshLabel(currentLabels);
-            currentLabels.add(skip);
+            Label skip = labelManager.getFreshLabel();
             result.add(new JumpNotZero(self, v, skip, lineNum++));
             result.add(new GoToLabel(FixedLabel.EMPTY, target, lineNum++));
             result.add(new Neutral(skip, v, lineNum++)); // skip:
@@ -288,8 +294,7 @@ public class EngineImpl implements Engine {
             result.add(new Assignment(self, tmp, v, lineNum++));
             result.add(new ConstantAssignment(FixedLabel.EMPTY, tmp, k, lineNum++));
             // subtract tmp - k loop
-            Label loop = freshLabel(currentLabels);
-            currentLabels.add(loop);
+            Label loop = labelManager.getFreshLabel();
             result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
             result.add(new Decrease(loop, tmp, lineNum++));
             result.add(new JumpNotZero(FixedLabel.EMPTY, tmp, loop, lineNum++));
@@ -307,8 +312,7 @@ public class EngineImpl implements Engine {
             result.add(new Assignment(self, t1, v1, lineNum++));
             result.add(new Assignment(FixedLabel.EMPTY, t2, v2, lineNum++));
 
-            Label loop = freshLabel(currentLabels);
-            currentLabels.add(loop);
+            Label loop = labelManager.getFreshLabel();
             result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop, lineNum++));
             result.add(new Decrease(loop, t1, lineNum++));
             result.add(new Decrease(FixedLabel.EMPTY, t2, lineNum++));
@@ -321,34 +325,8 @@ public class EngineImpl implements Engine {
         return result;
     }
 
-    private static Label freshLabel(List<Label> labels) {
-        int maxLabel = 0;
-        if (labels != null) {
-            maxLabel = labels.stream()
-                    .map(Label::getNum)
-                    .max(Integer::compareTo)
-                    .orElse(0);
-        }
-        return new NumericLabel(maxLabel + 1);
-    }
-
     private static Variable freshTemp() {
         return new Var("z" + (tempCounter++));
     }
 
-
-    public void printHistory() {
-        if (history.isEmpty()) {
-            System.out.println("No runs recorded yet.");
-            return;
-        }
-        for (RunRecord r : history) {
-            System.out.printf("#%d | degree=%d | inputs=%s | y=%d | cycles=%d%n",
-                    r.getRunId(), r.getDegree(), r.getInputs(), r.getResultY(), r.getCycles());
-        }
-    }
-
-    public boolean isLoaded() {
-        return currentProgram != null;
-    }
 }

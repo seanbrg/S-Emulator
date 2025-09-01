@@ -1,5 +1,6 @@
 package logic.instructions.api.basic;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -13,9 +14,13 @@ public class Neutral extends AbstractInstruction {
 
     private final Variable v;
 
-    public Neutral(Label selfLabel, Variable v, int num) {
-        super(InstructionData.NO_OP, selfLabel, num);
+    public Neutral(Label selfLabel, Variable v, int num, Instruction parent) {
+        super(InstructionData.NO_OP, selfLabel, num, parent);
         this.v = v;
+    }
+
+    public Neutral(Label selfLabel, Variable v, int num) {
+        this(selfLabel, v, num, null);
     }
 
     public Neutral(Label selfLabel, Variable v) {

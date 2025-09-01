@@ -2,6 +2,7 @@ package logic.instructions.api.synthetic;
 
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.Label;
@@ -13,9 +14,13 @@ public class GoToLabel extends AbstractInstruction {
 
     private final Label target;
 
-    public GoToLabel(Label selfLabel, Label target, int num) {
-        super(InstructionData.GOTO_LABEL,  selfLabel, num);
+    public GoToLabel(Label selfLabel, Label target, int num, Instruction parent) {
+        super(InstructionData.GOTO_LABEL,  selfLabel, num,  parent);
         this.target = target;
+    }
+
+    public GoToLabel(Label selfLabel, Label target, int num) {
+        this(selfLabel, target, num, null);
     }
 
     public GoToLabel(Label selfLabel, Label target) {

@@ -1,6 +1,7 @@
 package logic.instructions.api.synthetic;
 
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -15,10 +16,14 @@ public class ConstantAssignment extends AbstractInstruction {
     private final Variable v;
     private final int k;
 
-    public ConstantAssignment(Label selfLabel, Variable v, int k, int num) {
-        super(InstructionData.CONSTANT_ASSIGNMENT, selfLabel, num);
+    public ConstantAssignment(Label selfLabel, Variable v, int k, int num, Instruction parent) {
+        super(InstructionData.CONSTANT_ASSIGNMENT, selfLabel, num, parent);
         this.v = v;
         this.k = k;
+    }
+
+    public ConstantAssignment(Label selfLabel, Variable v, int k, int num) {
+        this(selfLabel, v, k, num, null);
     }
 
     public ConstantAssignment(Label selfLabel, Variable v, int k) {

@@ -1,5 +1,6 @@
 package logic.instructions.api.basic;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -12,9 +13,13 @@ public class Increase extends AbstractInstruction {
 
     private final Variable v;
 
-    public Increase(Label selfLabel, Variable v, int num) {
-        super(InstructionData.INCREASE, selfLabel, num);
+    public Increase(Label selfLabel, Variable v, int num, Instruction parent) {
+        super(InstructionData.INCREASE, selfLabel, num, parent);
         this.v = v;
+    }
+
+    public Increase(Label selfLabel, Variable v, int num) {
+        this(selfLabel, v, num, null);
     }
 
     public Increase(Label selfLabel, Variable v) {

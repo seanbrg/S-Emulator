@@ -1,6 +1,7 @@
 package logic.instructions.api.basic;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -14,10 +15,14 @@ public class JumpNotZero extends AbstractInstruction {
     private final Variable v;
     private final Label target;
 
-    public JumpNotZero(Label selfLabel, Variable v, Label target, int num) {
-        super(InstructionData.JUMP_NOT_ZERO, selfLabel, num);
+    public JumpNotZero(Label selfLabel, Variable v, Label target, int num, Instruction parent) {
+        super(InstructionData.JUMP_NOT_ZERO, selfLabel, num,  parent);
         this.v = v;
         this.target = target;
+    }
+
+    public JumpNotZero(Label selfLabel, Variable v, Label target, int num) {
+        this(selfLabel, v, target, num, null);
     }
 
     public JumpNotZero(Label selfLabel, Variable v, Label target) {

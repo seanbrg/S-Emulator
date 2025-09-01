@@ -2,6 +2,7 @@ package logic.instructions.api.synthetic;
 
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -16,11 +17,15 @@ public class JumpEqualVariable extends AbstractInstruction {
     private final Label target;
     private final Variable y;
 
-    public JumpEqualVariable(Label selfLabel, Variable x, Variable y, Label target, int num) {
-        super(InstructionData.JUMP_EQUAL_VARIABLE, selfLabel, num);
+    public JumpEqualVariable(Label selfLabel, Variable x, Variable y, Label target, int num, Instruction parent) {
+        super(InstructionData.JUMP_EQUAL_VARIABLE, selfLabel, num, parent);
         this.x = x;
         this.y = y;
         this.target = target;
+    }
+
+    public JumpEqualVariable(Label selfLabel, Variable x, Variable y, Label target, int num) {
+        this( selfLabel, x, y, target, num, null);
     }
 
     public JumpEqualVariable(Label selfLabel, Variable x, Variable y, Label target) {

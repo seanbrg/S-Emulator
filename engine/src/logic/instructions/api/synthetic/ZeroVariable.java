@@ -1,5 +1,6 @@
 package logic.instructions.api.synthetic;
 import execute.dto.VariableDTO;
+import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
 import logic.labels.FixedLabel;
@@ -13,9 +14,13 @@ public class ZeroVariable extends AbstractInstruction {
 
     private final Variable v;
 
-    public ZeroVariable(Label selfLabel, Variable v, int num) {
-        super(InstructionData.ZERO_VARIABLE,  selfLabel, num);
+    public ZeroVariable(Label selfLabel, Variable v, int num, Instruction parent) {
+        super(InstructionData.ZERO_VARIABLE,  selfLabel, num, parent);
         this.v = v;
+    }
+
+    public ZeroVariable(Label selfLabel, Variable v, int num) {
+        this(selfLabel, v, num, null);
     }
 
     public ZeroVariable(Label selfLabel, Variable v) {
