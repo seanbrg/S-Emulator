@@ -12,13 +12,17 @@ import logic.variables.VariableType;
 import java.util.*;
 
 public class EngineImpl implements Engine {
-    private Map<String, Variable> currentVars;
+    private Map<String, Variable> inputVarsMap;
+    private Map<String, Variable> tempVarsMap;
+    private Variable outputVar;
     private ProgramManager pm;
     private final List<RunRecord> history;
     private int runCounter = 0;
 
     public EngineImpl() {
-        this.pm = new ProgramManager();
+        this.tempVarsMap = new HashMap<>();
+        this.inputVarsMap = new HashMap<>();
+        this.pm = new ProgramManager(tempVarsMap);
         this.history = new ArrayList<>();
     }
 
@@ -28,7 +32,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public void resetVars() {
-        currentVars.values().forEach(v -> v.setValue(0)); // reset vars
+        inputVarsMap.values().forEach(v -> v.setValue(0));
     }
 
     @Override
@@ -44,36 +48,29 @@ public class EngineImpl implements Engine {
     @Override
     public List<List<VariableDTO>> getVarByType() {
 
-        List<VariableDTO> xList = new ArrayList<>(currentVars.values()) // snapshot
+        List<VariableDTO> xList = inputVarsMap.values() // snapshot
                 .stream()
                 .filter(Objects::nonNull)
-                .filter(v -> v.getType() == VariableType.INPUT)
                 .sorted(Comparator.comparing(Variable::getName))
                 .map(VariableDTO::new)
                 .toList();
 
 
-        List<VariableDTO> yList = List.of(currentVars.values().stream()
-                .filter(Objects::nonNull)
-                .filter(var -> var.getType().equals(VariableType.OUTPUT))
-                .map(VariableDTO::new)
-                .findFirst()
-                .orElse(new VariableDTO(VariableType.OUTPUT, 0, 0)));
+        List<VariableDTO> yList = List.of(new VariableDTO(outputVar));
 
-        List<VariableDTO> zList = new ArrayList<>(currentVars.values())
+        List<VariableDTO> zList = tempVarsMap.values()
                 .stream()
                 .filter(Objects::nonNull)
-                .filter(var -> var.getType().equals(VariableType.TEMP))
                 .sorted(Comparator.comparing(Variable::getName))
                 .map(VariableDTO::new)
                 .toList();
 
-        return List.of(xList, yList, zList);
+        return List.of(yList, xList, zList);
     }
 
     @Override
     public List<VariableDTO> getInputs() {
-        return this.getVarByType().getFirst();
+        return this.getVarByType().get(1);
     }
 
     @Override
@@ -86,8 +83,8 @@ public class EngineImpl implements Engine {
         Map<String, Variable> vars = new HashMap<>();
         Program program = XmlLoader.parse(filePath, vars);
         if (program != null) {
+            this.fillOutVars(vars);
             pm.loadNewProgram(program);
-            this.currentVars = vars;
             this.history.clear();
             System.out.println("Program '" + program.getName() + "' loaded successfully!");
             return true;
@@ -98,13 +95,28 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void loadInputs(List<VariableDTO> inputVars) {
-        for (VariableDTO variableDTO : inputVars) {
-            if (currentVars.containsKey(variableDTO.getName())) {
-                currentVars.get(variableDTO.getName()).setValue(variableDTO.getValue());
+    public void fillOutVars(Map<String, Variable> vars) {
+        for (Variable variable : vars.values()) {
+            if (variable.getType() == VariableType.INPUT) {
+                this.inputVarsMap.put(variable.getName(), variable);
+            }
+            else if (variable.getType() == VariableType.OUTPUT) {
+                this.outputVar = variable;
+            }
+            else if (variable.getType() == VariableType.TEMP) {
+                this.tempVarsMap.put(variable.getName(), variable);
+            }
+        }
+    }
+
+    @Override
+    public void loadInputs(List<VariableDTO> inputVarsDTO) {
+        for (VariableDTO variableDTO : inputVarsDTO) {
+            if (inputVarsMap.containsKey(variableDTO.getName())) {
+                inputVarsMap.get(variableDTO.getName()).setValue(variableDTO.getValue());
             }
             else {
-                currentVars.put(variableDTO.getName(), new Var(variableDTO));
+                inputVarsMap.put(variableDTO.getName(), new Var(variableDTO));
             }
         }
     }
@@ -131,8 +143,13 @@ public class EngineImpl implements Engine {
 
     @Override
     public long runProgram(int degree) {
+        outputVar.setValue(0);
+        tempVarsMap.values()
+                .stream()
+                .filter(Objects::nonNull)
+                .forEach(v -> v.setValue(0));
         pm.runProgram(degree);
-        return currentVars.get("y").getValue();
+        return outputVar.getValue();
     }
 
     @Override

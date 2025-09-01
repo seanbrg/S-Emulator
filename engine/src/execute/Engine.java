@@ -5,6 +5,7 @@ import logic.labels.Label;
 import logic.variables.Variable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface Engine {
@@ -27,6 +28,8 @@ public interface Engine {
     List<VariableDTO> getInputs();
 
     int getCycles(int degree);
+
+    void fillOutVars(Map<String, Variable> vars);
 
     void loadInputs(List<VariableDTO> inputVars);
 }

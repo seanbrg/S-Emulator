@@ -31,6 +31,9 @@ public class ZeroVariable extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
+    public List<Variable> getVars() { return List.of(v); }
+
+    @Override
     public Label execute() {
         v.setValue(0);
         return FixedLabel.EMPTY;

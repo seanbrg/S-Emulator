@@ -18,7 +18,7 @@ import java.util.*;
 
 public class XmlLoader {
 
-    public static Program parse(String filePath, Map<String, Variable> vars) {
+    public static Program parse(String filePath, Map<String, Variable> varsMap) {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("Error: File does not exist.");
@@ -55,10 +55,10 @@ public class XmlLoader {
                 NodeList varNodes = instrElem.getElementsByTagName("S-Variable");
                 if (varNodes.getLength() > 0) {
                     varName = varNodes.item(0).getTextContent().trim();
-                    if (!vars.containsKey(varName)) {
-                        vars.put(varName, new Var(varName));
+                    if (!varsMap.containsKey(varName)) {
+                        varsMap.put(varName, new Var(varName));
                     }
-                    var = vars.get(varName);
+                    var = varsMap.get(varName);
                 }
 
                 // label of the instruction
@@ -89,7 +89,7 @@ public class XmlLoader {
                     targetLabel = parseLabel(args.get("JNZLabel"));
                 }
 
-                Instruction instr = createInstruction(instrName, var, selfLabel, targetLabel, args, vars);
+                Instruction instr = createInstruction(instrName, var, selfLabel, targetLabel, args, varsMap);
                 if (instr != null) {
                     instructions.add(instr);
                     if (selfLabel != FixedLabel.EMPTY) {

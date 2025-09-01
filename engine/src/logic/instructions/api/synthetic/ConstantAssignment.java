@@ -34,6 +34,9 @@ public class ConstantAssignment extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
+    public List<Variable> getVars() { return List.of(v); }
+
+    @Override
     public int getConst() { return k; }
 
     @Override

@@ -31,6 +31,9 @@ public class Neutral extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
+    public List<Variable> getVars() { return List.of(v); }
+
+    @Override
     public Label execute() {
         return FixedLabel.EMPTY;
     }

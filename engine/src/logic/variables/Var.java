@@ -17,6 +17,16 @@ public class Var implements Variable {
         this.type = type;
         this.num = num;
         this.value = value;
+        switch(type) {
+            case INPUT:
+                name = "x" + num;
+                break;
+            case TEMP:
+                name = "z" + num;
+                break;
+            case OUTPUT:
+                name = "y";
+        }
     }
 
     public Var(VariableType type, int num) {

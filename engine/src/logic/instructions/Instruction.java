@@ -2,6 +2,7 @@ package logic.instructions;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
 import logic.labels.Label;
+import logic.variables.Variable;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public interface Instruction {
     void setNum(int num);
 
     Label getTargetLabel();
+
+    List<Variable> getVars();
 
     int getNum();
 

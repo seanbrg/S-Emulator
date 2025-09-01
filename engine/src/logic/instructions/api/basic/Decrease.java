@@ -30,6 +30,9 @@ public class Decrease extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
+    public List<Variable> getVars() { return List.of(v); }
+
+    @Override
     public Label execute() {
         v.setValue(v.getValue() - 1);
         return FixedLabel.EMPTY;

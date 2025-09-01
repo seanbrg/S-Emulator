@@ -14,21 +14,20 @@ import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProgramManager {
     private List<Program> programExpansions;
     private LabelGenerator labelGenerator;
+    private Map<String, Variable> tempVarsMap;
     private int currentTemps;
     private int maxDegree;
 
 
-    public ProgramManager() {
+    public ProgramManager(Map<String, Variable> tempVarsMap) {
         this.labelGenerator = new  LabelGenerator();
         this.programExpansions = new ArrayList<Program>();
+        this.tempVarsMap = tempVarsMap;
         this.currentTemps = 0;
         this.maxDegree = 0;
     }
@@ -42,12 +41,18 @@ public class ProgramManager {
     public void clear() {
         programExpansions.clear();
         labelGenerator.clear();
-        currentTemps = 0;
+        currentTemps = tempVarsMap.values()
+                .stream().max(Comparator.comparing(Variable::getNum))
+                .map(Variable::getNum).orElse(0);
         maxDegree = 0;
     }
 
     private Variable generateTempVar() {
-        return new Var(VariableType.TEMP, ++currentTemps, 0);
+        currentTemps++;
+        Variable newVar = new Var(VariableType.TEMP, currentTemps, 0);
+        tempVarsMap.put(newVar.getName(), newVar);
+        System.out.println("Variable generated: " + newVar.getName());
+        return newVar;
     }
 
     public boolean isEmpty() {
@@ -121,6 +126,15 @@ public class ProgramManager {
 
         labelGenerator.clear();
         labelGenerator.loadInstructionLabels(currentInstructions);
+
+        for (Instruction instr : currentInstructions) {
+            List<Variable> instrVars = instr.getVars();
+            for (Variable v : instrVars) {
+                if (v.getType() == VariableType.TEMP) {
+                    tempVarsMap.put(v.getName(), v);
+                }
+            }
+        }
 
         int lineNum = 1;
         for (Instruction instr: currentInstructions) {
