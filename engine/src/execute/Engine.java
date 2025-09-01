@@ -12,7 +12,9 @@ public interface Engine {
 
     void printProgram(int degree);
 
-    long runProgram(int degree, List<Long> inputs);
+    long runProgram(int degree);
+
+    long runProgramAndRecord(int degree, List<Long> inputs);
 
     void resetVars();
 

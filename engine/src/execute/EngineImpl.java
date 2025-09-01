@@ -11,6 +11,7 @@ import logic.variables.Variable;
 import logic.variables.VariableType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private Map<String, Variable> currentVars;
@@ -135,11 +136,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public long runProgram(int degree, List<Long> inputs) {
-
+    public long runProgram(int degree) {
         pm.runProgram(degree);
+        return currentVars.get("y").getValue();
+    }
 
-        long result = currentVars.get("y").getValue();
+    @Override
+    public long runProgramAndRecord(int degree, List<Long> inputs) {
+        long result = this.runProgram(degree);
         int cycles = pm.getProgramCycles(degree);
 
         runCounter++;
@@ -147,4 +151,5 @@ public class EngineImpl implements Engine {
 
         return result;
     }
+
 }

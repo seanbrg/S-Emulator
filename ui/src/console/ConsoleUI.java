@@ -131,6 +131,7 @@ public class ConsoleUI {
                         .filter(v -> !inputNumbersIndexes.contains(v.getNum()))
                         .forEach(inputVars::add);
 
+
                 int diff = inputNumbers.size() - requiredInputVars.size();
                 if (diff < 0) {
                     // inputNumbers is shorter -> pad with zeros
@@ -141,7 +142,7 @@ public class ConsoleUI {
                 }
 
                 engine.loadInputs(inputVars);
-                long result = engine.runProgram(degree, inputNumbers);
+                long result = engine.runProgramAndRecord(degree, inputNumbers);
                 System.out.println("Program ran successfully:");
                 engine.printProgram(degree);
 
