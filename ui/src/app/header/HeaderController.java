@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -43,15 +44,26 @@ public class HeaderController {
         );
 
         File selectedFile = fileChooser.showOpenDialog(loadFileButton.getScene().getWindow());
-        if (selectedFile != null) {
+        mainController.processFile(selectedFile.getPath());
+    }
+
+    public void fileLoadResult(boolean success) {
+        if (success) {
+            fileLoadedLabel.setText("File loaded successfully!");
+            fileLoadedLabel.setTextFill(Color.web("#81c784")); // green
             fileLoadedLabel.setOpacity(1.0);
         }
-        mainController.processFile(selectedFile.getPath());
+        else {
+            fileLoadedLabel.setText("Error loading file");
+            fileLoadedLabel.setTextFill(Color.web("#e57373")); // red
+            fileLoadedLabel.setOpacity(1.0);
+        }
     }
 
     public void setProgram(String programName, int maxDegree) {
         this.expandedDegree = 0;
         this.maxDegree = maxDegree;
+
         writeExpandedLabel();
 
         selectProgram.setValue(programName);

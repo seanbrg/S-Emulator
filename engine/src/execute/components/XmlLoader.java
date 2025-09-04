@@ -18,14 +18,14 @@ import java.util.*;
 
 public class XmlLoader {
 
-    public static Program parse(String filePath, Map<String, Variable> varsMap) {
+    public static Program parse(String filePath, Map<String, Variable> varsMap, boolean printMode) {
         File file = new File(filePath);
         if (!file.exists()) {
-            System.out.println("Error: File does not exist.");
+            if (printMode) System.out.println("Error: File does not exist.");
             return null;
         }
         if (!filePath.toLowerCase().endsWith(".xml")) {
-            System.out.println("Error: File is not an XML file.");
+            if (printMode) System.out.println("Error: File is not an XML file.");
             return null;
         }
 
@@ -41,7 +41,7 @@ public class XmlLoader {
             String programName = doc.getDocumentElement().getAttribute("name");
 
             NodeList instrNodes = doc.getElementsByTagName("S-Instruction");
-            System.out.println("Found " + instrNodes.getLength() + " instructions in XML");
+            if (printMode) System.out.println("Found " + instrNodes.getLength() + " instructions in XML");
 
             for (int i = 0; i < instrNodes.getLength(); i++) {
                 Element instrElem = (Element) instrNodes.item(i);
@@ -96,20 +96,20 @@ public class XmlLoader {
                         labels.put(selfLabel, instr);
                     }
                 } else {
-                    System.out.println("Unknown instruction name: " + instrName + " (type=" + type + ")");
+                    if (printMode) System.out.println("Unknown instruction name: " + instrName + " (type=" + type + ")");
                 }
             }
 
             Program program = new SProgram(programName, labels, instructions);
 
             if (!program.checkLabels()) {
-                System.out.println("Error: Program has invalid labels.");
+                if (printMode) System.out.println("Error: Program has invalid labels.");
                 return null;
             }
             else return program;
 
         } catch (Exception e) {
-            System.out.println("Error parsing XML: " + e.getMessage());
+            if (printMode) System.out.println("Error parsing XML: " + e.getMessage());
             e.printStackTrace();
             return null;
         }

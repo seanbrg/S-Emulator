@@ -19,9 +19,11 @@ public class AppController {
 
     public void processFile(String selectedFilePath) {
         //System.out.println("Processing file: " + selectedFile.getAbsolutePath());
-        engine.loadFromXML(selectedFilePath);
+        boolean result = engine.loadFromXML(selectedFilePath);
+
         String programName = engine.getProgramName();
         int maxDegree = engine.maxDegree();
         headerController.setProgram(programName, maxDegree);
+        headerController.fileLoadResult(result);
     }
 }

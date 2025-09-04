@@ -17,6 +17,8 @@ public interface Engine {
 
     long runProgramAndRecord(int degree, List<Long> inputs);
 
+    void setPrintMode(boolean mode);
+
     boolean isLoaded();
 
     String getProgramName();

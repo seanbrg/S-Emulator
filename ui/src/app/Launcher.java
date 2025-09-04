@@ -18,6 +18,7 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws Exception {
         AppController appController = new AppController();
         Engine engine = new EngineImpl();
+        engine.setPrintMode(false);
 
         appController.setEngine(engine);
 

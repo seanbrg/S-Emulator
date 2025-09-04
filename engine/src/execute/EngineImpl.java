@@ -17,14 +17,20 @@ public class EngineImpl implements Engine {
     private Variable outputVar;
     private ProgramManager pm;
     private final List<RunRecord> history;
-    private int runCounter = 0;
+    private int runCounter;
+    boolean printMode;
 
     public EngineImpl() {
         this.tempVarsMap = new HashMap<>();
         this.inputVarsMap = new HashMap<>();
         this.pm = new ProgramManager(tempVarsMap);
         this.history = new ArrayList<>();
+        printMode = true;
+        runCounter = 0;
     }
+
+    @Override
+    public void setPrintMode(boolean mode) { this.printMode = mode; }
 
     @Override
     public boolean isLoaded() {
@@ -85,15 +91,15 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromXML(String filePath) {
         Map<String, Variable> vars = new HashMap<>();
-        Program program = XmlLoader.parse(filePath, vars);
+        Program program = XmlLoader.parse(filePath, vars, printMode);
         if (program != null) {
             this.fillOutVars(vars);
             pm.loadNewProgram(program);
             this.history.clear();
-            System.out.println("Program '" + program.getName() + "' loaded successfully!");
+            if (printMode) System.out.println("Program '" + program.getName() + "' loaded successfully!");
             return true;
         } else {
-            System.out.println("Program not loaded. Keeping previous program.");
+            if (printMode) System.out.println("Program not loaded. Keeping previous program.");
             return false;
         }
     }
