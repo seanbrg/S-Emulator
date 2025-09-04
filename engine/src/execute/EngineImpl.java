@@ -26,9 +26,13 @@ public class EngineImpl implements Engine {
         this.history = new ArrayList<>();
     }
 
+    @Override
     public boolean isLoaded() {
         return !pm.isEmpty();
     }
+
+    @Override
+    public String getProgramName() { return pm.getProgramName(); }
 
     @Override
     public void resetVars() {

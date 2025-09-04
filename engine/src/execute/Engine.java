@@ -17,6 +17,10 @@ public interface Engine {
 
     long runProgramAndRecord(int degree, List<Long> inputs);
 
+    boolean isLoaded();
+
+    String getProgramName();
+
     void resetVars();
 
     boolean validateProgram(int degree);

@@ -32,6 +32,8 @@ public class ProgramManager {
         this.maxDegree = 0;
     }
 
+    public String getProgramName() { return programExpansions.isEmpty() ? "" : programExpansions.get(0).getName(); }
+
     public void loadNewProgram(Program program) {
         this.clear();
         programExpansions.add(program);
