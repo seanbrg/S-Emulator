@@ -66,6 +66,7 @@ public class HeaderController {
 
         writeExpandedLabel();
 
+        selectProgram.setDisable(false);
         selectProgram.setValue(programName);
         selectProgram.getItems().clear();
         selectProgram.getItems().add(programName);

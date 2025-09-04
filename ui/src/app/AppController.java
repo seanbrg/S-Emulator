@@ -23,7 +23,8 @@ public class AppController {
 
         String programName = engine.getProgramName();
         int maxDegree = engine.maxDegree();
-        headerController.setProgram(programName, maxDegree);
         headerController.fileLoadResult(result);
+
+        if (result) headerController.setProgram(programName, maxDegree);
     }
 }
