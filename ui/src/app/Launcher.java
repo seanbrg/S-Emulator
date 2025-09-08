@@ -1,8 +1,5 @@
 package app;
 
-import app.header.HeaderController;
-import execute.Engine;
-import execute.EngineImpl;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,22 +13,15 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        AppController appController = new AppController();
-        Engine engine = new EngineImpl();
-        engine.setPrintMode(false);
-
-        appController.setEngine(engine);
-
-        FXMLLoader loader = new FXMLLoader();
-        URL url = getClass().getResource("/app/header/Header.fxml");
-        loader.setLocation(url);
-        Parent root = loader.load(url.openStream());
-        HeaderController headerController = loader.getController();
-        appController.setHeaderController(headerController);
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = getClass().getResource("/app/body/body.fxml");
+        fxmlLoader.setLocation(url);
+        Parent root = fxmlLoader.load(url.openStream());
+        AppController controller = fxmlLoader.getController();
 
         Scene scene = new Scene(root);
-        // Add the Cupertino dark theme stylesheet
-        String css = getClass().getResource("/app/resources/style.css").toExternalForm();
+        controller.setScene(scene);
+        String css = getClass().getResource("/app/resources/style-dark.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         primaryStage.setTitle("S-Emulator");
