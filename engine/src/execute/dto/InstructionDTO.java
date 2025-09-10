@@ -12,17 +12,7 @@ public class InstructionDTO {
     private final List<VariableDTO> variables;
     private final LabelDTO argLabel;
     private final InstructionDTO parent;
-
-    public InstructionDTO(LabelDTO selfLabel, InstructionData data, int num, int k,
-                          List<VariableDTO> variables, LabelDTO argLabel,  InstructionDTO parent) {
-        this.selfLabel = selfLabel;
-        this.data = data;
-        this.num = num;
-        this.k = k;
-        this.variables = variables;
-        this.argLabel = argLabel;
-        this.parent = parent;
-    }
+    private final String name;
 
     public InstructionDTO(Instruction instr) {
         this.selfLabel = instr.getSelfLabelDTO();
@@ -34,6 +24,7 @@ public class InstructionDTO {
 
         Instruction localParent = instr.getParent();
         this.parent = localParent == null ? null : new InstructionDTO(localParent);
+        this.name = instr.print();
     }
 
     public LabelDTO getSelfLabel() { return selfLabel; }
@@ -43,4 +34,5 @@ public class InstructionDTO {
     public List<VariableDTO> getVariables() { return variables; }
     public LabelDTO getArgLabel() { return argLabel; }
     public InstructionDTO getParent() { return parent; }
+    public String getName() { return name; }
 }

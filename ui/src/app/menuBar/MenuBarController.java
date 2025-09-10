@@ -1,13 +1,13 @@
 package app.menuBar;
 
-import app.AppController;
+import app.body.AppController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -24,6 +24,7 @@ public class MenuBarController {
     @FXML private MenuItem menuItemThemeLight;
     @FXML private MenuItem menuItemThemeDark;
 
+    @FXML private ProgressBar progressBar;
     @FXML private Button buttonRun;
     @FXML private Button buttonDebug;
 

@@ -1,5 +1,6 @@
 package app;
 
+import app.body.AppController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,11 +22,11 @@ public class Launcher extends Application {
 
         Scene scene = new Scene(root);
         controller.setScene(scene);
-        String css = getClass().getResource("/app/resources/style-dark.css").toExternalForm();
+        String css = getClass().getResource("/app/resources/styles/style-dark.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         primaryStage.setTitle("S-Emulator");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/icon.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

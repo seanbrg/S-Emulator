@@ -1,5 +1,6 @@
 package execute;
 
+import execute.dto.InstructionDTO;
 import execute.dto.VariableDTO;
 import logic.labels.Label;
 import logic.variables.Variable;
@@ -38,4 +39,6 @@ public interface Engine {
     void fillOutVars(Map<String, Variable> vars);
 
     void loadInputs(List<VariableDTO> inputVars);
+
+    List<InstructionDTO> getInstructionsList(String programName, int degree);
 }

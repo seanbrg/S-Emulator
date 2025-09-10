@@ -477,3 +477,17 @@
 .table-view .placeholder .label {
     -fx-text-fill: rgba(255,255,255,0.6);
 }
+
+/* === TableView grid lines in dark mode === */
+.table-view .table-cell {
+    -fx-border-color: derive(-system-background, +15%);          /* vertical & horizontal grid lines */
+    -fx-border-width: 0 0 0 1;       /* keep only bottom + right borders */
+    -fx-border-insets: 0;
+    -fx-padding: 0 4 0 4;            /* optional: keeps text from touching */
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-border-color: derive(-system-background, +15%);
+    -fx-border-width: 0 0 0 1;
+}

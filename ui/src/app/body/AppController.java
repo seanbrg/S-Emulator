@@ -1,12 +1,14 @@
-package app;
+package app.body;
 
 import app.menuBar.MenuBarController;
 import app.programTab.ProgramTabController;
 import execute.Engine;
 import execute.EngineImpl;
+import execute.dto.InstructionDTO;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +19,7 @@ import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AppController {
@@ -26,7 +29,7 @@ public class AppController {
 
     // for pointing to the current opened tab:
     private Map<Tab, ProgramTabController> tabControllerMap;
-    private final ObjectProperty<ProgramTabController> currentTabController = new SimpleObjectProperty<>();
+    private ObjectProperty<ProgramTabController> currentTabController;
 
     private Scene scene;
     private Engine engine;
@@ -37,6 +40,7 @@ public class AppController {
             menuBarComponentController.setAppController(this);
         }
 
+        this.currentTabController = new SimpleObjectProperty<>();
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
@@ -67,8 +71,8 @@ public class AppController {
         if (scene == null) return;
 
         String cssPath = dark ?
-                "/app/resources/style-dark.css" :
-                "/app/resources/style-light.css";
+                "/app/resources/styles/style-dark.css" :
+                "/app/resources/styles/style-light.css";
 
         URL resource = getClass().getResource(cssPath);
         if (resource != null) {
@@ -102,7 +106,8 @@ public class AppController {
             ProgramTabController tabController = fxmlLoader.getController();
             tabController.setProgramName(programName);
             tabController.setMainController(this);
-            tabController.setEngine(this.engine);
+            List<InstructionDTO> list = engine.getInstructionsList(programName, 0);
+            tabController.setInstructionsList(FXCollections.observableList(list));
 
             this.programTabs.getTabs().add(programTab);
             this.tabControllerMap.put(programTab, tabController);

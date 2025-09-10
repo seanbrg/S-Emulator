@@ -1,5 +1,6 @@
 package execute;
 
+import execute.dto.InstructionDTO;
 import execute.dto.VariableDTO;
 import execute.components.ProgramManager;
 import execute.components.RunRecord;
@@ -129,6 +130,16 @@ public class EngineImpl implements Engine {
                 inputVarsMap.put(variableDTO.getName(), new Var(variableDTO));
             }
         }
+    }
+
+    @Override
+    public List<InstructionDTO> getInstructionsList(String programName, int degree) {
+        if (pm.isEmpty() || !pm.getProgramName().equals(programName)) {
+            return Collections.emptyList();
+        }
+        return pm.getProgram(degree).getInstructions().stream()
+                .map(InstructionDTO::new)
+                .toList();
     }
 
     @Override
