@@ -5,7 +5,6 @@ import execute.dto.InstructionDTO;
 import execute.dto.ProgramDTO;
 import execute.dto.VariableDTO;
 import execute.components.ProgramManager;
-import execute.components.RunRecord;
 import execute.components.XmlLoader;
 import logic.program.Program;
 import logic.variables.Var;
