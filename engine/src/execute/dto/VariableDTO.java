@@ -25,6 +25,11 @@ public class VariableDTO {
     public int getNum() { return num; }
     public long getValue() { return value; }
 
+    @Override
+    public String toString() {
+        return this.getName() + " = " + this.value;
+    }
+
     public String getName() {
         return switch (this.type) {
             case VariableType.INPUT -> "x" + num;

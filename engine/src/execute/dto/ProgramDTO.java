@@ -31,4 +31,9 @@ public class ProgramDTO {
         this.maxDegree = program.maxDegree();
     }
 
+    public String getProgramName() { return this.programName; }
+    public List<InstructionDTO> getInstructions() { return this.instructions; }
+    public Map<LabelDTO, InstructionDTO> getLabels() { return this.labels; }
+    public int getMaxDegree() { return this.maxDegree; }
+
 }

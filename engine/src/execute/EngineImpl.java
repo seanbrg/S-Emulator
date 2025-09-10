@@ -1,6 +1,8 @@
 package execute;
 
+import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
+import execute.dto.ProgramDTO;
 import execute.dto.VariableDTO;
 import execute.components.ProgramManager;
 import execute.components.RunRecord;
@@ -17,7 +19,7 @@ public class EngineImpl implements Engine {
     private Map<String, Variable> tempVarsMap;
     private Variable outputVar;
     private ProgramManager pm;
-    private final List<RunRecord> history;
+    private final List<HistoryDTO> history;
     private int runCounter;
     boolean printMode;
 
@@ -156,9 +158,9 @@ public class EngineImpl implements Engine {
             System.out.println("No runs recorded yet.");
             return;
         }
-        for (RunRecord r : history) {
+        for (HistoryDTO r : history) {
             System.out.printf("#%d | degree = %d | inputs = %s | y = %d | cycles = %d%n",
-                    r.getRunId(), r.getDegree(), r.getInputs(), r.getResultY(), r.getCycles());
+                    r.getNum(), r.getDegree(), r.getInputs().toString(), r.getOutput().getValue(), r.getCycles());
         }
     }
 
@@ -174,13 +176,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public long runProgramAndRecord(int degree, List<Long> inputs) {
-        long result = this.runProgram(degree);
+    public HistoryDTO runProgramAndRecord(int degree, List<VariableDTO> inputs) {
+        VariableDTO output = new VariableDTO(VariableType.OUTPUT,0, this.runProgram(degree)) ;
         int cycles = pm.getProgramCycles(degree);
 
         runCounter++;
-        history.add(new RunRecord(runCounter, degree, inputs, result, cycles));
-
+        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(degree));
+        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, output);
+        history.add(result);
         return result;
     }
 

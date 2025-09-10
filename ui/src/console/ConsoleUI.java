@@ -1,6 +1,7 @@
 package console;
 
 import execute.EngineImpl;
+import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -132,21 +133,21 @@ public class ConsoleUI {
                         .forEach(inputVars::add);
 
 
-                int diff = inputNumbers.size() - requiredInputVars.size();
+                /*int diff = inputNumbers.size() - requiredInputVars.size();
                 if (diff < 0) {
                     // inputNumbers is shorter -> pad with zeros
                     inputNumbers.addAll(Collections.nCopies(-diff, 0L));
                 } else if (diff > 0) {
                     // inputNumbers is longer -> trim
                     inputNumbers = inputNumbers.subList(0, requiredInputVars.size());
-                }
+                }*/
 
                 engine.loadInputs(inputVars);
-                long result = engine.runProgramAndRecord(degree, inputNumbers);
+                HistoryDTO result = engine.runProgramAndRecord(degree, inputVars);
                 System.out.println("Program ran successfully:");
                 engine.printProgram(degree);
 
-                System.out.printf("Output: y = %d%n", result);
+                System.out.printf("Output: y = %d%n", result.getOutput().getValue());
                 System.out.println("Variables:");
 
                 List<List<VariableDTO>> varByType = engine.getVarByType();

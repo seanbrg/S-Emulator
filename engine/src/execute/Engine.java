@@ -1,5 +1,6 @@
 package execute;
 
+import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.VariableDTO;
 import logic.labels.Label;
@@ -16,7 +17,7 @@ public interface Engine {
 
     long runProgram(int degree);
 
-    long runProgramAndRecord(int degree, List<Long> inputs);
+    HistoryDTO runProgramAndRecord(int degree, List<VariableDTO> inputs);
 
     void setPrintMode(boolean mode);
 
