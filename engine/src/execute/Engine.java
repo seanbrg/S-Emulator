@@ -42,4 +42,6 @@ public interface Engine {
     void loadInputs(List<VariableDTO> inputVars);
 
     List<InstructionDTO> getInstructionsList(String programName, int degree);
+
+    List<InstructionDTO> getInstrParents(InstructionDTO selectedInstr);
 }

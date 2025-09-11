@@ -26,7 +26,9 @@ public class VariableDTO {
     public long getValue() { return value; }
 
     @Override
-    public String toString() {
+    public String toString() { return this.getVarString(); }
+
+    public String getVarString() {
         return this.getName() + " = " + this.value;
     }
 

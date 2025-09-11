@@ -1,13 +1,10 @@
-package app.menuBar;
+package app.components.menuBar;
 
-import app.body.AppController;
+import app.components.body.AppController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -18,6 +15,7 @@ public class MenuBarController {
     @FXML private Menu menuRun;
     @FXML private Menu menuDebug;
 
+    @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
     @FXML private MenuItem menuItemFindComponent;
     @FXML private MenuItem menuItemExpand;
@@ -25,8 +23,6 @@ public class MenuBarController {
     @FXML private MenuItem menuItemThemeDark;
 
     @FXML private ProgressBar progressBar;
-    @FXML private Button buttonRun;
-    @FXML private Button buttonDebug;
 
     private Scene scene;
 
@@ -40,22 +36,9 @@ public class MenuBarController {
         menuItemExpand.setOnAction(event -> handleExpand());
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
-
-        buttonRun.setOnAction(event -> handleRun());
-        buttonDebug.setOnAction(event -> handleDebug());
-
-        Platform.runLater(() -> {
-            buttonRun.disableProperty().bind(
-                    mainController.currentTabControllerProperty().isNull()
-            );
-
-            buttonDebug.disableProperty().bind(
-                    mainController.currentTabControllerProperty().isNull()
-            );
-        });
     }
 
-    public void setAppController(AppController controller) { this.mainController = controller; }
+    public void setMainController(AppController mainController) { this.mainController = mainController; }
 
     public void setScene(Scene scene) { this.scene = scene; }
 
@@ -71,21 +54,10 @@ public class MenuBarController {
         if (selectedFile != null) mainController.processFile(selectedFile.getPath());
     }
 
-    private void handleRun() {
-        // TODO: Implement run functionality
-    }
-
-    private void handleDebug() {
-        // TODO: Implement debug functionality
-    }
-
     private void handleFindComponent() {
         // TODO: Implement find component functionality
     }
 
-    private void handleExpand() {
-        // TODO: Implement expand functionality
-    }
 
     private void handleThemeLight() {
         mainController.switchTheme(false);
@@ -93,5 +65,9 @@ public class MenuBarController {
 
     private void handleThemeDark() {
         mainController.switchTheme(true);
+    }
+
+    private void handleExpand() {
+        //TODO: handle expand through menu
     }
 }

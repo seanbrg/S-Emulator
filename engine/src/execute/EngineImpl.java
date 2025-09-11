@@ -144,6 +144,19 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public List<InstructionDTO> getInstrParents(InstructionDTO selectedInstr) {
+        List<InstructionDTO> result = new ArrayList<>();
+        InstructionDTO currentInstr = selectedInstr;
+
+        while (currentInstr != null) {
+            result.add(currentInstr);
+            currentInstr = selectedInstr.getParent();
+        }
+
+        return result;
+    }
+
+    @Override
     public void printProgram(int degree) {
         if (pm.isEmpty()) {
             System.out.println("No program loaded.");

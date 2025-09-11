@@ -1,6 +1,6 @@
 package app;
 
-import app.body.AppController;
+import app.components.body.AppController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("/app/body/body.fxml");
+        URL url = getClass().getResource("/app/components/body/body.fxml");
         fxmlLoader.setLocation(url);
         Parent root = fxmlLoader.load(url.openStream());
         AppController controller = fxmlLoader.getController();

@@ -1,6 +1,6 @@
-package app.programTab;
+package app.components.programTab;
 
-import app.body.AppController;
+import app.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -40,7 +40,6 @@ public class ProgramTabController {
         });
 
         setupColumnLabel();
-
         setupColumnInstruction();
         setupColumnType();
         setupColumnNum();
@@ -171,7 +170,6 @@ public class ProgramTabController {
         }
     }
 
-
     public void setMainController(AppController mainController) { this.mainController = mainController; }
 
     public void setProgramName(String programName) {
@@ -186,4 +184,8 @@ public class ProgramTabController {
     }
 
     public List<InstructionDTO> getInstructionsList() { return instructions.get(); }
+
+    public ReadOnlyObjectProperty<InstructionDTO> selectedInstructionProperty() {
+        return programTable.getSelectionModel().selectedItemProperty();
+    }
 }

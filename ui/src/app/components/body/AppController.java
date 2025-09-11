@@ -1,7 +1,10 @@
-package app.body;
+package app.components.body;
 
-import app.menuBar.MenuBarController;
-import app.programTab.ProgramTabController;
+import app.components.instructionHistory.InstructionHistoryController;
+import app.components.menuBar.MenuBarController;
+import app.components.programTab.ProgramTabController;
+import app.components.runHistory.RunHistoryController;
+import app.components.runWindow.RunWindowController;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.InstructionDTO;
@@ -14,6 +17,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -26,6 +31,12 @@ public class AppController {
     @FXML private HBox menuBarComponent;
     @FXML private MenuBarController menuBarComponentController;
     @FXML private TabPane programTabs;
+    @FXML private TableView runHistory;
+    @FXML private RunHistoryController runHistoryController;
+    @FXML private TableView instructionHistory;
+    @FXML private InstructionHistoryController instructionHistoryController;
+    @FXML private BorderPane runWindow;
+    @FXML private RunWindowController runWindowController;
 
     // for pointing to the current opened tab:
     private Map<Tab, ProgramTabController> tabControllerMap;
@@ -36,15 +47,16 @@ public class AppController {
 
     @FXML
     public void initialize() {
-        if (menuBarComponentController != null) {
-            menuBarComponentController.setAppController(this);
-        }
-
         this.currentTabController = new SimpleObjectProperty<>();
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
         engine.setPrintMode(false);
+
+        runWindowController.setMainController(this);
+        menuBarComponentController.setMainController(this);
+        runHistoryController.setMainController(this);
+        instructionHistoryController.setMainController(this);
 
         // whenever selection changes, update the currentTabController
         programTabs.getSelectionModel()
@@ -99,7 +111,7 @@ public class AppController {
     private void addProgramTab(String programName) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            URL url = getClass().getResource("/app/programTab/programTab.fxml");
+            URL url = getClass().getResource("/app/components/programTab/programTab.fxml");
             fxmlLoader.setLocation(url);
             Tab programTab = fxmlLoader.load();
 
@@ -116,5 +128,9 @@ public class AppController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
+        return this.engine.getInstrParents(selectedInstr);
     }
 }
