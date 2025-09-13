@@ -20,12 +20,16 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_FAILED;
+import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_SUCCEEDED;
 
 public class AppController {
     @FXML private HBox menuBarComponent;
@@ -93,6 +97,7 @@ public class AppController {
         }
     }
 
+    /*
     @FXML
     public void processFile(String selectedFilePath) {
         boolean result = engine.loadFromXML(selectedFilePath);
@@ -106,6 +111,52 @@ public class AppController {
         } else {
             System.out.println("Failed to load program from: " + selectedFilePath);
         }
+    }
+    */
+
+    @FXML
+    public Task<String> processFile(String selectedFilePath) {
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() {
+                boolean result = engine.loadFromXML(selectedFilePath);
+                if (!result) return null;
+                return engine.getProgramName();
+            }
+        };
+
+        // Use addEventHandler (doesn't get overwritten elsewhere)
+        task.addEventHandler(WORKER_STATE_SUCCEEDED, e -> {
+            String programName = task.getValue();
+            if (programName != null) {
+                addProgramTab(programName);  // runs on FX thread (handler already on JAT)
+            } else {
+                System.out.println("Failed to load program from: " + selectedFilePath);
+            }
+        });
+        task.addEventHandler(WORKER_STATE_FAILED, e -> {
+            System.out.println("Failed to load program (exception): " + selectedFilePath);
+            if (task.getException() != null) task.getException().printStackTrace();
+        });
+
+        Thread t = new Thread(task, "load-xml-task");
+        t.setDaemon(true);
+        t.start();
+        return task;
+    }
+
+    public Task<String> createLoadTask(String filePath) {
+        return new Task<>() {
+            @Override protected String call() {
+                boolean ok = engine.loadFromXML(filePath);
+                return ok ? engine.getProgramName() : null;
+            }
+        };
+    }
+
+    public void newProgram(String programName) {
+        this.programTabs.getTabs().clear();
+        addProgramTab(programName);
     }
 
     private void addProgramTab(String programName) {
