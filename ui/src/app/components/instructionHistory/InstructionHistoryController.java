@@ -158,20 +158,22 @@ public class InstructionHistoryController {
 
     private void autoResizeColumns(TableView<?> table) {
         for (TableColumn<?, ?> column : table.getColumns()) {
-            Text t = new Text(column.getText()); // start with header text
-            double max = t.getLayoutBounds().getWidth();
+            if (!column.equals(columnInstruction)) {
+                Text t = new Text(column.getText()); // start with header text
+                double max = t.getLayoutBounds().getWidth();
 
-            for (int i = 0; i < table.getItems().size(); i++) {
-                if (column.getCellData(i) != null) {
-                    t = new Text(column.getCellData(i).toString());
-                    double calcwidth = t.getLayoutBounds().getWidth();
-                    if (calcwidth > max) {
-                        max = calcwidth;
+                for (int i = 0; i < table.getItems().size(); i++) {
+                    if (column.getCellData(i) != null) {
+                        t = new Text(column.getCellData(i).toString());
+                        double calcwidth = t.getLayoutBounds().getWidth();
+                        if (calcwidth > max) {
+                            max = calcwidth;
+                        }
                     }
                 }
-            }
 
-            column.setPrefWidth(max + 5);
+                column.setPrefWidth(max + 5);
+            }
         }
     }
 

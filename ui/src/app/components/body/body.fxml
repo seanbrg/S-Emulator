@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.body.AppController">
+   <content>
+      <BorderPane minHeight="-Infinity" minWidth="520.0" prefHeight="650.0" prefWidth="1000.0">
+         <top>
+            <fx:include fx:id="menuBarComponent" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../menuBar/menuBar.fxml" />
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.5961538461538461" maxHeight="Infinity" maxWidth="Infinity" pickOnBounds="false" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                  <SplitPane dividerPositions="0.6623" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                    <items>
+                        <TabPane fx:id="programTabs" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" />
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <fx:include fx:id="instructionHistory" maxHeight="Infinity" maxWidth="Infinity" source="../instructionHistory/instructionHistory.fxml" />
+                           </center>
+                           <top>
+                              <Label text="Expanded Instruction History" BorderPane.alignment="CENTER" />
+                           </top>
+                        </BorderPane>
+                    </items>
+                  </SplitPane>
+                  <SplitPane dividerPositions="0.6623" maxHeight="Infinity" maxWidth="Infinity" orientation="VERTICAL">
+                    <items>
+                        <fx:include fx:id="runWindow" maxHeight="Infinity" maxWidth="Infinity" source="../runWindow/runWindow.fxml" />
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <fx:include fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" source="../runHistory/runHistory.fxml" />
+                           </center>
+                           <top>
+                              <Label text="Previous Runs Statistics" BorderPane.alignment="CENTER" />
+                           </top>
+                        </BorderPane>
+                    </items>
+                  </SplitPane>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </content>
+</ScrollPane>
