@@ -8,10 +8,15 @@ import app.components.runWindow.RunWindowController;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.InstructionDTO;
+import execute.dto.VariableDTO;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -46,6 +51,8 @@ public class AppController {
     private Map<Tab, ProgramTabController> tabControllerMap;
     private ObjectProperty<ProgramTabController> currentTabController;
 
+    private final ListProperty<VariableDTO> currentProgramInputs =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private Scene scene;
     private Engine engine;
 
@@ -71,6 +78,8 @@ public class AppController {
                 currentTabController.set(null);
             }
         });
+
+        currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
     }
 
     public void setScene(Scene scene) {
@@ -129,6 +138,7 @@ public class AppController {
             this.programTabs.getTabs().add(programTab);
             this.tabControllerMap.put(programTab, tabController);
             this.currentTabControllerProperty().set(tabController);
+            refreshInputs();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,5 +147,13 @@ public class AppController {
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
         return this.engine.getInstrParents(selectedInstr);
+    }
+
+    public ListProperty<VariableDTO> currentProgramInputsProperty() {
+        return currentProgramInputs;
+    }
+
+    private void refreshInputs() {
+        currentProgramInputs.setAll(engine.getInputs()); // or get by program name if needed
     }
 }

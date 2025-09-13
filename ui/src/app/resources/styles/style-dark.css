@@ -518,3 +518,47 @@
     -fx-background-insets: 0;
     -fx-background-radius: 6;
 }
+
+/* === ListView Dark Theme — mimic TableView === */
+.list-view {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-control-inner-background: derive(-system-background, -8%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.list-cell {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-text-fill: white;
+    /* mimic table grid lines as dividers */
+    -fx-border-color: derive(-system-background, +15%);
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0 4 0 4;
+}
+
+.list-cell:odd {
+    -fx-background-color: derive(-system-background, -12%);
+}
+
+.list-cell:hover {
+    -fx-background-color: derive(-system-background, -18%);
+}
+
+.list-cell:selected {
+    -fx-background-color: derive(-system-background, -25%);
+    -fx-text-fill: white;
+}
+
+/* Placeholder message ("No content in list") */
+.list-view .placeholder .label {
+    -fx-text-fill: rgba(255,255,255,0.6);
+}
+
+/* Optional: remove bright focus ring to match your tab styling */
+.list-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

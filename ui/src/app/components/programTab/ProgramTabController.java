@@ -2,6 +2,7 @@ package app.components.programTab;
 
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
+import execute.dto.VariableDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -188,4 +189,5 @@ public class ProgramTabController {
     public ReadOnlyObjectProperty<InstructionDTO> selectedInstructionProperty() {
         return programTable.getSelectionModel().selectedItemProperty();
     }
+
 }
