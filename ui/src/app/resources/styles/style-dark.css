@@ -491,3 +491,30 @@
     -fx-border-color: derive(-system-background, +15%);
     -fx-border-width: 0 0 0 1;
 }
+
+/* Global dark progress bar */
+.progress-bar {
+    -fx-background-color: transparent; /* no outer box */
+}
+
+.progress-bar > .track {
+    -fx-background-color: #1f2937;     /* dark background */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: #374151;         /* subtle outline */
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-accent;  /* keep default blue */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+
+/* Indeterminate keeps same blue and shape */
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: -fx-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}

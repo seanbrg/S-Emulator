@@ -97,59 +97,13 @@ public class AppController {
         }
     }
 
-    /*
-    @FXML
-    public void processFile(String selectedFilePath) {
-        boolean result = engine.loadFromXML(selectedFilePath);
-
-        String programName = engine.getProgramName();
-        int maxDegree = engine.maxDegree();
-        if (result && programName != null) {
-            Platform.runLater(() -> {
-                addProgramTab(programName);
-            });
-        } else {
-            System.out.println("Failed to load program from: " + selectedFilePath);
-        }
-    }
-    */
-
-    @FXML
-    public Task<String> processFile(String selectedFilePath) {
-        Task<String> task = new Task<>() {
-            @Override
-            protected String call() {
-                boolean result = engine.loadFromXML(selectedFilePath);
-                if (!result) return null;
-                return engine.getProgramName();
-            }
-        };
-
-        // Use addEventHandler (doesn't get overwritten elsewhere)
-        task.addEventHandler(WORKER_STATE_SUCCEEDED, e -> {
-            String programName = task.getValue();
-            if (programName != null) {
-                addProgramTab(programName);  // runs on FX thread (handler already on JAT)
-            } else {
-                System.out.println("Failed to load program from: " + selectedFilePath);
-            }
-        });
-        task.addEventHandler(WORKER_STATE_FAILED, e -> {
-            System.out.println("Failed to load program (exception): " + selectedFilePath);
-            if (task.getException() != null) task.getException().printStackTrace();
-        });
-
-        Thread t = new Thread(task, "load-xml-task");
-        t.setDaemon(true);
-        t.start();
-        return task;
-    }
-
     public Task<String> createLoadTask(String filePath) {
         return new Task<>() {
             @Override protected String call() {
-                boolean ok = engine.loadFromXML(filePath);
-                return ok ? engine.getProgramName() : null;
+                if (!engine.loadFromXML(filePath)) {
+                    throw new RuntimeException("Load failed: " + filePath);
+                }
+                return engine.getProgramName();
             }
         };
     }
