@@ -3,7 +3,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<TableView fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="app.components.runHistory.RunHistoryController">
+<TableView fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runHistory.RunHistoryController">
     <columns>
         <TableColumn fx:id="columnNum" prefWidth="75.0" text="Num" />
         <TableColumn fx:id="columnDegree" prefWidth="75.0" text="Degree" />

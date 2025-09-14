@@ -437,3 +437,19 @@
     -fx-background-insets: 0;
     -fx-background-radius: 6;
 }
+
+
+/* Variable column: center text, no per-cell borders (no horizontal lines) */
+.table-view .table-cell.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;           /* removes those row lines */
+    -fx-border-color: transparent; /* just in case */
+}
+
+/* Header for the var column: center, no left line.
+   If you want a baseline under the header, set border-width to 0 0 1 0 instead. */
+.table-view .column-header.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}

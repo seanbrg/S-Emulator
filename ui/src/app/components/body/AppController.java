@@ -61,7 +61,7 @@ public class AppController {
         this.programTabs.getTabs().clear();
         this.programCycles = new SimpleIntegerProperty(0);
 
-        engine.setPrintMode(true);
+        engine.setPrintMode(false);
         runWindowController.setMainController(this);
         menuBarComponentController.setMainController(this);
         runHistoryController.setMainController(this);

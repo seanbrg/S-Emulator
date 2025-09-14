@@ -76,6 +76,10 @@ public class RunWindowController {
         varColumn.setCellValueFactory(cd -> new ReadOnlyStringWrapper(cd.getValue().getName()));
         valueColumn.setCellValueFactory(cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getValue()));
 
+        // align bottom-center and tag this column for CSS
+        varColumn.getStyleClass().add("var-col");   // tag for CSS
+        varColumn.setStyle("-fx-alignment: CENTER;"); // exact middle (both axes)
+
         // ListView <- outputVariables
         resultsList.itemsProperty().bind(outputVariables);
         resultsList.setCellFactory(lv -> new ListCell<>() {
