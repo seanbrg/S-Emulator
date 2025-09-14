@@ -20,6 +20,25 @@ public class VariableDTO {
         this.value = var.getValue();
     }
 
+    public VariableDTO(String name, long newValue) {
+        switch (name.charAt(0)) {
+            case 'x' -> {
+                this.type = VariableType.INPUT;
+                this.num = Integer.parseInt(name.substring(1));
+            }
+            case 'y' -> {
+                this.type = VariableType.OUTPUT;
+                this.num = 0;
+            }
+            case 'z' -> {
+                this.type = VariableType.TEMP;
+                this.num = Integer.parseInt(name.substring(1));
+            }
+            default -> throw new IllegalArgumentException("Invalid variable name: " + name);
+        }
+        this.value = newValue;
+    }
+
 
     public VariableType getType() { return type; }
     public int getNum() { return num; }

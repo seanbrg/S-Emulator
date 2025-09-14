@@ -15,9 +15,9 @@ public interface Engine {
 
     void printProgram(int degree);
 
-    long runProgram(int degree);
+    long runProgram(String programName, int degree);
 
-    HistoryDTO runProgramAndRecord(int degree, List<VariableDTO> inputs);
+    HistoryDTO runProgramAndRecord(String programName, int degree, List<VariableDTO> inputs);
 
     void setPrintMode(boolean mode);
 

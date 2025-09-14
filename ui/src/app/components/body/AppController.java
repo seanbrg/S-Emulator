@@ -7,16 +7,13 @@ import app.components.runHistory.RunHistoryController;
 import app.components.runWindow.RunWindowController;
 import execute.Engine;
 import execute.EngineImpl;
+import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.VariableDTO;
-import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -33,9 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_FAILED;
-import static javafx.concurrent.WorkerStateEvent.WORKER_STATE_SUCCEEDED;
-
 public class AppController {
     @FXML private HBox menuBarComponent;
     @FXML private MenuBarController menuBarComponentController;
@@ -51,8 +45,9 @@ public class AppController {
     private Map<Tab, ProgramTabController> tabControllerMap;
     private ObjectProperty<ProgramTabController> currentTabController;
 
-    private final ListProperty<VariableDTO> currentProgramInputs =
-            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ListProperty<VariableDTO> currentRawProgramInputs;
+    private ListProperty<VariableDTO> currentActualProgramInputs;
+    private IntegerProperty programCycles;
     private Scene scene;
     private Engine engine;
 
@@ -60,10 +55,13 @@ public class AppController {
     public void initialize() {
         this.currentTabController = new SimpleObjectProperty<>();
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
+        this.currentRawProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.currentActualProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
-        engine.setPrintMode(false);
+        this.programCycles = new SimpleIntegerProperty(0);
 
+        engine.setPrintMode(true);
         runWindowController.setMainController(this);
         menuBarComponentController.setMainController(this);
         runHistoryController.setMainController(this);
@@ -80,6 +78,33 @@ public class AppController {
         });
 
         currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
+        Bindings.bindContent(currentActualProgramInputs, runWindowController.actualInputVariablesProperty());
+
+        runWindowController.runningProperty().addListener((obs, was, is) -> {
+            if (is) {
+                runProgram();
+                runWindowController.runningProperty().set(false); // ready for next run
+            }
+        });
+    }
+
+    private void runProgram() {
+        ProgramTabController tabController = currentTabController.get();
+        if (tabController == null) return;
+
+        String programName = tabController.getProgramName();
+        if (programName == null || programName.isEmpty()) return;
+
+        int degree = tabController.getCurrentDegree();
+
+        List<VariableDTO> inputs = currentActualProgramInputs.get();
+        System.out.println(inputs.stream().map(v -> v.getName() + "=" + v.getValue()).toList());
+        HistoryDTO result = engine.runProgramAndRecord(programName, degree, inputs);
+        if (result == null) throw new RuntimeException("Run failed for program: " + programName);
+
+        programCycles.set(result.getCycles());
+        runWindowController.setOutputVariables(List.of(result.getOutput()));
+        runHistoryController.addRunHistory(result);
     }
 
     public void setScene(Scene scene) {
@@ -117,12 +142,12 @@ public class AppController {
         };
     }
 
-    public void newProgram(String programName) {
+    public void newProgram(String programName, int degree) {
         this.programTabs.getTabs().clear();
-        addProgramTab(programName);
+        addProgramTab(programName, degree);
     }
 
-    private void addProgramTab(String programName) {
+    private void addProgramTab(String programName, int degree) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             URL url = getClass().getResource("/app/components/programTab/programTab.fxml");
@@ -130,7 +155,7 @@ public class AppController {
             Tab programTab = fxmlLoader.load();
 
             ProgramTabController tabController = fxmlLoader.getController();
-            tabController.setProgramName(programName);
+            tabController.setProgram(programName, degree);
             tabController.setMainController(this);
             List<InstructionDTO> list = engine.getInstructionsList(programName, 0);
             tabController.setInstructionsList(FXCollections.observableList(list));
@@ -149,11 +174,15 @@ public class AppController {
         return this.engine.getInstrParents(selectedInstr);
     }
 
-    public ListProperty<VariableDTO> currentProgramInputsProperty() {
-        return currentProgramInputs;
+    public ListProperty<VariableDTO> currentRawProgramInputsProperty() {
+        return currentRawProgramInputs;
     }
 
     private void refreshInputs() {
-        currentProgramInputs.setAll(engine.getInputs()); // or get by program name if needed
+        currentRawProgramInputs.setAll(engine.getInputs()); // or get by program name if needed
+    }
+
+    public IntegerProperty runCyclesProperty() {
+        return programCycles;
     }
 }

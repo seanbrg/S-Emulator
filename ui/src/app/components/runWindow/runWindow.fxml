@@ -61,12 +61,12 @@
                         </Tooltip>
                      </tooltip>
                   </Button>
-                  <Label text="Cycles:">
+                  <Label fx:id="cyclesLabel" text="Cycles:">
                      <HBox.margin>
                         <Insets left="20.0" top="20.0" />
                      </HBox.margin>
                   </Label>
-                  <Label text="Current Step:">
+                  <Label fx:id="currentStepsLabel" text="Current Step:">
                      <HBox.margin>
                         <Insets left="20.0" top="20.0" />
                      </HBox.margin>

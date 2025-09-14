@@ -2,7 +2,6 @@ package app.components.programTab;
 
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
-import execute.dto.VariableDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -28,6 +27,7 @@ public class ProgramTabController {
     // TODO: add breakpoint column
 
     private String programName;
+    int degree;
     private ListProperty<InstructionDTO> instructions;
 
     @FXML
@@ -173,9 +173,10 @@ public class ProgramTabController {
 
     public void setMainController(AppController mainController) { this.mainController = mainController; }
 
-    public void setProgramName(String programName) {
+    public void setProgram(String programName, int degree) {
         this.programName = programName;
-        this.programTab.setText(this.programName);
+        this.degree = degree;
+        this.programTab.setText(this.programName + " (" + this.degree + ")");
     }
 
     public Tab getTab() { return programTab; }
@@ -190,4 +191,11 @@ public class ProgramTabController {
         return programTable.getSelectionModel().selectedItemProperty();
     }
 
+    public String getProgramName() {
+        return programName;
+    }
+
+    public int getCurrentDegree() {
+        return degree;
+    }
 }

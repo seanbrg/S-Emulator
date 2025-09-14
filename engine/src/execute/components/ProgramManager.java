@@ -103,8 +103,10 @@ public class ProgramManager {
         }
     }
 
-    public void runProgram(int degree) {
+    public void runProgram(String programName, int degree) {
         assert 0 <= degree && degree <= maxDegree;
+        assert !programExpansions.isEmpty() && programExpansions.get(0).getName().equals(programName);
+
         if (!programExpansions.isEmpty()) {
             if (programExpansions.size() <= degree) {
                 this.expand(degree);

@@ -177,24 +177,30 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public long runProgram(int degree) {
+    public long runProgram(String programName, int degree) {
         outputVar.setValue(0);
         tempVarsMap.values()
                 .stream()
                 .filter(Objects::nonNull)
                 .forEach(v -> v.setValue(0));
-        pm.runProgram(degree);
+        pm.runProgram(programName, degree);
         return outputVar.getValue();
     }
 
     @Override
-    public HistoryDTO runProgramAndRecord(int degree, List<VariableDTO> inputs) {
-        VariableDTO output = new VariableDTO(VariableType.OUTPUT,0, this.runProgram(degree)) ;
+    public HistoryDTO runProgramAndRecord(String programName, int degree, List<VariableDTO> inputs) {
+        loadInputs(inputs);
+        VariableDTO output = new VariableDTO(VariableType.OUTPUT,0, this.runProgram(programName, degree)) ;
         int cycles = pm.getProgramCycles(degree);
 
         runCounter++;
         ProgramDTO programDTO = new ProgramDTO(pm.getProgram(degree));
         HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, output);
+
+        if (printMode) {
+            System.out.printf("Run #%d complete: y = %d, cycles = %d%n", runCounter, output.getValue(), cycles);
+        }
+
         history.add(result);
         return result;
     }

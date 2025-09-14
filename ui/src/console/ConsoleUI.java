@@ -143,7 +143,7 @@ public class ConsoleUI {
                 }*/
 
                 engine.loadInputs(inputVars);
-                HistoryDTO result = engine.runProgramAndRecord(degree, inputVars);
+                HistoryDTO result = engine.runProgramAndRecord(engine.getProgramName(), degree, inputVars);
                 System.out.println("Program ran successfully:");
                 engine.printProgram(degree);
 

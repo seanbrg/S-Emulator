@@ -33,10 +33,17 @@ public class RunHistoryController {
         this.historyList = new SimpleListProperty<>(FXCollections.observableArrayList());
         runHistory.itemsProperty().bind(historyList);
 
-        runHistory.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        runHistory.getItems().addListener((ListChangeListener<Object>) c -> {
-            autoResizeColumns(runHistory);
-        });
+        runHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        runHistory.getColumns().setAll(columnNum, columnDegree, columnInputs, columnCycles, columnOutput);
+
+        fitColumns();
+        runHistory.widthProperty().addListener((o, a, b) -> fitColumns());
+        runHistory.getItems().addListener(
+                (javafx.collections.ListChangeListener<? super HistoryDTO>) c ->
+                        javafx.application.Platform.runLater(this::fitColumns)
+        );
+
 
         setupColumnNum();
         setupColumnDegree();
@@ -100,7 +107,7 @@ public class RunHistoryController {
         columnInputs.setCellValueFactory
                 (cd -> new ReadOnlyStringWrapper(cd.getValue().getInputs().toString()));
 
-        columnOutput.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
+        columnInputs.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
             private final Tooltip tooltip = new Tooltip();
 
             @Override
@@ -116,6 +123,7 @@ public class RunHistoryController {
                     tooltip.setShowDelay(Duration.millis(500));
                     setTooltip(tooltip);
                 }
+                setAlignment(Pos.CENTER);
             }
         });
     }
@@ -151,6 +159,8 @@ public class RunHistoryController {
                 (cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getNum()));
 
         columnNum.setCellFactory(col -> new TableCell<HistoryDTO, Integer>() {
+            private final Tooltip tooltip = new Tooltip();
+
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
@@ -159,32 +169,58 @@ public class RunHistoryController {
                     setTooltip(null);
                 } else {
                     setText(item.toString());
+                    tooltip.setText("Num: " + item);
+                    tooltip.setStyle("-fx-font-size: 13");
+                    tooltip.setShowDelay(Duration.millis(500));
+                    setTooltip(tooltip);
+
                 }
                 setAlignment(Pos.CENTER);
             }
         });
     }
 
-    private void autoResizeColumns(TableView<?> table) {
-        for (TableColumn<?, ?> column : table.getColumns()) {
-            Text t = new Text(column.getText()); // start with header text
-            double max = t.getLayoutBounds().getWidth();
+    private void fitColumns() {
+        double pad = 18;
 
-            for (int i = 0; i < table.getItems().size(); i++) {
-                if (column.getCellData(i) != null) {
-                    t = new Text(column.getCellData(i).toString());
-                    double calcwidth = t.getLayoutBounds().getWidth();
-                    if (calcwidth > max) {
-                        max = calcwidth;
-                    }
-                }
-            }
+        lockToContent(columnNum,     pad);
+        lockToContent(columnDegree,  pad);
+        lockToContent(columnCycles,  pad);
+        lockToContent(columnInputs,  pad);
 
-            column.setPrefWidth(max + 2);
-        }
+        // columnOutput flexes under CONSTRAINED policy
+        columnOutput.setResizable(true);
+        columnOutput.setMinWidth(0);
+        columnOutput.setPrefWidth(1);
+        columnOutput.setMaxWidth(Double.MAX_VALUE);
     }
+
+    private void lockToContent(TableColumn<?, ?> col, double pad) {
+        double w = headerAndCellsWidth(col) + pad;
+        col.setResizable(false);
+        col.setMinWidth(w);
+        col.setPrefWidth(w);
+        col.setMaxWidth(w);
+    }
+
+    private double headerAndCellsWidth(TableColumn<?, ?> col) {
+        double max = textW(col.getText());
+        for (int i = 0; i < runHistory.getItems().size(); i++) {
+            Object v = col.getCellData(i);
+            if (v != null) max = Math.max(max, textW(String.valueOf(v)));
+        }
+        return Math.ceil(max);
+    }
+
+    private double textW(String s) {
+        return new javafx.scene.text.Text(s == null ? "" : s).getLayoutBounds().getWidth();
+    }
+
 
     public void setMainController(AppController mainController) { this.mainController =  mainController; }
 
 
+    public void addRunHistory(HistoryDTO result) {
+        historyList.add(result);
+    }
 }

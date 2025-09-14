@@ -3,13 +3,15 @@ package app.components.runWindow;
 import app.components.body.AppController;
 import execute.dto.VariableDTO;
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RunWindowController {
     @FXML private AppController mainController;
@@ -19,20 +21,29 @@ public class RunWindowController {
     @FXML private ListView<VariableDTO> resultsList;
     @FXML private TableView<VariableDTO> inputsTable;
     @FXML private TableColumn<VariableDTO, String> varColumn;
-    @FXML private TableColumn<VariableDTO, Integer> valueColumn;
+    @FXML private TableColumn<VariableDTO, Long> valueColumn;
+    @FXML private Label cyclesLabel;
+    @FXML private Label currentStepsLabel;
 
 
     private ListProperty<VariableDTO> inputVariablesRaw;
-    private ListProperty<VariableDTO> inputVariables; // processed user inputs
-    private ListProperty<VariableDTO> outputVariables;
+    private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
+    private ReadOnlyListWrapper<VariableDTO> outputVariables;
+    private Map<String, Long> editedValues;
+    private BooleanProperty running;
+    private BooleanProperty debugging;
+
 
     @FXML
     public void initialize() {
         buttonRun.setOnAction(event -> handleRun());
         buttonDebug.setOnAction(event -> handleDebug());
         inputVariablesRaw = new SimpleListProperty<>();
-        inputVariables = new SimpleListProperty<>();
-        outputVariables = new SimpleListProperty<>();
+        ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+        outputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+        editedValues = new HashMap<>();
+        running = new SimpleBooleanProperty(false);
+        debugging = new SimpleBooleanProperty(false);
 
         Platform.runLater(() -> {
             buttonRun.disableProperty().bind(
@@ -42,6 +53,9 @@ public class RunWindowController {
             buttonDebug.disableProperty().bind(
                     mainController.currentTabControllerProperty().isNull()
             );
+
+            cyclesLabel.textProperty().bind(mainController.runCyclesProperty().asString("Cycles: %d"));
+
         });
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
@@ -54,10 +68,13 @@ public class RunWindowController {
         );
 
 
-        // TableView <- inputVariables
         inputsTable.itemsProperty().bind(inputVariablesRaw);
+        cyclesLabel.setVisible(false);
+        currentStepsLabel.visibleProperty().bind(debugging);
+
+        // TableView <- inputVariables
         varColumn.setCellValueFactory(cd -> new ReadOnlyStringWrapper(cd.getValue().getName()));
-        valueColumn.setCellValueFactory(cd -> new ReadOnlyObjectWrapper<Integer>((int) cd.getValue().getValue()));
+        valueColumn.setCellValueFactory(cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getValue()));
 
         // ListView <- outputVariables
         resultsList.itemsProperty().bind(outputVariables);
@@ -68,6 +85,50 @@ public class RunWindowController {
             }
         });
 
+        inputsTable.setEditable(true);
+        valueColumn.setEditable(true);
+
+        valueColumn.setCellFactory(col -> new TableCell<VariableDTO, Long>() {
+            private final TextField tf = new TextField();
+
+            {
+                // only digits
+                tf.setTextFormatter(new TextFormatter<String>(change ->
+                        change.getControlNewText().matches("\\d*") ? change : null
+                ));
+                // commit on Enter or focus loss
+                tf.setOnAction(e -> commit());
+                tf.focusedProperty().addListener((obs, was, is) -> { if (!is) commit(); });
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                tf.setPrefWidth(Double.MAX_VALUE);
+            }
+
+            private void commit() {
+                VariableDTO row = getTableRow() == null ? null : getTableRow().getItem();
+                if (row == null) return;
+                String s = tf.getText();
+                if (s == null || s.isEmpty()) {
+                    editedValues.remove(row.getName());
+                    return;
+                }
+                editedValues.put(row.getName(), Long.parseLong(s));
+            }
+
+            @Override protected void updateItem(Long item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
+                VariableDTO row = getTableRow() == null ? null : getTableRow().getItem();
+                Long shown = (row != null && editedValues.containsKey(row.getName()))
+                        ? editedValues.get(row.getName()) : item;
+                tf.setText(shown == null ? "" : String.valueOf(shown));
+                setGraphic(tf);
+            }
+        });
+
+
     }
 
     private void lockVarWidth() {
@@ -77,6 +138,7 @@ public class RunWindowController {
         varColumn.setMaxWidth(w);
         // valueColumn stays resizable (default) and, under CONSTRAINED policy, takes the remaining width
     }
+
 
     private double contentWidth(TableColumn<?, ?> col) {
         double max = textW(col.getText());
@@ -91,8 +153,38 @@ public class RunWindowController {
         return new Text(s == null ? "" : s).getLayoutBounds().getWidth();
     }
 
+    @FXML
     private void handleRun() {
-        // TODO: Implement run functionality
+        Platform.runLater(() -> {
+            cyclesLabel.setVisible(true);
+            rebuildInputsFromTable();
+            running.set(true);
+        });
+    }
+
+    public BooleanProperty runningProperty() {
+        return running;
+    };
+
+    public ReadOnlyListProperty<VariableDTO> actualInputVariablesProperty() {
+        return ActualInputVariables;
+    }
+
+    public ReadOnlyListProperty<VariableDTO> outputVariablesProperty() {
+        return outputVariables.getReadOnlyProperty();
+    }
+
+    private void rebuildInputsFromTable() {
+        var rebuilt = inputsTable.getItems().stream()
+                .map(v -> copyWithValue(v, editedValues.getOrDefault(v.getName(), v.getValue())))
+                .toList();
+        ActualInputVariables.clear();
+        ActualInputVariables.setAll(rebuilt);   // now SAFE (backing list is modifiable)
+    }
+
+    // adjust the constructor to your actual DTO shape
+    private VariableDTO copyWithValue(VariableDTO src, long newValue) {
+        return new VariableDTO(src.getName(), newValue);
     }
 
     private void handleDebug() {
@@ -102,6 +194,11 @@ public class RunWindowController {
     public void setMainController(AppController appController) {
         mainController = appController;
 
-        inputVariablesRaw.bind(mainController.currentProgramInputsProperty());
+        inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
+    }
+
+    public void setOutputVariables(List<VariableDTO> outputs) {
+        outputVariables.clear();
+        outputVariables.addAll(outputs);
     }
 }
