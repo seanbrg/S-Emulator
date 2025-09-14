@@ -1,4 +1,4 @@
-package app.components.runWindow;
+package app.components.runMenu;
 
 import app.components.body.AppController;
 import execute.dto.VariableDTO;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RunWindowController {
+public class RunMenuController {
     @FXML public VBox vBox;
     @FXML private AppController mainController;
 

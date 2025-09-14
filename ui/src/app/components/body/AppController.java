@@ -4,14 +4,13 @@ import app.components.instructionHistory.InstructionHistoryController;
 import app.components.menuBar.MenuBarController;
 import app.components.programTab.ProgramTabController;
 import app.components.runHistory.RunHistoryController;
-import app.components.runWindow.RunWindowController;
+import app.components.runMenu.RunMenuController;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.VariableDTO;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -38,8 +37,8 @@ public class AppController {
     @FXML private RunHistoryController runHistoryController;
     @FXML private TableView instructionHistory;
     @FXML private InstructionHistoryController instructionHistoryController;
-    @FXML private BorderPane runWindow;
-    @FXML private RunWindowController runWindowController;
+    @FXML private BorderPane runMenu;
+    @FXML private RunMenuController runMenuController;
 
     // for pointing to the current opened tab:
     private Map<Tab, ProgramTabController> tabControllerMap;
@@ -64,7 +63,7 @@ public class AppController {
         this.programCycles = new SimpleIntegerProperty(0);
 
         engine.setPrintMode(false);
-        runWindowController.setMainController(this);
+        runMenuController.setMainController(this);
         menuBarComponentController.setMainController(this);
         runHistoryController.setMainController(this);
         instructionHistoryController.setMainController(this);
@@ -80,12 +79,12 @@ public class AppController {
         });
 
         currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
-        Bindings.bindContent(currentActualProgramInputs, runWindowController.actualInputVariablesProperty());
+        Bindings.bindContent(currentActualProgramInputs, runMenuController.actualInputVariablesProperty());
 
-        runWindowController.runningProperty().addListener((obs, was, is) -> {
+        runMenuController.runningProperty().addListener((obs, was, is) -> {
             if (is) {
                 runProgram();
-                runWindowController.runningProperty().set(false); // ready for next run
+                runMenuController.runningProperty().set(false); // ready for next run
             }
         });
     }
@@ -104,7 +103,7 @@ public class AppController {
         if (result == null) throw new RuntimeException("Run failed for program: " + programName);
 
         programCycles.set(result.getCycles());
-        runWindowController.setOutputVariables(result.getOutputs());
+        runMenuController.setOutputVariables(result.getOutputs());
         runHistoryController.addRunHistory(result);
     }
 

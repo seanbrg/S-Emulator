@@ -30,7 +30,7 @@
                   </SplitPane>
                   <SplitPane dividerPositions="0.6623" maxHeight="Infinity" maxWidth="Infinity" orientation="VERTICAL">
                     <items>
-                        <fx:include fx:id="runWindow" maxHeight="Infinity" maxWidth="Infinity" source="../runWindow/runWindow.fxml" />
+                        <fx:include fx:id="runMenu" maxHeight="Infinity" maxWidth="Infinity" source="../runMenu/runMenu.fxml" />
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
                               <fx:include fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" source="../runHistory/runHistory.fxml" />
