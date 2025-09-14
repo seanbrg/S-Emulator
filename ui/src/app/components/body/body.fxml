@@ -10,7 +10,7 @@
    <content>
       <BorderPane minHeight="-Infinity" minWidth="520.0" prefHeight="650.0" prefWidth="1000.0">
          <top>
-            <fx:include fx:id="menuBarComponent" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../menuBar/menuBar.fxml" />
+            <fx:include fx:id="header" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../header/header.fxml" />
          </top>
          <center>
             <SplitPane dividerPositions="0.5961538461538461" maxHeight="Infinity" maxWidth="Infinity" pickOnBounds="false" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">

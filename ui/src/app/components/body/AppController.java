@@ -1,7 +1,7 @@
 package app.components.body;
 
 import app.components.instructionHistory.InstructionHistoryController;
-import app.components.menuBar.MenuBarController;
+import app.components.header.headerController;
 import app.components.programTab.ProgramTabController;
 import app.components.runHistory.RunHistoryController;
 import app.components.runMenu.RunMenuController;
@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AppController {
-    @FXML private HBox menuBarComponent;
-    @FXML private MenuBarController menuBarComponentController;
+    @FXML private HBox header;
+    @FXML private headerController headerController;
     @FXML private TabPane programTabs;
     @FXML private TableView runHistory;
     @FXML private RunHistoryController runHistoryController;
@@ -64,7 +64,7 @@ public class AppController {
 
         engine.setPrintMode(false);
         runMenuController.setMainController(this);
-        menuBarComponentController.setMainController(this);
+        headerController.setMainController(this);
         runHistoryController.setMainController(this);
         instructionHistoryController.setMainController(this);
 
@@ -109,7 +109,7 @@ public class AppController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        this.menuBarComponentController.setScene(scene);
+        this.headerController.setScene(scene);
     }
 
     public ObjectProperty<ProgramTabController> currentTabControllerProperty() {
