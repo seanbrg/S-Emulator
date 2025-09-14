@@ -100,7 +100,6 @@ public class AppController {
         int degree = tabController.getCurrentDegree();
 
         List<VariableDTO> inputs = currentActualProgramInputs.get();
-        System.out.println(inputs.stream().map(v -> v.getName() + "=" + v.getValue()).toList());
         HistoryDTO result = engine.runProgramAndRecord(programName, degree, inputs);
         if (result == null) throw new RuntimeException("Run failed for program: " + programName);
 
@@ -175,6 +174,10 @@ public class AppController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void expandProgram() {
+
     }
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {

@@ -135,6 +135,6 @@ public class MenuBarController {
     }
 
     private void handleExpand() {
-        //TODO: handle expand through menu
+        mainController.expandProgram();
     }
 }

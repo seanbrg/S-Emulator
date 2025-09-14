@@ -20,6 +20,7 @@ public class RunWindowController {
 
     @FXML private Button buttonRun;
     @FXML private Button buttonDebug;
+    @FXML private Button buttonExpand;
     @FXML private ListView<VariableDTO> resultsList;
     @FXML private TableView<VariableDTO> inputsTable;
     @FXML private TableColumn<VariableDTO, String> varColumn;
@@ -41,6 +42,7 @@ public class RunWindowController {
 
         buttonRun.setOnAction(event -> handleRun());
         buttonDebug.setOnAction(event -> handleDebug());
+        buttonExpand.setOnAction(event -> handleExpand());
         inputVariablesRaw = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
         outputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
@@ -123,6 +125,8 @@ public class RunWindowController {
 
     }
 
+    private void handleExpand() { mainController.expandProgram(); }
+
     public void setMainController(AppController appController) {
         mainController = appController;
 
@@ -133,6 +137,10 @@ public class RunWindowController {
         );
 
         buttonDebug.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
+        buttonExpand.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
 

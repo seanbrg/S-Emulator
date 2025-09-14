@@ -458,3 +458,14 @@
     /* pick one of these two lines: */
     -fx-background-color: derive(-system-background, -13%);                 /* fixed hex (a bit darker) */
 }
+
+/* Light-mode tooltip */
+.tooltip {
+    -fx-background-color: #ffffff;      /* bg */
+    -fx-text-fill: #111827;             /* text (very dark gray) */
+    -fx-border-color: #e5e7eb;          /* subtle border */
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 10;
+    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.15), 8, 0, 0, 2);
+}
