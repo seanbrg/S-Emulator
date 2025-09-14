@@ -181,12 +181,10 @@ public class RunHistoryController {
     }
 
     private void fitColumns() {
-        double pad = 18;
-
-        lockToContent(columnNum,     pad);
-        lockToContent(columnDegree,  pad);
-        lockToContent(columnCycles,  pad);
-        lockToContent(columnInputs,  pad);
+        lockToContent(columnNum,     1);
+        lockToContent(columnDegree,  1);
+        lockToContent(columnCycles,  1);
+        lockToContent(columnInputs,  70);
 
         // columnOutput flexes under CONSTRAINED policy
         columnOutput.setResizable(true);
