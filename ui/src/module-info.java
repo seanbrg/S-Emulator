@@ -10,6 +10,7 @@ module ui {
     opens app.components.header to javafx.fxml;
     opens app.components.instructionHistory to javafx.fxml;
     opens app.components.runMenu to javafx.fxml;
+    opens app.components.expandWindow to javafx.fxml;
 
     exports app to javafx.graphics, javafx.fxml;
     exports app.components.programTab to javafx.graphics, javafx.fxml;
@@ -18,4 +19,5 @@ module ui {
     exports app.components.body to engine, javafx.fxml, javafx.graphics;
     exports app.components.instructionHistory to javafx.fxml, javafx.graphics;
     exports app.components.runMenu to javafx.fxml, javafx.graphics;
+    exports app.components.expandWindow to javafx.fxml, javafx.graphics;
 }

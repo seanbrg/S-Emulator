@@ -1,5 +1,6 @@
 package app.components.body;
 
+import app.components.expandWindow.ExpandWindowController;
 import app.components.instructionHistory.InstructionHistoryController;
 import app.components.header.headerController;
 import app.components.programTab.ProgramTabController;
@@ -15,13 +16,18 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.concurrent.Task;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -176,8 +182,39 @@ public class AppController {
     }
 
     public void expandProgram() {
+        try {
+            FXMLLoader fx = new FXMLLoader(getClass().getResource(
+                    "/app/components/expandWindow/expandWindow.fxml"));
 
+            Parent root = fx.load();
+            ExpandWindowController c = fx.getController();
+
+            // give the window its max degree
+            int maxDegree = engine.maxDegree();      // existing API
+            c.setMaxExpansion(maxDegree);            // existing controller API
+
+            // show modally (main window disabled) and wait
+            Stage s = new Stage();
+            s.initOwner(scene.getWindow());
+            s.initModality(Modality.APPLICATION_MODAL);
+            s.setTitle("Choose Expansion Degree");
+            Scene dialogScene = new Scene(root);
+            dialogScene.getStylesheets().addAll(scene.getStylesheets()); // inherit theme
+            s.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+            s.setScene(dialogScene);
+            s.setResizable(false);
+            s.showAndWait();
+
+            // read the result (0 == cancelled)
+            int chosen = c.getResult();
+            if (chosen > 0) {
+                // TODO: use chosen (e.g., expand/compute with this degree)
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
+
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
         return this.engine.getInstrParents(selectedInstr);

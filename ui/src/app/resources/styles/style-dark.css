@@ -586,6 +586,14 @@
     -fx-border-color: derive(-system-background, -35%);
 }
 
+.text-field.console {
+    -fx-control-inner-background: derive(-system-background, -30%);  /* ~6–8% darker */
+    -fx-background-color: derive(-system-background, -30%);
+    -fx-text-fill: #e5e7eb;
+    -fx-border-color: derive(-system-background, -35%);
+}
+
+
 /* If you want a hair darker, swap to one of these: */
 /* #1c1e20   (~10% darker) */
 /* #191b1d   (~12% darker) */
@@ -594,4 +602,65 @@
 .darker-vbox {
     /* pick one of these two lines: */
     -fx-background-color: derive(-system-background, -20%);                 /* fixed hex (a bit darker) */
+}
+
+
+/* === Dark Spinner (gray, theme tokens) === */
+.spinner {
+    -fx-background-color: -secondary-system-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -separator;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.spinner:focused {
+    -fx-border-color: derive(-separator, 15%); /* subtle focus */
+}
+
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: -label-color;
+    -fx-prompt-text-fill: -secondary-label;
+    -fx-highlight-fill: derive(-secondary-system-background, -12%);
+    -fx-highlight-text-fill: -label-color;
+    -fx-padding: 6 8;
+}
+
+/* Arrow buttons (gray, no accent) */
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -secondary-system-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 6 6 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0 8;
+}
+.spinner .decrement-arrow-button {
+    -fx-background-radius: 6 0 0 6;
+}
+
+/* Hover / press */
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: derive(-secondary-system-background, 8%);
+}
+.spinner .increment-arrow-button:armed,
+.spinner .decrement-arrow-button:armed {
+    -fx-background-color: derive(-secondary-system-background, -8%);
+}
+
+/* Arrow glyph color */
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -label-color;
+}
+
+/* Disabled */
+.spinner:disabled,
+.spinner:disabled .text-field,
+.spinner:disabled .increment-arrow,
+.spinner:disabled .decrement-arrow {
+    -fx-opacity: 0.55;
 }
