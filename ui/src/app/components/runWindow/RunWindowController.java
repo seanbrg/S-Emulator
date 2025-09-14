@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RunWindowController {
+    @FXML public VBox vBox;
     @FXML private AppController mainController;
 
     @FXML private Button buttonRun;
@@ -22,8 +24,7 @@ public class RunWindowController {
     @FXML private TableView<VariableDTO> inputsTable;
     @FXML private TableColumn<VariableDTO, String> varColumn;
     @FXML private TableColumn<VariableDTO, Long> valueColumn;
-    @FXML private Label cyclesLabel;
-    @FXML private Label currentStepsLabel;
+    @FXML private TextArea console;
 
 
     private ListProperty<VariableDTO> inputVariablesRaw;
@@ -36,6 +37,8 @@ public class RunWindowController {
 
     @FXML
     public void initialize() {
+        vBox.getStyleClass().add("darker-vbox");
+
         buttonRun.setOnAction(event -> handleRun());
         buttonDebug.setOnAction(event -> handleDebug());
         inputVariablesRaw = new SimpleListProperty<>();
@@ -56,8 +59,6 @@ public class RunWindowController {
 
 
         inputsTable.itemsProperty().bind(inputVariablesRaw);
-        cyclesLabel.setVisible(false);
-        currentStepsLabel.visibleProperty().bind(debugging);
 
         // TableView <- inputVariables
         varColumn.setCellValueFactory(cd -> new ReadOnlyStringWrapper(cd.getValue().getName()));
@@ -135,13 +136,16 @@ public class RunWindowController {
                 mainController.currentTabControllerProperty().isNull()
         );
 
-        cyclesLabel.textProperty().bind(mainController.runCyclesProperty().asString("Cycles: %d"));
-
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
             outputVariables.clear();
             editedValues.clear();
+            clearLog();
         });
+
+        mainController.runCyclesProperty().addListener((o, oldV, newV) ->
+                log(newV + " cycles requested.")
+        );
     }
 
     private void lockVarWidth() {
@@ -169,7 +173,7 @@ public class RunWindowController {
     @FXML
     private void handleRun() {
         Platform.runLater(() -> {
-            cyclesLabel.setVisible(true);
+            clearLog();
             rebuildInputsFromTable();
             running.set(true);
         });
@@ -185,6 +189,17 @@ public class RunWindowController {
 
     public ReadOnlyListProperty<VariableDTO> outputVariablesProperty() {
         return outputVariables.getReadOnlyProperty();
+    }
+
+    public void log(String line) {
+        javafx.application.Platform.runLater(() -> {
+            console.appendText(line + System.lineSeparator());
+            console.positionCaret(console.getLength()); // auto-scroll
+        });
+    }
+
+    public void clearLog() {
+        javafx.application.Platform.runLater(() -> console.clear());
     }
 
     private void rebuildInputsFromTable() {

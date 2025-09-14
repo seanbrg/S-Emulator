@@ -17,12 +17,6 @@
               <MenuItem fx:id="menuItemLoad" mnemonicParsing="false" text="Load" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Run">
-               <items>
-                  <Menu fx:id="menuRun" mnemonicParsing="false" text="Run Program..." />
-                  <Menu fx:id="menuDebug" mnemonicParsing="false" text="Debug Program..." />
-               </items>
-          </Menu>
             <Menu mnemonicParsing="false" text="View">
               <items>
                 <MenuItem fx:id="menuItemFindComponent" mnemonicParsing="false" text="Find Component" />

@@ -577,3 +577,21 @@
     -fx-border-width: 0;
     -fx-border-color: transparent;
 }
+
+/* Slightly darker console bg */
+.text-area.console {
+    -fx-control-inner-background: derive(-system-background, -30%);  /* ~6–8% darker */
+    -fx-background-color: derive(-system-background, -30%);
+    -fx-text-fill: #e5e7eb;
+    -fx-border-color: derive(-system-background, -35%);
+}
+
+/* If you want a hair darker, swap to one of these: */
+/* #1c1e20   (~10% darker) */
+/* #191b1d   (~12% darker) */
+
+/* Slightly-darker panel for dark mode */
+.darker-vbox {
+    /* pick one of these two lines: */
+    -fx-background-color: derive(-system-background, -20%);                 /* fixed hex (a bit darker) */
+}

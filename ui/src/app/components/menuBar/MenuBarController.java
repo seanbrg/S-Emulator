@@ -26,9 +26,6 @@ import static javafx.concurrent.WorkerStateEvent.*;
 public class MenuBarController {
     @FXML private AppController mainController;
 
-    @FXML private Menu menuRun;
-    @FXML private Menu menuDebug;
-
     @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
     @FXML private MenuItem menuItemFindComponent;
@@ -41,9 +38,6 @@ public class MenuBarController {
 
     @FXML
     private void initialize() {
-        //menuRun.setOnAction(e -> handleRun());
-        //menuDebug.setOnAction(e -> handleDebug());
-
         menuItemLoad.setOnAction(event -> handleLoad());
         menuItemFindComponent.setOnAction(event -> handleFindComponent());
         menuItemExpand.setOnAction(event -> handleExpand());
