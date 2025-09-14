@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runWindow" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runWindow.RunWindowController">
+<BorderPane fx:id="runWindow" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runWindow.RunWindowController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <top>
@@ -23,7 +23,7 @@
                <children>
                   <BorderPane maxHeight="-Infinity" maxWidth="-Infinity">
                      <bottom>
-                        <TableView fx:id="inputsTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="230.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="inputsTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="260.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
@@ -40,7 +40,7 @@
                      <top>
                         <Label text="Input Variables" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
-                              <Insets left="20.0" top="10.0" />
+                              <Insets bottom="5.0" left="20.0" top="10.0" />
                            </BorderPane.margin>
                         </Label>
                      </top>
@@ -52,12 +52,12 @@
                      <top>
                         <Label text="Result Variables" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
-                              <Insets right="20.0" top="10.0" />
+                              <Insets bottom="5.0" right="20.0" top="10.0" />
                            </BorderPane.margin>
                         </Label>
                      </top>
                      <bottom>
-                        <ListView fx:id="resultsList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="230.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                        <ListView fx:id="resultsList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="260.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets bottom="20.0" right="15.0" />
                            </BorderPane.margin>
@@ -68,7 +68,7 @@
             </HBox>
          </top>
          <center>
-            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="114.0" prefRowCount="8" prefWidth="400.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
+            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefRowCount="8" prefWidth="400.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>

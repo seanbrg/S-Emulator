@@ -453,3 +453,8 @@
     -fx-border-width: 0;
     -fx-border-color: transparent;
 }
+
+.darker-vbox {
+    /* pick one of these two lines: */
+    -fx-background-color: derive(-system-background, -13%);                 /* fixed hex (a bit darker) */
+}

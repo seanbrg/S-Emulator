@@ -142,10 +142,6 @@ public class RunWindowController {
             editedValues.clear();
             clearLog();
         });
-
-        mainController.runCyclesProperty().addListener((o, oldV, newV) ->
-                log(newV + " cycles requested.")
-        );
     }
 
     private void lockVarWidth() {
@@ -176,6 +172,7 @@ public class RunWindowController {
             clearLog();
             rebuildInputsFromTable();
             running.set(true);
+            log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
 
