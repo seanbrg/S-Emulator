@@ -2,6 +2,7 @@ package app.components.instructionHistory;
 
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -41,6 +42,10 @@ public class InstructionHistoryController {
         instructionHistory.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         instructionHistory.getItems().addListener((ListChangeListener<Object>) c -> {
             autoResizeColumns(instructionHistory);
+        });
+
+        Platform.runLater(() -> {
+
         });
 
         setupColumnLabel();
@@ -155,7 +160,6 @@ public class InstructionHistoryController {
         });
     }
 
-
     private void autoResizeColumns(TableView<?> table) {
         for (TableColumn<?, ?> column : table.getColumns()) {
             if (!column.equals(columnInstruction)) {
@@ -192,6 +196,10 @@ public class InstructionHistoryController {
                     }
                 });
             }
+        });
+
+        this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
+            instrHistoryList.clear();
         });
     }
 

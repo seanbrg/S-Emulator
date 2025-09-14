@@ -171,8 +171,8 @@ public class EngineImpl implements Engine {
             return;
         }
         for (HistoryDTO r : history) {
-            System.out.printf("#%d | degree = %d | inputs = %s | y = %d | cycles = %d%n",
-                    r.getNum(), r.getDegree(), r.getInputs().toString(), r.getOutput().getValue(), r.getCycles());
+            System.out.printf("#%d | degree = %d | inputs = %s | outputs = %s | cycles = %d%n",
+                    r.getNum(), r.getDegree(), r.getInputs().toString(), r.getOutputs().getFirst().getValue(), r.getCycles());
         }
     }
 
@@ -190,15 +190,22 @@ public class EngineImpl implements Engine {
     @Override
     public HistoryDTO runProgramAndRecord(String programName, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
-        VariableDTO output = new VariableDTO(VariableType.OUTPUT,0, this.runProgram(programName, degree)) ;
+        this.runProgram(programName, degree);
+        List<VariableDTO> outputs = new ArrayList<>();
+        List<List<VariableDTO>> varsByType = this.getVarByType();
+        if (!varsByType.isEmpty()) {
+            outputs.addAll(varsByType.get(0)); // y
+            outputs.addAll(varsByType.get(1)); // x
+            outputs.addAll(varsByType.get(2)); // z
+        }
         int cycles = pm.getProgramCycles(degree);
 
         runCounter++;
         ProgramDTO programDTO = new ProgramDTO(pm.getProgram(degree));
-        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, output);
+        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, outputs);
 
         if (printMode) {
-            System.out.printf("Run #%d complete: y = %d, cycles = %d%n", runCounter, output.getValue(), cycles);
+            System.out.printf("Run #%d complete: outputs: %s, cycles = %d%n", runCounter, outputs.toString(), cycles);
         }
 
         history.add(result);

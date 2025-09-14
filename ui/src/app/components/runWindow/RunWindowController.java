@@ -45,19 +45,6 @@ public class RunWindowController {
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
 
-        Platform.runLater(() -> {
-            buttonRun.disableProperty().bind(
-                    mainController.currentTabControllerProperty().isNull()
-            );
-
-            buttonDebug.disableProperty().bind(
-                    mainController.currentTabControllerProperty().isNull()
-            );
-
-            cyclesLabel.textProperty().bind(mainController.runCyclesProperty().asString("Cycles: %d"));
-
-        });
-
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
         // fit once after first layout, then refit when items change
@@ -135,6 +122,28 @@ public class RunWindowController {
 
     }
 
+    public void setMainController(AppController appController) {
+        mainController = appController;
+
+        inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
+
+        buttonRun.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
+        buttonDebug.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
+        cyclesLabel.textProperty().bind(mainController.runCyclesProperty().asString("Cycles: %d"));
+
+        this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
+            inputVariablesRaw.clear();
+            outputVariables.clear();
+            editedValues.clear();
+        });
+    }
+
     private void lockVarWidth() {
         double w = contentWidth(varColumn) + 5;
         varColumn.setMinWidth(w);
@@ -193,12 +202,6 @@ public class RunWindowController {
 
     private void handleDebug() {
         // TODO: Implement debug functionality
-    }
-
-    public void setMainController(AppController appController) {
-        mainController = appController;
-
-        inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {

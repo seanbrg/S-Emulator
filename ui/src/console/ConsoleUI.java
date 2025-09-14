@@ -147,7 +147,7 @@ public class ConsoleUI {
                 System.out.println("Program ran successfully:");
                 engine.printProgram(degree);
 
-                System.out.printf("Output: y = %d%n", result.getOutput().getValue());
+                System.out.printf("Output: y = %d%n", result.getOutputs().getFirst().getValue());
                 System.out.println("Variables:");
 
                 List<List<VariableDTO>> varByType = engine.getVarByType();

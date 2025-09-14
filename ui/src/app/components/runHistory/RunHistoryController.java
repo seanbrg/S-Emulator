@@ -80,7 +80,7 @@ public class RunHistoryController {
 
     private void setupColumnOutput() {
         columnOutput.setCellValueFactory
-                (cd -> new ReadOnlyStringWrapper(cd.getValue().getOutput().getVarString()));
+                (cd -> new ReadOnlyStringWrapper(cd.getValue().getOutputs().toString()));
 
         columnOutput.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
             private final Tooltip tooltip = new Tooltip();
@@ -93,7 +93,7 @@ public class RunHistoryController {
                     setTooltip(null);
                 } else {
                     setText(item);
-                    tooltip.setText("Output: " + item);
+                    tooltip.setText("Outputs: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
                     tooltip.setShowDelay(Duration.millis(500));
                     setTooltip(tooltip);
@@ -188,8 +188,8 @@ public class RunHistoryController {
 
         // columnOutput flexes under CONSTRAINED policy
         columnOutput.setResizable(true);
-        columnOutput.setMinWidth(0);
-        columnOutput.setPrefWidth(1);
+        columnOutput.setMinWidth(70);
+        columnOutput.setPrefWidth(70);
         columnOutput.setMaxWidth(Double.MAX_VALUE);
     }
 
@@ -215,7 +215,13 @@ public class RunHistoryController {
     }
 
 
-    public void setMainController(AppController mainController) { this.mainController =  mainController; }
+    public void setMainController(AppController mainController) {
+        this.mainController =  mainController;
+
+        this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
+            historyList.clear();
+        });
+    }
 
 
     public void addRunHistory(HistoryDTO result) {

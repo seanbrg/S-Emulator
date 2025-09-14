@@ -44,6 +44,7 @@ public class AppController {
     // for pointing to the current opened tab:
     private Map<Tab, ProgramTabController> tabControllerMap;
     private ObjectProperty<ProgramTabController> currentTabController;
+    private ReadOnlyBooleanWrapper switchingProgram;
 
     private ListProperty<VariableDTO> currentRawProgramInputs;
     private ListProperty<VariableDTO> currentActualProgramInputs;
@@ -57,6 +58,7 @@ public class AppController {
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
         this.currentRawProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentActualProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.switchingProgram = new ReadOnlyBooleanWrapper(false);
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
         this.programCycles = new SimpleIntegerProperty(0);
@@ -103,7 +105,7 @@ public class AppController {
         if (result == null) throw new RuntimeException("Run failed for program: " + programName);
 
         programCycles.set(result.getCycles());
-        runWindowController.setOutputVariables(List.of(result.getOutput()));
+        runWindowController.setOutputVariables(result.getOutputs());
         runHistoryController.addRunHistory(result);
     }
 
@@ -114,6 +116,10 @@ public class AppController {
 
     public ObjectProperty<ProgramTabController> currentTabControllerProperty() {
         return currentTabController;
+    }
+
+    public ReadOnlyBooleanProperty programSwitchedProperty() {
+        return switchingProgram.getReadOnlyProperty();
     }
 
     @FXML
@@ -143,7 +149,8 @@ public class AppController {
     }
 
     public void newProgram(String programName, int degree) {
-        this.programTabs.getTabs().clear();
+        switchingProgram.set(!switchingProgram.get());
+        programTabs.getTabs().clear();
         addProgramTab(programName, degree);
     }
 
