@@ -61,13 +61,13 @@ public class headerController {
         Task<String> task = mainController.createLoadTask(path);
 
         // when task leaves RUNNING, finish the bar and then open/notify
-        task.setOnSucceeded(e -> finish(true, task.getValue(), 0, path, spinner));
-        task.setOnFailed(e -> finish(false, null, 0, path, spinner));
+        task.setOnSucceeded(e -> finish(true, task.getValue(), path, spinner));
+        task.setOnFailed(e -> finish(false, null, path, spinner));
 
         new Thread(task, "load-xml").start();
     }
 
-    private void finish(boolean ok, String programName, int degree, String path, Timeline spinner) {
+    private void finish(boolean ok, String programName, String path, Timeline spinner) {
         spinner.stop();
         var toFull = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -81,7 +81,7 @@ public class headerController {
             var stall = new PauseTransition(Duration.seconds(0.2));
             stall.setOnFinished(__ -> {
                 loadLabel.setText(ok ? path : "Failed to load: " + path);
-                if (ok) mainController.newProgram(programName, degree);
+                if (ok) mainController.newProgram(programName);
                 progressBar.setVisible(false);
             });
             stall.play();

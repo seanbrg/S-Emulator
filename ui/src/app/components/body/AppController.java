@@ -152,10 +152,10 @@ public class AppController {
         };
     }
 
-    public void newProgram(String programName, int degree) {
+    public void newProgram(String programName) {
         switchingProgram.set(!switchingProgram.get());
         programTabs.getTabs().clear();
-        addProgramTab(programName, degree);
+        addProgramTab(programName, 0);
     }
 
     private void addProgramTab(String programName, int degree) {
@@ -168,7 +168,7 @@ public class AppController {
             ProgramTabController tabController = fxmlLoader.getController();
             tabController.setProgram(programName, degree);
             tabController.setMainController(this);
-            List<InstructionDTO> list = engine.getInstructionsList(programName, 0);
+            List<InstructionDTO> list = engine.getInstructionsList(programName, degree);
             tabController.setInstructionsList(FXCollections.observableList(list));
 
             this.programTabs.getTabs().add(programTab);
@@ -206,9 +206,9 @@ public class AppController {
             s.showAndWait();
 
             // read the result (0 == cancelled)
-            int chosen = c.getResult();
-            if (chosen > 0) {
-                // TODO: use chosen (e.g., expand/compute with this degree)
+            int chosenDegree = c.getResult();
+            if (chosenDegree > 0) {
+                addProgramTab(engine.getProgramName(), chosenDegree);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

@@ -146,11 +146,9 @@ public class EngineImpl implements Engine {
     @Override
     public List<InstructionDTO> getInstrParents(InstructionDTO selectedInstr) {
         List<InstructionDTO> result = new ArrayList<>();
-        InstructionDTO currentInstr = selectedInstr;
 
-        while (currentInstr != null) {
-            result.add(currentInstr);
-            currentInstr = selectedInstr.getParent();
+        for (InstructionDTO current = selectedInstr; current != null; current = current.getParent()) {
+            result.add(current);
         }
 
         return result;

@@ -23,7 +23,11 @@ public class InstructionDTO {
         this.argLabel = instr.getArgLabelDTO();
 
         Instruction localParent = instr.getParent();
-        this.parent = localParent == null ? null : new InstructionDTO(localParent);
+        if (localParent != null) {
+            this.parent = new InstructionDTO(localParent);
+        } else {
+            this.parent = null;
+        }
         this.name = instr.print();
     }
 
