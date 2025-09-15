@@ -23,7 +23,7 @@
                   <Insets left="25.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="maxDegreeConsole" editable="false" focusTraversable="false" prefHeight="26.0" prefWidth="34.0" styleClass="console" style="-fx-alignment: CENTER;" >
+            <TextField fx:id="maxDegreeConsole" editable="false" focusTraversable="false" prefHeight="26.0" prefWidth="34.0" styleClass="console">
                <padding>
                   <Insets left="15.0" />
                </padding>

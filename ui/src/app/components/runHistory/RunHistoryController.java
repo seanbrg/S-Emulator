@@ -1,5 +1,6 @@
 package app.components.runHistory;
 
+import app.components.ColumnResizer;
 import app.components.body.AppController;
 import app.components.programTab.ProgramTabController;
 import execute.dto.HistoryDTO;
@@ -32,19 +33,23 @@ public class RunHistoryController {
     public void initialize() {
         this.historyList = new SimpleListProperty<>(FXCollections.observableArrayList());
         runHistory.itemsProperty().bind(historyList);
-
-        runHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
         runHistory.getColumns().setAll(columnNum, columnDegree, columnInputs, columnCycles, columnOutput);
 
+        runHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         fitColumns();
         runHistory.widthProperty().addListener((o, a, b) -> fitColumns());
         runHistory.getItems().addListener(
                 (javafx.collections.ListChangeListener<? super HistoryDTO>) c ->
-                        javafx.application.Platform.runLater(this::fitColumns)
+                {
+                    javafx.application.Platform.runLater(this::fitColumns);
+                }
         );
 
+        setupColumns();
 
+    }
+
+    private void setupColumns() {
         setupColumnNum();
         setupColumnDegree();
         setupColumnInputs();
@@ -98,7 +103,7 @@ public class RunHistoryController {
                     tooltip.setShowDelay(Duration.millis(500));
                     setTooltip(tooltip);
                 }
-                setAlignment(Pos.CENTER);
+                setAlignment(Pos.CENTER_LEFT);
             }
         });
     }
@@ -181,39 +186,8 @@ public class RunHistoryController {
     }
 
     private void fitColumns() {
-        lockToContent(columnNum,     1);
-        lockToContent(columnDegree,  1);
-        lockToContent(columnCycles,  1);
-        lockToContent(columnInputs,  70);
-
-        // columnOutput flexes under CONSTRAINED policy
-        columnOutput.setResizable(true);
-        columnOutput.setMinWidth(70);
-        columnOutput.setPrefWidth(70);
-        columnOutput.setMaxWidth(Double.MAX_VALUE);
+        ColumnResizer.lockToContent(runHistory, 2);
     }
-
-    private void lockToContent(TableColumn<?, ?> col, double pad) {
-        double w = headerAndCellsWidth(col) + pad;
-        col.setResizable(false);
-        col.setMinWidth(w);
-        col.setPrefWidth(w);
-        col.setMaxWidth(w);
-    }
-
-    private double headerAndCellsWidth(TableColumn<?, ?> col) {
-        double max = textW(col.getText());
-        for (int i = 0; i < runHistory.getItems().size(); i++) {
-            Object v = col.getCellData(i);
-            if (v != null) max = Math.max(max, textW(String.valueOf(v)));
-        }
-        return Math.ceil(max);
-    }
-
-    private double textW(String s) {
-        return new javafx.scene.text.Text(s == null ? "" : s).getLayoutBounds().getWidth();
-    }
-
 
     public void setMainController(AppController mainController) {
         this.mainController =  mainController;

@@ -172,6 +172,7 @@ public class AppController {
             tabController.setInstructionsList(FXCollections.observableList(list));
 
             this.programTabs.getTabs().add(programTab);
+            this.programTabs.getSelectionModel().select(programTab);
             this.tabControllerMap.put(programTab, tabController);
             this.currentTabControllerProperty().set(tabController);
             refreshInputs();

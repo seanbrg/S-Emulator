@@ -4,6 +4,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ public class ExpandWindowController {
         maxDegree = 0;
 
         expandButton.disableProperty().bind(degreeSpinner.valueProperty().isNull());
+        maxDegreeConsole.setAlignment(Pos.CENTER);
 
         degreeSpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxDegree, maxDegree)
@@ -51,7 +53,7 @@ public class ExpandWindowController {
 
 
         degreeSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxDegree, maxDegree)
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxDegree, 0)
         );
     }
 }

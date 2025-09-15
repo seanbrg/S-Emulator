@@ -1,6 +1,8 @@
 package app.components.instructionHistory;
 
+import app.components.ColumnResizer;
 import app.components.body.AppController;
+import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -39,14 +41,15 @@ public class InstructionHistoryController {
         this.instrHistoryList = new SimpleListProperty<>(FXCollections.observableArrayList());
         instructionHistory.itemsProperty().bind(instrHistoryList);
 
-        instructionHistory.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        instructionHistory.getItems().addListener((ListChangeListener<Object>) c -> {
-            autoResizeColumns(instructionHistory);
-        });
-
-        Platform.runLater(() -> {
-
-        });
+        instructionHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        fitColumns();
+        instructionHistory.widthProperty().addListener((o, a, b) -> fitColumns());
+        instructionHistory.getItems().addListener(
+                (javafx.collections.ListChangeListener<? super InstructionDTO>) c ->
+                {
+                    javafx.application.Platform.runLater(this::fitColumns);
+                    }
+        );
 
         setupColumnLabel();
         setupColumnInstruction();
@@ -160,25 +163,8 @@ public class InstructionHistoryController {
         });
     }
 
-    private void autoResizeColumns(TableView<?> table) {
-        for (TableColumn<?, ?> column : table.getColumns()) {
-            if (!column.equals(columnInstruction)) {
-                Text t = new Text(column.getText()); // start with header text
-                double max = t.getLayoutBounds().getWidth();
-
-                for (int i = 0; i < table.getItems().size(); i++) {
-                    if (column.getCellData(i) != null) {
-                        t = new Text(column.getCellData(i).toString());
-                        double calcwidth = t.getLayoutBounds().getWidth();
-                        if (calcwidth > max) {
-                            max = calcwidth;
-                        }
-                    }
-                }
-
-                column.setPrefWidth(max + 5);
-            }
-        }
+    private void fitColumns() {
+        ColumnResizer.lockToContent(instructionHistory, 2);
     }
 
     public void setMainController(AppController mainController) {

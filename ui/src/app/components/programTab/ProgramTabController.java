@@ -1,5 +1,6 @@
 package app.components.programTab;
 
+import app.components.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.*;
@@ -35,10 +36,15 @@ public class ProgramTabController {
         this.instructions = new SimpleListProperty<>(FXCollections.observableArrayList());
         programTable.itemsProperty().bind(instructions);
 
-        programTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        programTable.getItems().addListener((ListChangeListener<Object>) c -> {
-            autoResizeColumns(programTable);
-        });
+        programTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        fitColumns();
+        programTable.widthProperty().addListener((o, a, b) -> fitColumns());
+        programTable.getItems().addListener(
+                (javafx.collections.ListChangeListener<? super InstructionDTO>) c ->
+                {
+                    javafx.application.Platform.runLater(this::fitColumns);
+                }
+        );
 
         setupColumnLabel();
         setupColumnInstruction();
@@ -152,23 +158,8 @@ public class ProgramTabController {
         });
     }
 
-    private void autoResizeColumns(TableView<?> table) {
-        for (TableColumn<?, ?> column : table.getColumns()) {
-            Text t = new Text(column.getText()); // start with header text
-            double max = t.getLayoutBounds().getWidth();
-
-            for (int i = 0; i < table.getItems().size(); i++) {
-                if (column.getCellData(i) != null) {
-                    t = new Text(column.getCellData(i).toString());
-                    double calcwidth = t.getLayoutBounds().getWidth();
-                    if (calcwidth > max) {
-                        max = calcwidth;
-                    }
-                }
-            }
-
-            column.setPrefWidth(max + 2);
-        }
+    private void fitColumns() {
+        ColumnResizer.lockToContent(programTable, 2);
     }
 
     public void setMainController(AppController mainController) { this.mainController = mainController; }
