@@ -5,12 +5,10 @@ import app.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.List;

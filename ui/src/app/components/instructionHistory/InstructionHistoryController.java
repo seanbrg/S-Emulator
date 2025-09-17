@@ -2,15 +2,12 @@ package app.components.instructionHistory;
 
 import app.components.ColumnResizer;
 import app.components.body.AppController;
-import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
-import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -18,7 +15,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.List;

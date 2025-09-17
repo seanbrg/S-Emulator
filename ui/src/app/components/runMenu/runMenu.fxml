@@ -109,7 +109,26 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip fx:id="tooltipDebug" text="Debug" textAlignment="CENTER">
+                  <Tooltip fx:id="tooltipDebug" text="Start run in Debug mode" textAlignment="CENTER">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Tooltip>
+               </tooltip>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="buttonDebugStep" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <ImageView fx:id="imageDebugStep" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../resources/images/debug.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip fx:id="tooltipDebugStep" text="Debug Step Foward" textAlignment="CENTER">
                      <font>
                         <Font size="13.0" />
                      </font>

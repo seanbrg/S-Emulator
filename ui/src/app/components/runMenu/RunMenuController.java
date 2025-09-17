@@ -20,6 +20,7 @@ public class RunMenuController {
 
     @FXML private Button buttonRun;
     @FXML private Button buttonDebug;
+    @FXML private Button buttonDebugStep;
     @FXML private Button buttonExpand;
     @FXML private ListView<VariableDTO> resultsList;
     @FXML private TableView<VariableDTO> inputsTable;
@@ -41,8 +42,10 @@ public class RunMenuController {
         vBox.getStyleClass().add("darker-vbox");
 
         buttonRun.setOnAction(event -> handleRun());
-        buttonDebug.setOnAction(event -> handleDebug());
+        buttonDebug.setOnAction(event -> handleDebugStart());
         buttonExpand.setOnAction(event -> handleExpand());
+        buttonDebugStep.setOnAction(event -> handleDebugStep());
+
         inputVariablesRaw = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
         outputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
@@ -84,7 +87,6 @@ public class RunMenuController {
 
         valueColumn.setCellFactory(col -> new TableCell<VariableDTO, Long>() {
             private final TextField tf = new TextField();
-
             {
                 // only digits
                 tf.setTextFormatter(new TextFormatter<String>(change ->
@@ -121,8 +123,6 @@ public class RunMenuController {
                 setGraphic(tf);
             }
         });
-
-
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -137,12 +137,14 @@ public class RunMenuController {
         );
 
         buttonDebug.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
+                mainController.currentTabControllerProperty().isNull().or(debugging)
         );
 
         buttonExpand.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
+
+        buttonDebugStep.disableProperty().bind(debugging.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
@@ -220,8 +222,13 @@ public class RunMenuController {
         return new VariableDTO(src.getName(), newValue);
     }
 
-    private void handleDebug() {
-        // TODO: Implement debug functionality
+    private void handleDebugStart() {
+        mainController.debugStart();
+        this.handleDebugStep();
+    }
+
+    private void handleDebugStep() {
+        debugging.setValue(mainController.debugStep());
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {

@@ -18,6 +18,8 @@ import java.util.*;
 
 public class ProgramManager {
     private List<Program> programExpansions;
+    private Program programInDebug;
+    private int debugLine;
     private LabelGenerator labelGenerator;
     private Map<String, Variable> tempVarsMap;
     private int currentTemps;
@@ -252,4 +254,41 @@ public class ProgramManager {
         return result;
     }
 
+    public void debugStart(String programName, int degree) {
+        assert 0 <= degree && degree <= maxDegree;
+        assert !programExpansions.isEmpty() && programExpansions.get(0).getName().equals(programName);
+
+        if (!programExpansions.isEmpty()) {
+            if (programExpansions.size() <= degree) {
+                this.expand(degree);
+            }
+            programInDebug = programExpansions.get(degree);
+            debugLine = 0;
+        }
+    }
+
+    public boolean debugStep() {
+        int size = programInDebug.getInstructions().size();
+
+        if (debugLine < size) {
+            Instruction instr = programInDebug.getInstructions().get(debugLine);
+            Label nextLabel = instr.execute();
+
+            if (nextLabel.equals(FixedLabel.EMPTY)) {
+                debugLine++;
+                return true;
+            } else if (nextLabel.equals(FixedLabel.EXIT)) {
+                debugLine = size;
+                return false;
+            } else {
+                OptionalInt nextLine = programInDebug.getInstructions().stream()
+                        .filter(i -> i.getSelfLabel().equals(nextLabel))
+                        .mapToInt(Instruction::getNum).findFirst();
+                debugLine = nextLine.orElse(debugLine + 1);
+                return debugLine < size;
+            }
+        } else {
+            return false;
+        }
+    }
 }

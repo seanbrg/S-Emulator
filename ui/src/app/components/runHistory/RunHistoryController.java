@@ -2,19 +2,15 @@ package app.components.runHistory;
 
 import app.components.ColumnResizer;
 import app.components.body.AppController;
-import app.components.programTab.ProgramTabController;
 import execute.dto.HistoryDTO;
-import execute.dto.InstructionDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class RunHistoryController {

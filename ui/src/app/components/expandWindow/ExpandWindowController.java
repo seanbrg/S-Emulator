@@ -1,12 +1,8 @@
 package app.components.expandWindow;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 public class ExpandWindowController {

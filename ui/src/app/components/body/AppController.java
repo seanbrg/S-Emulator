@@ -25,7 +25,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.concurrent.Task;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -231,5 +230,28 @@ public class AppController {
 
     public IntegerProperty runCyclesProperty() {
         return programCycles;
+    }
+
+    public void debugStart() {
+        ProgramTabController tabController = currentTabController.get();
+        if (tabController == null) return;
+
+        String programName = tabController.getProgramName();
+        if (programName == null || programName.isEmpty()) return;
+
+        int degree = tabController.getCurrentDegree();
+        List<VariableDTO> inputs = currentActualProgramInputs.get();
+        engine.debugStart(programName, degree, inputs);
+    }
+
+    public Boolean debugStep() {
+        ProgramTabController tabController = currentTabController.get();
+        if (tabController == null) return false;
+
+        String programName = tabController.getProgramName();
+        if (programName == null || programName.isEmpty()) return false;
+
+        int degree = tabController.getCurrentDegree();
+        return engine.debugStep(programName, degree);
     }
 }

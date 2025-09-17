@@ -1,11 +1,11 @@
 package execute;
 
+import execute.components.XmlLoader;
 import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.ProgramDTO;
 import execute.dto.VariableDTO;
 import execute.components.ProgramManager;
-import execute.components.XmlLoader;
 import logic.program.Program;
 import logic.variables.Var;
 import logic.variables.Variable;
@@ -208,6 +208,22 @@ public class EngineImpl implements Engine {
 
         history.add(result);
         return result;
+    }
+
+    @Override
+    public void debugStart(String programName, int degree, List<VariableDTO> inputs) {
+        loadInputs(inputs);
+        outputVar.setValue(0);
+        tempVarsMap.values()
+                .stream()
+                .filter(Objects::nonNull)
+                .forEach(v -> v.setValue(0));
+        pm.debugStart(programName, degree);
+    }
+
+    @Override
+    public boolean debugStep(String programName, int degree) {
+        return pm.debugStep();
     }
 
 }
