@@ -187,12 +187,22 @@ public class ProgramManager {
         else if (instr instanceof Assignment asg) {
             Variable x = asg.getX();
             Variable y = asg.getY();
-            Label loop = labelGenerator.newLabel();
+            Variable z = this.generateTempVar();
+            Label l1 = labelGenerator.newLabel();
+            Label l2 = labelGenerator.newLabel();
+            Label l3 = labelGenerator.newLabel();
+
             result.add(new ZeroVariable(self, x, lineNum++, instr));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum++, instr));
-            result.add(new Decrease(loop, y, lineNum++, instr));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, y, l1, lineNum++, instr));
+            result.add(new GoToLabel(FixedLabel.EMPTY, l3, lineNum++, instr));
+            result.add(new Decrease(l1, y, lineNum++, instr));
+            result.add(new Increase(FixedLabel.EMPTY, z, lineNum++, instr));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, y, l1, lineNum++, instr));
+            result.add(new Decrease(l2, z, lineNum++, instr));
             result.add(new Increase(FixedLabel.EMPTY, x, lineNum++, instr));
-            result.add(new JumpNotZero(FixedLabel.EMPTY, y, loop, lineNum, instr));
+            result.add(new Increase(FixedLabel.EMPTY, y, lineNum++, instr));
+            result.add(new JumpNotZero(FixedLabel.EMPTY, z, l2, lineNum++, instr));
+            result.add(new Neutral(l3, x, lineNum, instr));
         }
 
         // ---- GOTO_LABEL ----
