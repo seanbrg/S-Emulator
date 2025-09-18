@@ -81,6 +81,18 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public List<VariableDTO> getOutputs() {
+        List<VariableDTO> outputs = new ArrayList<>();
+        List<List<VariableDTO>> varsByType = this.getVarByType();
+        if (!varsByType.isEmpty()) {
+            outputs.addAll(varsByType.get(0)); // y
+            outputs.addAll(varsByType.get(1)); // x
+            outputs.addAll(varsByType.get(2)); // z
+        }
+        return outputs;
+    }
+
+    @Override
     public List<VariableDTO> getInputs() {
         return this.getVarByType().get(1);
     }
@@ -189,13 +201,7 @@ public class EngineImpl implements Engine {
     public HistoryDTO runProgramAndRecord(String programName, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
         this.runProgram(programName, degree);
-        List<VariableDTO> outputs = new ArrayList<>();
-        List<List<VariableDTO>> varsByType = this.getVarByType();
-        if (!varsByType.isEmpty()) {
-            outputs.addAll(varsByType.get(0)); // y
-            outputs.addAll(varsByType.get(1)); // x
-            outputs.addAll(varsByType.get(2)); // z
-        }
+        List<VariableDTO> outputs = getOutputs();
         int cycles = pm.getProgramCycles(degree);
 
         runCounter++;
@@ -224,6 +230,11 @@ public class EngineImpl implements Engine {
     @Override
     public boolean debugStep(String programName, int degree) {
         return pm.debugStep();
+    }
+
+    @Override
+    public int getDebugLine() {
+        return pm.getDebugLine();
     }
 
 }

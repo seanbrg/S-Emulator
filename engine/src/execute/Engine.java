@@ -33,6 +33,8 @@ public interface Engine {
 
     List<List<VariableDTO>> getVarByType();
 
+    List<VariableDTO> getOutputs();
+
     List<VariableDTO> getInputs();
 
     int getCycles(int degree);
@@ -48,4 +50,6 @@ public interface Engine {
     void debugStart(String programName, int degree, List<VariableDTO> inputs);
     
     boolean debugStep(String programName, int degree);
+
+    int getDebugLine();
 }

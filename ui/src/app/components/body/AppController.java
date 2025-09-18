@@ -53,6 +53,7 @@ public class AppController {
     private ListProperty<VariableDTO> currentRawProgramInputs;
     private ListProperty<VariableDTO> currentActualProgramInputs;
     private IntegerProperty programCycles;
+    private IntegerProperty debugLine;
     private Scene scene;
     private Engine engine;
 
@@ -66,6 +67,7 @@ public class AppController {
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
         this.programCycles = new SimpleIntegerProperty(0);
+        this.debugLine = new SimpleIntegerProperty(0);
 
         engine.setPrintMode(false);
         runMenuController.setMainController(this);
@@ -90,6 +92,12 @@ public class AppController {
             if (is) {
                 runProgram();
                 runMenuController.runningProperty().set(false); // ready for next run
+            }
+        });
+
+        runMenuController.debuggingProperty().addListener((obs, was, is) -> {
+            if (is) {
+                debugStart();
             }
         });
     }
@@ -124,6 +132,8 @@ public class AppController {
     public ReadOnlyBooleanProperty programSwitchedProperty() {
         return switchingProgram.getReadOnlyProperty();
     }
+
+    public IntegerProperty debugLineProperty() { return debugLine; }
 
     @FXML
     public void switchTheme(boolean dark) {
@@ -241,6 +251,7 @@ public class AppController {
 
         int degree = tabController.getCurrentDegree();
         List<VariableDTO> inputs = currentActualProgramInputs.get();
+        debugLine.set(0);
         engine.debugStart(programName, degree, inputs);
     }
 
@@ -252,6 +263,10 @@ public class AppController {
         if (programName == null || programName.isEmpty()) return false;
 
         int degree = tabController.getCurrentDegree();
-        return engine.debugStep(programName, degree);
+        debugLine.set(engine.getDebugLine());
+        Boolean notDone = engine.debugStep(programName, degree);
+        runMenuController.setOutputVariables(engine.getOutputs());
+
+        return notDone;
     }
 }

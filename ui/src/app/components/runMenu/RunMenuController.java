@@ -190,6 +190,11 @@ public class RunMenuController {
         return running;
     };
 
+    public BooleanProperty debuggingProperty() {
+        return debugging;
+    }
+
+
     public ReadOnlyListProperty<VariableDTO> actualInputVariablesProperty() {
         return ActualInputVariables;
     }
@@ -223,12 +228,19 @@ public class RunMenuController {
     }
 
     private void handleDebugStart() {
-        mainController.debugStart();
+        rebuildInputsFromTable();
+        outputVariables.clear();
+        debugging.set(true); // mainController.debugStart()
         this.handleDebugStep();
     }
 
     private void handleDebugStep() {
         debugging.setValue(mainController.debugStep());
+        clearLog();
+        log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
+        if (!debugging.get()) {
+            log("Debugging finished.");
+        }
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {

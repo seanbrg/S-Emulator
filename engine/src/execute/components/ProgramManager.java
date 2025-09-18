@@ -263,20 +263,20 @@ public class ProgramManager {
                 this.expand(degree);
             }
             programInDebug = programExpansions.get(degree);
-            debugLine = 0;
+            debugLine = 1;
         }
     }
 
     public boolean debugStep() {
         int size = programInDebug.getInstructions().size();
 
-        if (debugLine < size) {
-            Instruction instr = programInDebug.getInstructions().get(debugLine);
+        if (debugLine <= size) {
+            Instruction instr = programInDebug.getInstructions().get(debugLine - 1);
             Label nextLabel = instr.execute();
 
             if (nextLabel.equals(FixedLabel.EMPTY)) {
                 debugLine++;
-                return true;
+                return debugLine <= size;
             } else if (nextLabel.equals(FixedLabel.EXIT)) {
                 debugLine = size;
                 return false;
@@ -285,10 +285,14 @@ public class ProgramManager {
                         .filter(i -> i.getSelfLabel().equals(nextLabel))
                         .mapToInt(Instruction::getNum).findFirst();
                 debugLine = nextLine.orElse(debugLine + 1);
-                return debugLine < size;
+                return debugLine <= size;
             }
         } else {
             return false;
         }
+    }
+
+    public int getDebugLine() {
+        return debugLine;
     }
 }
