@@ -1,6 +1,6 @@
 package app.components.runHistory;
 
-import app.components.ColumnResizer;
+import app.util.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.HistoryDTO;
 import javafx.beans.property.*;

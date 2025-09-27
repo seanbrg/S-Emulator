@@ -469,3 +469,8 @@
     -fx-padding: 6 10;
     -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.15), 8, 0, 0, 2);
 }
+
+.table-row-cell.row-highlight {
+    -fx-background-color: yellow;   /* choose color */
+    -fx-text-fill: black;
+}

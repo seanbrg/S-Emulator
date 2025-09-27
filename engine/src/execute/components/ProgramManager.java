@@ -305,4 +305,17 @@ public class ProgramManager {
     public int getDebugLine() {
         return debugLine;
     }
+
+    public List<Label> getLabels(String programName, int degree) {
+        assert 0 <= degree && degree <= maxDegree;
+        assert !programExpansions.isEmpty() && programExpansions.get(0).getName().equals(programName);
+
+        if (!programExpansions.isEmpty()) {
+            if (programExpansions.size() <= degree) {
+                this.expand(degree);
+            }
+             return programExpansions.get(degree).getLabels().keySet().stream().toList();
+        }
+        else return null;
+    }
 }

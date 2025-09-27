@@ -1,8 +1,10 @@
 package app.components.programTab;
 
-import app.components.ColumnResizer;
+import app.util.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
+import execute.dto.LabelDTO;
+import execute.dto.VariableDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,10 +30,15 @@ public class ProgramTabController {
     private String programName;
     int degree;
     private ListProperty<InstructionDTO> instructions;
+    private ListProperty<VariableDTO> variables;
+    private ListProperty<LabelDTO> labels;
 
     @FXML
     public void initialize() {
         this.instructions = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.variables = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.labels = new SimpleListProperty<>(FXCollections.observableArrayList());
+
         programTable.itemsProperty().bind(instructions);
 
         programTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -160,7 +167,42 @@ public class ProgramTabController {
         ColumnResizer.lockToContent(programTable, 2);
     }
 
-    public void setMainController(AppController mainController) { this.mainController = mainController; }
+    public void setMainController(AppController mainController) {
+        this.mainController = mainController;
+        mainController.highlightedLabelProperty().addListener((obs, old, neu) -> {
+            // refresh forces updateItem to be called on visible cells
+            programTable.refresh();
+        });
+
+        mainController.highlightedVariableProperty().addListener((obs, old, neu) -> {
+            // refresh forces updateItem to be called on visible cells
+            programTable.refresh();
+        });
+
+        programTable.setRowFactory(tv -> new TableRow<InstructionDTO>() {
+            @Override
+            protected void updateItem(InstructionDTO item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    getStyleClass().remove("highlight");
+                    setStyle("");
+                } else {
+                    String highlighted = mainController.highlightedLabelProperty().get();
+                    String label = item.getSelfLabel().getLabel(); // adapt to your getter
+                    if (highlighted != null && highlighted.equals(label)) {
+                        if (!getStyleClass().contains("highlight")) {
+                            getStyleClass().add("highlight");
+                        }
+                    } else {
+                        getStyleClass().remove("highlight");
+                    }
+                }
+            }
+        });
+
+        mainController.highlightedLabelProperty().addListener((obs, old, neu) -> programTable.refresh());
+        mainController.highlightedVariableProperty().addListener((obs, old, neu) -> programTable.refresh());
+    }
 
     public void setProgram(String programName, int degree) {
         this.programName = programName;
@@ -174,7 +216,17 @@ public class ProgramTabController {
         this.instructions.set(instructionsList);
     }
 
-    public List<InstructionDTO> getInstructionsList() { return instructions.get(); }
+    public void setVariablesList(ObservableList<VariableDTO> variablesList) {
+        this.variables.set(variablesList);
+    }
+
+    public void setLabelsList(ObservableList<LabelDTO> labelsList) {
+        this.labels.set(labelsList);
+    }
+
+    public ListProperty<VariableDTO> getVariablesList() { return variables; }
+
+    public ListProperty<LabelDTO> getLabelsList() { return labels; }
 
     public ReadOnlyObjectProperty<InstructionDTO> selectedInstructionProperty() {
         return programTable.getSelectionModel().selectedItemProperty();

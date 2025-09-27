@@ -10,7 +10,9 @@ import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
+import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -52,8 +54,12 @@ public class AppController {
 
     private ListProperty<VariableDTO> currentRawProgramInputs;
     private ListProperty<VariableDTO> currentActualProgramInputs;
+    private ListProperty<VariableDTO> currentVariables;
+    private ListProperty<LabelDTO> currentLabels;
     private IntegerProperty programCycles;
     private IntegerProperty debugLine;
+    private StringProperty highlightedLabel;
+    private StringProperty highlightedVariable;
     private Scene scene;
     private Engine engine;
 
@@ -63,11 +69,15 @@ public class AppController {
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
         this.currentRawProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentActualProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.currentVariables = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.currentLabels = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.switchingProgram = new ReadOnlyBooleanWrapper(false);
         this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
         this.programCycles = new SimpleIntegerProperty(0);
         this.debugLine = new SimpleIntegerProperty(0);
+        this.highlightedLabel = new SimpleStringProperty("");
+        this.highlightedVariable = new SimpleStringProperty("");
 
         engine.setPrintMode(false);
         runMenuController.setMainController(this);
@@ -87,6 +97,19 @@ public class AppController {
 
         currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
         Bindings.bindContent(currentActualProgramInputs, runMenuController.actualInputVariablesProperty());
+        currentTabController.addListener((obs, oldC, newC) -> {
+            if (oldC != null) {
+                Bindings.unbindContent(currentVariables, oldC.getVariablesList());
+                Bindings.unbindContent(currentLabels, oldC.getLabelsList());
+            }
+            if (newC != null) {
+                Bindings.bindContent(currentVariables, newC.getVariablesList());
+                Bindings.bindContent(currentLabels, newC.getLabelsList());
+            } else {
+                currentVariables.clear();
+                currentLabels.clear();
+            }
+        });
 
         runMenuController.runningProperty().addListener((obs, was, is) -> {
             if (is) {
@@ -177,8 +200,12 @@ public class AppController {
             ProgramTabController tabController = fxmlLoader.getController();
             tabController.setProgram(programName, degree);
             tabController.setMainController(this);
-            List<InstructionDTO> list = engine.getInstructionsList(programName, degree);
-            tabController.setInstructionsList(FXCollections.observableList(list));
+            List<InstructionDTO> instrList = engine.getInstructionsList(programName, degree);
+            List<VariableDTO> varList = engine.getOutputs();
+            List<LabelDTO> inputList = engine.getLabels(programName, degree);
+            tabController.setInstructionsList(FXCollections.observableList(instrList));
+            tabController.setVariablesList(FXCollections.observableList(varList));
+            tabController.setLabelsList(FXCollections.observableList(inputList));
 
             this.programTabs.getTabs().add(programTab);
             this.programTabs.getSelectionModel().select(programTab);
@@ -268,5 +295,13 @@ public class AppController {
         runMenuController.setOutputVariables(engine.getOutputs());
 
         return notDone;
+    }
+
+    public StringProperty highlightedLabelProperty() {
+        return highlightedLabel;
+    }
+
+    public StringProperty highlightedVariableProperty() {
+        return highlightedVariable;
     }
 }

@@ -1,4 +1,4 @@
-package app;
+package app.util;
 
 import app.components.body.AppController;
 import javafx.application.Application;

@@ -123,7 +123,7 @@
                <graphic>
                   <ImageView fx:id="imageDebugStep" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../resources/images/debug.png" />
+                        <Image url="@../../resources/images/next.png" />
                      </image>
                   </ImageView>
                </graphic>

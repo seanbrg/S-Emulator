@@ -1,10 +1,7 @@
 package execute;
 
 import execute.components.XmlLoader;
-import execute.dto.HistoryDTO;
-import execute.dto.InstructionDTO;
-import execute.dto.ProgramDTO;
-import execute.dto.VariableDTO;
+import execute.dto.*;
 import execute.components.ProgramManager;
 import logic.program.Program;
 import logic.variables.Var;
@@ -237,4 +234,10 @@ public class EngineImpl implements Engine {
         return pm.getDebugLine();
     }
 
+    @Override
+    public List<LabelDTO> getLabels(String programName, int degree) {
+        return pm.getLabels(programName, degree).stream()
+                .map(LabelDTO::new)
+                .toList();
+    }
 }

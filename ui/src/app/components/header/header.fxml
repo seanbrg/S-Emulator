@@ -6,11 +6,11 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 
-<?import javafx.scene.image.Image?>
-<HBox fx:id="header" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="8" styleClass="surface" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.header.headerController">
+<HBox fx:id="header" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="8" styleClass="surface" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="app.components.header.headerController">
    <children>
       <MenuBar maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="150.0" useSystemMenuBar="true">
         <menus>
@@ -21,7 +21,12 @@
           </Menu>
             <Menu mnemonicParsing="false" text="View">
               <items>
-                <MenuItem fx:id="menuItemFindComponent" mnemonicParsing="false" text="Find Component" />
+                  <Menu mnemonicParsing="false" text="Find...">
+                     <items>
+                        <Menu mnemonicParsing="false" text="Find Label..." />
+                        <Menu mnemonicParsing="false" text="Find Variable..." />
+                     </items>
+                  </Menu>
                   <MenuItem fx:id="menuItemExpand" mnemonicParsing="false" text="Expand" />
               </items>
             </Menu>

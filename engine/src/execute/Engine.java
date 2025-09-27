@@ -2,6 +2,7 @@ package execute;
 
 import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
+import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
 import logic.labels.Label;
 import logic.variables.Variable;
@@ -52,4 +53,6 @@ public interface Engine {
     boolean debugStep(String programName, int degree);
 
     int getDebugLine();
+
+    List<LabelDTO> getLabels(String programName, int degree);
 }

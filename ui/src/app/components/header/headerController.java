@@ -18,7 +18,6 @@ public class headerController {
 
     @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
-    @FXML private MenuItem menuItemFindComponent;
     @FXML private MenuItem menuItemExpand;
     @FXML private MenuItem menuItemThemeLight;
     @FXML private MenuItem menuItemThemeDark;
@@ -29,7 +28,6 @@ public class headerController {
     @FXML
     private void initialize() {
         menuItemLoad.setOnAction(event -> handleLoad());
-        menuItemFindComponent.setOnAction(event -> handleFindComponent());
         menuItemExpand.setOnAction(event -> handleExpand());
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());

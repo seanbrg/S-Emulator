@@ -664,3 +664,8 @@
 .spinner:disabled .decrement-arrow {
     -fx-opacity: 0.55;
 }
+
+.table-row-cell.row-highlight {
+    -fx-background-color: yellow;   /* choose color */
+    -fx-text-fill: black;
+}

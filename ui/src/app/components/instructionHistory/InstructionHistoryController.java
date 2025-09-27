@@ -1,6 +1,6 @@
 package app.components.instructionHistory;
 
-import app.components.ColumnResizer;
+import app.util.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.ListProperty;
