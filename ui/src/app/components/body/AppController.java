@@ -187,9 +187,17 @@ public class AppController {
     public void newProgram(List<String> funcNames) {
         switchingProgram.set(!switchingProgram.get());
         programTabs.getTabs().clear();
-        for (String func : funcNames.reversed()) {
+        for (String func : funcNames) {
             addProgramTab(func, 0);
         }
+
+        Tab programTab = programTabs.getTabs().getFirst();
+        ProgramTabController tabController = tabControllerMap.get(programTab);
+
+        this.programTabs.getSelectionModel().select(programTab);
+        this.currentTabControllerProperty().set(tabController);
+        refreshInputs();
+
     }
 
     private void addProgramTab(String programName, int degree) {
@@ -210,10 +218,7 @@ public class AppController {
             tabController.setLabelsList(FXCollections.observableList(inputList));
 
             this.programTabs.getTabs().add(programTab);
-            this.programTabs.getSelectionModel().select(programTab);
             this.tabControllerMap.put(programTab, tabController);
-            this.currentTabControllerProperty().set(tabController);
-            refreshInputs();
 
         } catch (IOException e) {
             e.printStackTrace();

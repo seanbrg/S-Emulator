@@ -76,8 +76,10 @@ public class XmlLoader {
             return programs;
 
         } catch (Exception e) {
-            if (printMode) System.out.println("Error parsing XML: " + e.getMessage());
-            e.printStackTrace();
+            if (printMode) {
+                System.out.println("Error parsing XML: " + e.getMessage());
+                e.printStackTrace();
+            }
             return null;
         }
     }
