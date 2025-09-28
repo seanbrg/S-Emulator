@@ -9,6 +9,7 @@ import logic.variables.Variable;
 import logic.variables.VariableType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private Map<String, Variable> inputVarsMap;
@@ -78,15 +79,21 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<VariableDTO> getOutputs() {
-        List<VariableDTO> outputs = new ArrayList<>();
+    public List<VariableDTO> getOutputs(String func, int degree) {
+        List<VariableDTO> result = new ArrayList<>();
+        Set<String> varStr = pm.getProgram(func, degree).getVariables()
+                .stream().map(Variable::getName).collect(Collectors.toSet());
         List<List<VariableDTO>> varsByType = this.getVarByType();
-        if (!varsByType.isEmpty()) {
-            outputs.addAll(varsByType.get(0)); // y
-            outputs.addAll(varsByType.get(1)); // x
-            outputs.addAll(varsByType.get(2)); // z
+
+        for (List<VariableDTO> list : varsByType) {
+            for (VariableDTO variableDTO : list) {
+                if (varStr.contains(variableDTO.getName())) {
+                    result.add(variableDTO);
+                }
+            }
         }
-        return outputs;
+
+        return result;
     }
 
     @Override
@@ -209,7 +216,7 @@ public class EngineImpl implements Engine {
     public HistoryDTO runProgramAndRecord(String program, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
         this.runProgram(program, degree);
-        List<VariableDTO> outputs = getOutputs();
+        List<VariableDTO> outputs = getOutputs(program, degree);
         int cycles = pm.getProgramCycles(program, degree);
 
         runCounter++;

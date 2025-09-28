@@ -211,7 +211,7 @@ public class AppController {
             tabController.setProgram(programName, degree);
             tabController.setMainController(this);
             List<InstructionDTO> instrList = engine.getInstructionsList(programName, degree);
-            List<VariableDTO> varList = engine.getOutputs();
+            List<VariableDTO> varList = engine.getOutputs(programName, degree);
             List<LabelDTO> inputList = engine.getLabels(programName, degree);
             tabController.setInstructionsList(FXCollections.observableList(instrList));
             tabController.setVariablesList(FXCollections.observableList(varList));
@@ -309,7 +309,7 @@ public class AppController {
         int degree = tabController.getCurrentDegree();
         debugLine.set(engine.getDebugLine());
         Boolean notDone = engine.debugStep(programName, degree);
-        runMenuController.setOutputVariables(engine.getOutputs());
+        runMenuController.setOutputVariables(engine.getOutputs(programName, degree));
 
         return notDone;
     }

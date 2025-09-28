@@ -32,7 +32,7 @@ public interface Engine {
 
     List<List<VariableDTO>> getVarByType();
 
-    List<VariableDTO> getOutputs();
+    List<VariableDTO> getOutputs(String func, int degree);
 
     List<VariableDTO> getInputs(String func, int degree);
 
