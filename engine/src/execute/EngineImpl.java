@@ -90,8 +90,19 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<VariableDTO> getInputs() {
-        return this.getVarByType().get(1);
+    public List<VariableDTO> getInputs(String func, int degree) {
+        Program function = pm.getProgram(func, degree);
+
+        Set<Variable> innerFunctionVars = function.getVariables();
+        List<VariableDTO> result = new ArrayList<>();
+
+        for (Variable var : innerFunctionVars) {
+            if (var.getType().equals(VariableType.INPUT)) {
+                result.add(new VariableDTO(var));
+            }
+        }
+
+        return result;
     }
 
     @Override

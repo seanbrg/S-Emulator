@@ -34,7 +34,7 @@ public interface Engine {
 
     List<VariableDTO> getOutputs();
 
-    List<VariableDTO> getInputs();
+    List<VariableDTO> getInputs(String func, int degree);
 
     int getCycles(String program, int degree);
 

@@ -266,7 +266,15 @@ public class AppController {
     }
 
     private void refreshInputs() {
-        currentRawProgramInputs.setAll(engine.getInputs()); // or get by program name if needed
+        ProgramTabController tabController = currentTabController.get();
+        if (tabController == null) return;
+
+        String programName = tabController.getProgramName();
+        if (programName == null || programName.isEmpty()) return;
+
+        int degree = tabController.getCurrentDegree();
+
+        currentRawProgramInputs.setAll(engine.getInputs(programName, degree)); // or get by program name if needed
     }
 
     public IntegerProperty runCyclesProperty() {

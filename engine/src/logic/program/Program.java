@@ -5,6 +5,7 @@ import logic.labels.Label;
 import logic.variables.Variable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface Program {
     public void run();
@@ -16,6 +17,8 @@ public interface Program {
 
     List<Instruction> getInstructions();
     Map<Label, Instruction> getLabels();
+
+    Set<Variable> getVariables();
 
     int maxDegree();
     int cycles();

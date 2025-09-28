@@ -38,12 +38,9 @@ public class ProgramManager {
     }
 
     public static long runFunction(Program function, List<Variable> argsVars) {
-        Set<Variable> innerFunctionVars = new HashSet<>();
+        Set<Variable> innerFunctionVars = function.getVariables();
         Map<Integer, Variable> inputFunctionVars = new HashMap<>();
 
-        function.getInstructions().forEach(instruction -> {
-            innerFunctionVars.addAll(instruction.getVars());
-        });
         for (Variable var : innerFunctionVars) {
             if (var.getType().equals(VariableType.INPUT)) {
                 inputFunctionVars.put(var.getNum() - 1, var);

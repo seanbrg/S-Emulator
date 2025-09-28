@@ -3,6 +3,8 @@ package logic.program;
 import logic.instructions.Instruction;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
+import logic.variables.Variable;
+import logic.variables.VariableType;
 
 import java.util.*;
 
@@ -88,6 +90,16 @@ public class SProgram implements Program {
     @Override
     public Map<Label, Instruction> getLabels() {
         return labels;
+    }
+
+    @Override
+    public Set<Variable> getVariables() {
+        Set<Variable> innerFunctionVars = new HashSet<>();
+        instructions.forEach(instruction -> {
+            innerFunctionVars.addAll(instruction.getVars());
+        });
+
+        return innerFunctionVars;
     }
 
     @Override

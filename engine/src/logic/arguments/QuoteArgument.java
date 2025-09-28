@@ -22,4 +22,8 @@ public class QuoteArgument implements Argument {
         quoteInstruction.execute();
         return quoteInstruction.getVars().getFirst();
     }
+
+    public Quote getQuoteInstruction() {
+        return quoteInstruction;
+    }
 }

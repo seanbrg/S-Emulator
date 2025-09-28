@@ -3,6 +3,8 @@ package logic.instructions.api.synthetic;
 import execute.components.ProgramManager;
 import execute.dto.VariableDTO;
 import logic.arguments.Argument;
+import logic.arguments.QuoteArgument;
+import logic.arguments.VarArgument;
 import logic.instructions.Instruction;
 import logic.instructions.InstructionData;
 import logic.instructions.api.AbstractInstruction;
@@ -47,18 +49,52 @@ public class Quote extends AbstractInstruction {
         for (Argument arg : args) {
             argsVars.add(arg.get());
         }
-        System.out.println(argsVars.stream().map(Variable::getValue).toList());
         v.setValue(ProgramManager.runFunction(function, argsVars));
         return FixedLabel.EMPTY;
     }
 
     @Override
     public List<Variable> getVars() {
-        return List.of(v);
+        List<Variable> result = new ArrayList<>();
+
+        result.add(v);
+        for (Argument arg : args) {
+            if (arg instanceof VarArgument) {
+                result.add(arg.get());
+            }
+            else if (arg instanceof QuoteArgument) {
+                result.addAll(((QuoteArgument) arg).getQuoteInstruction().getVars());
+            }
+        }
+        return result;
     }
 
     @Override
     public List<VariableDTO> getVarsDTO() {
-        return List.of(new VariableDTO(v));
+        List<VariableDTO> result = new ArrayList<>();
+
+        result.add(new VariableDTO(v));
+        for (Argument arg : args) {
+            if (arg instanceof VarArgument) {
+                result.add(new VariableDTO(arg.get()));
+            }
+            else if (arg instanceof QuoteArgument) {
+                result.addAll(((QuoteArgument) arg).getQuoteInstruction().getVarsDTO());
+            }
+        }
+        return result;
     }
+
+    @Override
+    public int getCycles() {
+        int cycles = 5;
+        cycles += function.cycles();
+        for (Argument arg : args) {
+            if (arg instanceof QuoteArgument) {
+                cycles += ((QuoteArgument) arg).getQuoteInstruction().getCycles();
+            }
+        }
+        return cycles;
+    }
+
 }

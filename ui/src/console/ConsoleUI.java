@@ -91,7 +91,7 @@ public class ConsoleUI {
             }
 
             if (0 <= degree && degree <= maxDegree) {
-                List<VariableDTO> requiredInputVars = engine.getInputs();
+                List<VariableDTO> requiredInputVars = engine.getInputs(engine.getMainProgramName(), degree);
                 System.out.println("The current program's input variables are:");
                 requiredInputVars.forEach(s -> System.out.print(s.getName() + " "));
                 System.out.println('\n' + "Please enter inputs separated by commas:");
