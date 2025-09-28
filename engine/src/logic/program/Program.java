@@ -11,6 +11,9 @@ public interface Program {
     void addInstruction(Instruction instruction);
 
     String getName();
+
+    String getUserStr();
+
     List<Instruction> getInstructions();
     Map<Label, Instruction> getLabels();
 

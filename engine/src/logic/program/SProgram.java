@@ -78,6 +78,9 @@ public class SProgram implements Program {
     }
 
     @Override
+    public String getUserStr() { return userStr; }
+
+    @Override
     public List<Instruction> getInstructions() {
         return instructions;
     }

@@ -37,7 +37,7 @@ public class Quote extends AbstractInstruction {
     @Override
     public String print() {
         String argsStr = String.join(",", args.stream().map(Argument::toString).toList());
-        return String.format("%s <- (%s, %s)", v.getName(), function.getName(), argsStr);
+        return String.format("%s <- (%s,%s)", v.getName(), function.getUserStr(), argsStr);
     }
 
     @Override

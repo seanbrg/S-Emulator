@@ -55,4 +55,6 @@ public interface Engine {
     List<LabelDTO> getLabels(String programName, int degree);
 
     List<String> getFuncNamesList();
+
+    void clear();
 }

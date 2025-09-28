@@ -245,4 +245,13 @@ public class EngineImpl implements Engine {
     public List<String> getFuncNamesList() {
         return pm.getFuncNamesList();
     }
+
+    @Override
+    public void clear() {
+        pm.clear();
+        inputVarsMap.clear();
+        tempVarsMap.clear();
+        history.clear();
+        outputVar = null;
+    }
 }

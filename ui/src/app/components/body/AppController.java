@@ -175,6 +175,7 @@ public class AppController {
     public Task<List<String>> createLoadTask(String filePath) {
         return new Task<>() {
             @Override protected List<String> call() {
+                engine.clear();
                 if (!engine.loadFromXML(filePath)) {
                     throw new RuntimeException("Load failed: " + filePath);
                 }

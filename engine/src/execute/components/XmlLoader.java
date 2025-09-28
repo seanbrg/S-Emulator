@@ -147,12 +147,13 @@ public class XmlLoader {
     private Program parseFunction(Element funcElem, Map<String, Variable> varsMap, Map<Label, Instruction> labels, boolean printMode) {
         List<Instruction> instructions = new ArrayList<>();
         String funcName = funcElem.getAttribute("name");
+        String userStr = funcElem.getAttribute("user-string");
 
         NodeList instrNodes = funcElem.getElementsByTagName("S-Instruction");
         List<Instruction> funcInstructions = parseInstructions(instrNodes, varsMap, labels, printMode);
         instructions.addAll(funcInstructions);
 
-        Program result = new SProgram(funcName, labels, instructions, null);
+        Program result = new SProgram(funcName, labels, instructions, userStr);
 
         if (!result.checkLabels()) {
             if (printMode) System.out.println("Error: Program has invalid labels.");
