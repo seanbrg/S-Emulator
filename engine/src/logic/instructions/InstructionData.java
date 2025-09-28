@@ -12,7 +12,9 @@ public enum InstructionData {
     CONSTANT_ASSIGNMENT("CONSTANT_ASSIGNMENT", 2, 1, InstructionType.SYNTHETIC),
     JUMP_ZERO("JUMP_ZERO", 2, 2, InstructionType.SYNTHETIC),
     JUMP_EQUAL_CONSTANT("JUMP_EQUAL_CONSTANT", 2, 3, InstructionType.SYNTHETIC),
-    JUMP_EQUAL_VARIABLE("JUMP_EQUAL_VARIABLE", 2, 3, InstructionType.SYNTHETIC);
+    JUMP_EQUAL_VARIABLE("JUMP_EQUAL_VARIABLE", 2, 3, InstructionType.SYNTHETIC),
+
+    QUOTE("QUOTE", 5, 1, InstructionType.SYNTHETIC);
 
     private final String name;
     private final int cycles;

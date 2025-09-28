@@ -7,17 +7,20 @@ import logic.labels.Label;
 import java.util.*;
 
 public class SProgram implements Program {
+    private String userStr;
     private String name;
     private List<Instruction> instructions;
     private Map<Label, Instruction> labels;
 
-    public SProgram(String name, Map<Label, Instruction> labels) {
+    public SProgram(String name, Map<Label, Instruction> labels, String userStr) {
+        this.userStr = userStr == null ? name : userStr;
         this.name = name;
         this.instructions = new ArrayList<>();
         this.labels = labels; // labels must map each label to its instruction
     }
 
-    public SProgram(String name, Map<Label, Instruction> labels, List<Instruction> instructions) {
+    public SProgram(String name, Map<Label, Instruction> labels, List<Instruction> instructions, String userStr) {
+        this.userStr = userStr == null ? name : userStr;
         this.name = name;
         this.instructions = instructions;
         this.labels = labels; // labels must map each label to its instruction

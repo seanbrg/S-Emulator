@@ -11,6 +11,9 @@ public abstract class AbstractInstruction implements Instruction {
     private int num;
     private final Instruction parent;
 
+
+    //TODO: create 2 new instruction objects
+
     public AbstractInstruction(InstructionData data) {
         this(data, FixedLabel.EMPTY);
     }

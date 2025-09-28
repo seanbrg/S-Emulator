@@ -25,7 +25,6 @@ public class ProgramTabController {
     @FXML private TableColumn<InstructionDTO, String> columnType;
     @FXML private TableColumn<InstructionDTO, Integer> columnNum;
     @FXML private TableColumn<InstructionDTO, Integer> columnCycles;
-    // TODO: add breakpoint column
 
     private String programName;
     int degree;

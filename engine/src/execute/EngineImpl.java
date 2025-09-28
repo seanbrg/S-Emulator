@@ -102,12 +102,15 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromXML(String filePath) {
         Map<String, Variable> vars = new HashMap<>();
-        Program program = XmlLoader.parse(filePath, vars, printMode);
-        if (program != null) {
+        XmlLoader loader = new XmlLoader();
+        List<Program> programs = loader.parse(filePath, vars, printMode);
+
+        if (programs != null) {
+            Program main = programs.get(0);
             this.fillOutVars(vars);
-            pm.loadNewProgram(program);
+            pm.loadNewProgram(main);
             this.history.clear();
-            if (printMode) System.out.println("Program '" + program.getName() + "' loaded successfully!");
+            if (printMode) System.out.println("Program '" + main.getName() + "' loaded successfully!");
             return true;
         } else {
             if (printMode) System.out.println("Program not loaded. Keeping previous program.");

@@ -34,6 +34,30 @@ public class ProgramManager {
         this.maxDegree = 0;
     }
 
+    public static long runFunction(Program function, List<Variable> argsVars) {
+        Set<Variable> innerFunctionVars = new HashSet<>();
+        function.getInstructions().forEach(instruction -> {
+            innerFunctionVars.addAll(instruction.getVars());
+        });
+        Variable output = argsVars.stream()
+                .filter(v -> v.getType().equals(VariableType.OUTPUT))
+                .findFirst()
+                .orElse(null);
+
+        if (output == null) { return 0; }
+
+        innerFunctionVars.stream().forEach(var -> {
+            for (Variable argsVar : argsVars) {
+                if (argsVar.getName().equals(var.getName())) {
+                    var.setValue(argsVar.getValue());
+                }
+            }
+        });
+
+        function.run();
+        return output.getValue();
+    }
+
     public String getProgramName() { return programExpansions.isEmpty() ? "" : programExpansions.get(0).getName(); }
 
     public void loadNewProgram(Program program) {
@@ -156,7 +180,7 @@ public class ProgramManager {
                     .findFirst().ifPresent(labeledInstr -> newLabels.put(label, labeledInstr));
         }
 
-        programExpansions.add(new SProgram(currentProgram.getName(), newLabels, newInstructions));
+        programExpansions.add(new SProgram(currentProgram.getName(), newLabels, newInstructions, null));
     }
 
     private List<Instruction> expandInstruction(Instruction instr, int lineNum) {

@@ -110,7 +110,7 @@ public class headerController {
 
 
     private void handleFindComponent() {
-        // TODO: Implement find component functionality
+        // TODO: Implement find component functionality for highlighting
     }
 
 
