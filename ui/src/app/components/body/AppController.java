@@ -12,7 +12,6 @@ import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -173,21 +172,23 @@ public class AppController {
         }
     }
 
-    public Task<String> createLoadTask(String filePath) {
+    public Task<List<String>> createLoadTask(String filePath) {
         return new Task<>() {
-            @Override protected String call() {
+            @Override protected List<String> call() {
                 if (!engine.loadFromXML(filePath)) {
                     throw new RuntimeException("Load failed: " + filePath);
                 }
-                return engine.getProgramName();
+                return engine.getFuncNamesList();
             }
         };
     }
 
-    public void newProgram(String programName) {
+    public void newProgram(List<String> funcNames) {
         switchingProgram.set(!switchingProgram.get());
         programTabs.getTabs().clear();
-        addProgramTab(programName, 0);
+        for (String func : funcNames.reversed()) {
+            addProgramTab(func, 0);
+        }
     }
 
     private void addProgramTab(String programName, int degree) {
@@ -225,9 +226,11 @@ public class AppController {
 
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();
+            String funcName = currentTabController.getName();
+            //TODO: FIX BUG WITH FUNCNAME BEING NULL
 
             // give the window its max degree
-            int maxDegree = engine.maxDegree();      // existing API
+            int maxDegree = engine.maxDegree(funcName);      // existing API
             c.setMaxExpansion(maxDegree);            // existing controller API
 
             // show modally (main window disabled) and wait
@@ -245,7 +248,7 @@ public class AppController {
             // read the result (0 == cancelled)
             int chosenDegree = c.getResult();
             if (chosenDegree > 0) {
-                addProgramTab(engine.getProgramName(), chosenDegree);
+                addProgramTab(funcName, chosenDegree);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

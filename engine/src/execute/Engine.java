@@ -4,17 +4,15 @@ import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
-import logic.labels.Label;
 import logic.variables.Variable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface Engine {
     boolean loadFromXML(String filePath);
 
-    void printProgram(int degree);
+    void printProgram(String program, int degree);
 
     long runProgram(String programName, int degree);
 
@@ -24,13 +22,13 @@ public interface Engine {
 
     boolean isLoaded();
 
-    String getProgramName();
+    String getMainProgramName();
 
     void resetVars();
 
-    boolean validateProgram(int degree);
+    boolean validateProgram(String program, int degree);
 
-    int maxDegree();
+    int maxDegree(String func);
 
     List<List<VariableDTO>> getVarByType();
 
@@ -38,7 +36,7 @@ public interface Engine {
 
     List<VariableDTO> getInputs();
 
-    int getCycles(int degree);
+    int getCycles(String program, int degree);
 
     void fillOutVars(Map<String, Variable> vars);
 
@@ -55,4 +53,6 @@ public interface Engine {
     int getDebugLine();
 
     List<LabelDTO> getLabels(String programName, int degree);
+
+    List<String> getFuncNamesList();
 }

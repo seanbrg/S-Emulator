@@ -11,6 +11,8 @@ import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
 import java.io.File;
+import java.util.List;
+
 import javafx.animation.*;
 
 public class headerController {
@@ -56,7 +58,7 @@ public class headerController {
         Timeline spinner = startContinuousProgress();
 
         // background load (no UI work inside)
-        Task<String> task = mainController.createLoadTask(path);
+        Task<List<String>> task = mainController.createLoadTask(path);
 
         // when task leaves RUNNING, finish the bar and then open/notify
         task.setOnSucceeded(e -> finish(true, task.getValue(), path, spinner));
@@ -65,7 +67,7 @@ public class headerController {
         new Thread(task, "load-xml").start();
     }
 
-    private void finish(boolean ok, String programName, String path, Timeline spinner) {
+    private void finish(boolean ok, List<String> funcNames, String path, Timeline spinner) {
         spinner.stop();
         var toFull = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -79,7 +81,9 @@ public class headerController {
             var stall = new PauseTransition(Duration.seconds(0.2));
             stall.setOnFinished(__ -> {
                 loadLabel.setText(ok ? path : "Failed to load: " + path);
-                if (ok) mainController.newProgram(programName);
+                if (ok) {
+                        mainController.newProgram(funcNames);
+                }
                 progressBar.setVisible(false);
             });
             stall.play();

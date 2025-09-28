@@ -1,5 +1,6 @@
 package logic.arguments;
 
+import execute.components.ProgramManager;
 import logic.instructions.api.synthetic.Quote;
 import logic.variables.Variable;
 
@@ -12,7 +13,8 @@ public class QuoteArgument implements Argument {
 
     @Override
     public String toString() {
-        return quoteInstruction.print();
+        String printed = quoteInstruction.print();
+        return printed.substring(printed.indexOf("-") + 2).trim();
     }
 
     @Override

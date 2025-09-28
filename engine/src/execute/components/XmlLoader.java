@@ -13,11 +13,13 @@ import logic.program.Program;
 import logic.program.SProgram;
 import logic.variables.Var;
 import logic.variables.Variable;
+import logic.variables.VariableType;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class XmlLoader {
 
@@ -253,7 +255,7 @@ public class XmlLoader {
                             subFuncName = inside.substring(0, firstComma).trim();
                             subFuncArgs = inside.substring(firstComma + 1).trim();
                         }
-                        Quote subQuote = generateQuote(FixedLabel.EMPTY, new Var("y"), subFuncName, subFuncArgs, vars);
+                        Quote subQuote = generateQuote(FixedLabel.EMPTY, var, subFuncName, subFuncArgs, vars);
                         funcArgs.add(new QuoteArgument(subQuote));
                     } else {
                         throw new IllegalArgumentException("Unknown argument format: " + trimmed);
@@ -262,6 +264,18 @@ public class XmlLoader {
             }
             return new Quote(selfLabel, var, func, funcArgs);
         }
+    }
+
+    private Variable generateTempVar(Map<String, Variable> vars) {
+        int maxTmp = 0;
+        for (Variable v : vars.values()) {
+            if (v.getType().equals(VariableType.OUTPUT) && v.getNum() > maxTmp) {
+                maxTmp = v.getNum();
+            }
+        }
+        Variable v = new Var("z" + (maxTmp + 1));
+        vars.put(v.getName(), v);
+        return v;
     }
 
     // helper: split only on top-level commas

@@ -37,7 +37,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public String getProgramName() { return pm.getProgramName(); }
+    public String getMainProgramName() { return pm.getMainProgramName(); }
 
     @Override
     public void resetVars() {
@@ -45,13 +45,13 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public boolean validateProgram(int degree) {
-        return pm.getProgram(degree).checkLabels();
+    public boolean validateProgram(String program, int degree) {
+        return pm.getProgram(program, degree).checkLabels();
     }
 
     @Override
-    public int maxDegree() {
-        return pm.maxDegree();
+    public int maxDegree(String func) {
+        return pm.maxDegree(func);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public int getCycles(int degree) {
-        return pm.getProgram(degree).cycles();
+    public int getCycles(String program, int degree) {
+        return pm.getProgram(program, degree).cycles();
     }
 
     @Override
@@ -106,11 +106,10 @@ public class EngineImpl implements Engine {
         List<Program> programs = loader.parse(filePath, vars, printMode);
 
         if (programs != null) {
-            Program main = programs.get(0);
             this.fillOutVars(vars);
-            pm.loadNewProgram(main);
+            pm.loadNew(programs);
             this.history.clear();
-            if (printMode) System.out.println("Program '" + main.getName() + "' loaded successfully!");
+            if (printMode) System.out.println("Program '" + programs.getLast().getName() + "' loaded successfully!");
             return true;
         } else {
             if (printMode) System.out.println("Program not loaded. Keeping previous program.");
@@ -146,11 +145,9 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public List<InstructionDTO> getInstructionsList(String programName, int degree) {
-        if (pm.isEmpty() || !pm.getProgramName().equals(programName)) {
-            return Collections.emptyList();
-        }
-        return pm.getProgram(degree).getInstructions().stream()
+    public List<InstructionDTO> getInstructionsList(String program, int degree) {
+        if (pm.isEmpty()) return Collections.emptyList();
+        else return pm.getProgram(program, degree).getInstructions().stream()
                 .map(InstructionDTO::new)
                 .toList();
     }
@@ -167,12 +164,12 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void printProgram(int degree) {
+    public void printProgram(String program, int degree) {
         if (pm.isEmpty()) {
             System.out.println("No program loaded.");
             return;
         }
-        pm.printProgram(degree);
+        pm.printProgram(program, degree);
     }
 
     public void printHistory() {
@@ -198,14 +195,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public HistoryDTO runProgramAndRecord(String programName, int degree, List<VariableDTO> inputs) {
+    public HistoryDTO runProgramAndRecord(String program, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
-        this.runProgram(programName, degree);
+        this.runProgram(program, degree);
         List<VariableDTO> outputs = getOutputs();
-        int cycles = pm.getProgramCycles(degree);
+        int cycles = pm.getProgramCycles(program, degree);
 
         runCounter++;
-        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(degree));
+        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(program, degree));
         HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, outputs);
 
         if (printMode) {
@@ -242,5 +239,10 @@ public class EngineImpl implements Engine {
         return pm.getLabels(programName, degree).stream()
                 .map(LabelDTO::new)
                 .toList();
+    }
+
+    @Override
+    public List<String> getFuncNamesList() {
+        return pm.getFuncNamesList();
     }
 }

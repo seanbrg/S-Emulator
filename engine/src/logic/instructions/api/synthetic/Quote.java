@@ -11,6 +11,7 @@ import logic.labels.Label;
 import logic.program.Program;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Quote extends AbstractInstruction {
@@ -41,7 +42,12 @@ public class Quote extends AbstractInstruction {
 
     @Override
     public Label execute() {
-        List<Variable> argsVars = args.stream().map(Argument::get).toList();
+        List<Variable> argsVars = new ArrayList<>();
+
+        for (Argument arg : args) {
+            argsVars.add(arg.get());
+        }
+        System.out.println(argsVars.stream().map(Variable::getValue).toList());
         v.setValue(ProgramManager.runFunction(function, argsVars));
         return FixedLabel.EMPTY;
     }

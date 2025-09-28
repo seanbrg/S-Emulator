@@ -10,7 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox fx:id="header" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="8" styleClass="surface" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="app.components.header.headerController">
+<HBox fx:id="header" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="8" styleClass="surface" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.header.headerController">
    <children>
       <MenuBar maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="150.0" useSystemMenuBar="true">
         <menus>
