@@ -70,7 +70,7 @@ public class ProgramManager {
         this.clear();
         mainName = programs.getFirst().getName();
         for (Program func : programs) {
-            savedFunctions.put(func.getName(), List.of(func));
+            savedFunctions.put(func.getName(), new ArrayList<>(List.of(func)));
             maxDegrees.put(func.getName(), func.maxDegree());
         }
     }

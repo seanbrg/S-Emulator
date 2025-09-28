@@ -232,12 +232,9 @@ public class AppController {
 
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();
-            String funcName = currentTabController.getName();
-            //TODO: FIX BUG WITH FUNCNAME BEING NULL
-
-            // give the window its max degree
-            int maxDegree = engine.maxDegree(funcName);      // existing API
-            c.setMaxExpansion(maxDegree);            // existing controller API
+            String funcName = currentTabController.get().getProgramName();
+            int maxDegree = engine.maxDegree(funcName);
+            c.setMaxExpansion(maxDegree);
 
             // show modally (main window disabled) and wait
             Stage s = new Stage();
