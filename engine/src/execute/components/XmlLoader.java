@@ -258,7 +258,8 @@ public class XmlLoader {
                             subFuncName = inside.substring(0, firstComma).trim();
                             subFuncArgs = inside.substring(firstComma + 1).trim();
                         }
-                        Quote subQuote = generateQuote(FixedLabel.EMPTY, var, subFuncName, subFuncArgs, vars);
+                        Variable tmp = generateTempVar(vars);
+                        Quote subQuote = generateQuote(FixedLabel.EMPTY, tmp, subFuncName, subFuncArgs, vars);
                         funcArgs.add(new QuoteArgument(subQuote));
                     } else {
                         throw new IllegalArgumentException("Unknown argument format: " + trimmed);
