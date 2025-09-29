@@ -139,7 +139,6 @@ public class SProgram implements Program {
     @Override
     public void setInstrList(List<Instruction> newInstrList) {
         this.instructions = newInstrList;
-        findVariables();
     }
 
     @Override

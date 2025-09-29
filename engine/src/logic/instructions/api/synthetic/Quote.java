@@ -107,7 +107,13 @@ public class Quote extends AbstractInstruction {
         return cycles;
     }
 
+    @Override
+    public int getDegree() {
+        return function.maxDegree();
+    }
+
     public Program getFunction() { return function; }
+
     public void setFunction(Program function) { this.function = function; }
 
     public List<Argument> getArgs() {

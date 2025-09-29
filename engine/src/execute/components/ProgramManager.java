@@ -112,9 +112,9 @@ public class ProgramManager {
                 }
             }
 
-            Program func = quotableFunctions.get(programs.get(i).getName());
-            func.setOutputVar(outputVar);
-            func.setInputs(inputVars);
+            Program editedFunc = quotableFunctions.get(programs.get(i).getName());
+            editedFunc.setOutputVar(outputVar);
+            editedFunc.setInputs(inputVars);
 
             for (Label quotedLbl : programs.get(i).getLabels().keySet()) {
                 if (usedLbls.contains(quotedLbl) && !newLblsMap.containsKey(quotedLbl)) {
@@ -153,7 +153,7 @@ public class ProgramManager {
                 Variable oldScdVar = instr.getSecondaryVar();
 
                 Instruction newInstr = copyInstr(instr, newSelfLabel, newTgtLabel,
-                        newVarsMap.get(oldPrmVar), newVarsMap.get(oldScdVar), newVarsMap, newLblsMap);
+                        newVarsMap.get(oldPrmVar), newVarsMap.get(oldScdVar), instr.getNum(), null, newVarsMap, newLblsMap);
 
                 if (instr instanceof Quote quo) {
                     quo.setFunction(quotableFunctions.get(quo.getFunction().getName()));
@@ -171,26 +171,28 @@ public class ProgramManager {
 
     private Instruction copyInstr(Instruction instr, Label selfLabel, Label targetLabel,
                                   Variable primaryVar, Variable secondaryVar,
+                                  int lineNum,
+                                  Instruction parent,
                                   Map<Variable, Variable> newVarsMap,
                                   Map<Label, Label> newLblsMap) {
 
         return switch (instr.getData().name().toUpperCase()) {
-            case "INCREASE" -> new Increase(selfLabel, primaryVar);
-            case "DECREASE" -> new Decrease(selfLabel, primaryVar);
-            case "JNZ" -> new JumpNotZero(selfLabel, primaryVar, targetLabel);
-            case "NO_OP" -> new Neutral(selfLabel, primaryVar);
-            case "ZERO_VARIABLE" -> new ZeroVariable(selfLabel, primaryVar);
-            case "GOTO_LABEL" -> new GoToLabel(selfLabel, targetLabel);
-            case "ASSIGNMENT" -> new Assignment(selfLabel, primaryVar, secondaryVar);
-            case "CONSTANT_ASSIGNMENT" -> new ConstantAssignment(selfLabel, primaryVar, instr.getConst());
-            case "JUMP_ZERO" -> new JumpZero(selfLabel, primaryVar, targetLabel);
-            case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant(selfLabel, primaryVar, instr.getConst(), targetLabel);
-            case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, primaryVar, secondaryVar, targetLabel);
+            case "INCREASE" -> new Increase(selfLabel, primaryVar, lineNum, parent);
+            case "DECREASE" -> new Decrease(selfLabel, primaryVar, lineNum, parent);
+            case "JNZ" -> new JumpNotZero(selfLabel, primaryVar, targetLabel, lineNum, parent);
+            case "NO_OP" -> new Neutral(selfLabel, primaryVar, lineNum, parent);
+            case "ZERO_VARIABLE" -> new ZeroVariable(selfLabel, primaryVar, lineNum, parent);
+            case "GOTO_LABEL" -> new GoToLabel(selfLabel, targetLabel, lineNum, parent);
+            case "ASSIGNMENT" -> new Assignment(selfLabel, primaryVar, secondaryVar, lineNum, parent);
+            case "CONSTANT_ASSIGNMENT" -> new ConstantAssignment(selfLabel, primaryVar, instr.getConst(), lineNum, parent);
+            case "JUMP_ZERO" -> new JumpZero(selfLabel, primaryVar, targetLabel, lineNum, parent);
+            case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant(selfLabel, primaryVar, instr.getConst(), targetLabel, lineNum, parent);
+            case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, primaryVar, secondaryVar, targetLabel, lineNum, parent);
             case "QUOTE" -> {
                 String funcName = ((Quote)instr).getFunction().getName();
                 Program newFunc = quotableFunctions.get(funcName);
                 List<Argument> newArgs = recursiveFixArgs(((Quote)instr).getArgs(), newVarsMap, newLblsMap);
-                yield new Quote(selfLabel, primaryVar, newFunc, newArgs);
+                yield new Quote(selfLabel, primaryVar, newFunc, newArgs, lineNum, parent);
             }
 
             default -> null;
@@ -202,11 +204,7 @@ public class ProgramManager {
         List<Argument> newArgs = new ArrayList<>();
         for (Argument arg : args) {
             if (arg instanceof VarArgument varArg) {
-                if (newVarsMap != null) {
-                    newArgs.add(new VarArgument(newVarsMap.get(varArg.get())));
-                } else {
-                    newArgs.add(new VarArgument(varArg.get()));
-                }
+                newArgs.add(varArg);
             }
             if (arg instanceof QuoteArgument quoteArg) {
                 List<Argument> innerArgs = recursiveFixArgs(quoteArg.getQuoteInstruction().getArgs(), newVarsMap, newLblsMap);
@@ -436,7 +434,7 @@ public class ProgramManager {
 
         // ---- QUOTE ----
         else if (instr instanceof Quote quo) {
-            result.addAll(expandQuote(quo.getFunction().getName(), self, quo.getPrimaryVar(), lineNum));
+            result.addAll(expandQuote(quo, lineNum));
         }
         else {
             result.add(instr);
@@ -445,16 +443,42 @@ public class ProgramManager {
         return result;
     }
 
-    private List<Instruction> expandQuote(String funcName, Label selfLabel, Variable v, int lineNum) {
+    private List<Instruction> expandQuote(Quote quo, int lineNum) {
         List<Instruction> result = new ArrayList<>();
-        List<Instruction> oldInstrList = quotableFunctions.get(funcName).getInstructions();
+        Program func = quotableFunctions.get(quo.getFunction().getName());
+        List<Instruction> funcInstrList = func.getInstructions();
+        Map<Integer, Variable> funcInputs = func.getInputs();
+        List<Argument> arguments = quo.getArgs();
+        List<Variable> varArgs = new ArrayList<>();
 
-        result.add(new Neutral(selfLabel, v));
+        result.add(new Neutral(quo.getSelfLabel(), quo.getPrimaryVar(), lineNum++, quo));
 
-        for (Instruction instr : oldInstrList) {
-            result.add(copyInstr(instr, instr.getSelfLabel(), instr.getTargetLabel(),
-                            instr.getPrimaryVar(), instr.getSecondaryVar(), null, null));
+        for (Argument arg : arguments) {
+            if (arg instanceof VarArgument varArg) {
+                varArgs.add(varArg.get());
+            }
+            else if (arg instanceof QuoteArgument quoteArg) {
+                Quote inner = quoteArg.getQuoteInstruction();
+                result.add(new Quote(FixedLabel.EMPTY, inner.getPrimaryVar(), inner.getFunction(), inner.getArgs(), lineNum++, quo));
+                varArgs.add(inner.getPrimaryVar());
+            }
         }
+
+        for (int i = 0; i < varArgs.size(); i++) {
+            Variable target = funcInputs.get(i + 1);
+            Variable source = varArgs.get(i);
+
+            result.add(new Assignment(FixedLabel.EMPTY, target, source, lineNum++, quo));
+        }
+
+        for (Instruction instr : funcInstrList) {
+            result.add(copyInstr(instr, instr.getSelfLabel(), instr.getTargetLabel(),
+                            instr.getPrimaryVar(), instr.getSecondaryVar(), lineNum, quo,null, null));
+        }
+
+        Variable output = func.getOutput();
+        result.add(new Assignment(FixedLabel.EMPTY, quo.getPrimaryVar(), output, lineNum, quo));
+
         return result;
     }
 

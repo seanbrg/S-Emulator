@@ -17,7 +17,7 @@ public class Assignment extends AbstractInstruction {
     private final Variable x, y;
 
     public Assignment(Label selfLabel, Variable x, Variable y, int num, Instruction parent) {
-        super(InstructionData.ASSIGNMENT,  selfLabel, num, parent);
+        super(InstructionData.ASSIGNMENT, selfLabel, num, parent);
         this.x = x;
         this.y = y;
     }
@@ -31,7 +31,12 @@ public class Assignment extends AbstractInstruction {
     }
 
     @Override
-    public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(x), new VariableDTO(y)); }
+    public List<VariableDTO> getVarsDTO() {
+        List<VariableDTO> vars = new ArrayList<>(2);
+        if (x != null) vars.add(new VariableDTO(x));
+        if (y != null) vars.add(new VariableDTO(y));
+        return vars;
+    }
 
     @Override
     public List<Variable> getVars() {
