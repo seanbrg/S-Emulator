@@ -37,6 +37,13 @@ public class ConstantAssignment extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(v); }
 
     @Override
+    public Variable getPrimaryVar() { return v; }
+
+    @Override
+    public Variable getSecondaryVar() { return v; }
+
+
+    @Override
     public int getConst() { return k; }
 
     @Override

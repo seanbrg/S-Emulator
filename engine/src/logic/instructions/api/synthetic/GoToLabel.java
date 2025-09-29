@@ -35,6 +35,13 @@ public class GoToLabel extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(); }
 
     @Override
+    public Variable getPrimaryVar() { return null; }
+
+    @Override
+    public Variable getSecondaryVar() { return null; }
+
+
+    @Override
     public LabelDTO getArgLabelDTO() { return new LabelDTO(target.getLabel()); }
 
     @Override

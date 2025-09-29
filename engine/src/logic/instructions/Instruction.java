@@ -38,4 +38,8 @@ public interface Instruction {
     int getConst();
 
     Instruction getParent();
+
+    Variable getPrimaryVar();
+
+    Variable getSecondaryVar();
 }

@@ -125,6 +125,7 @@ public class EngineImpl implements Engine {
 
         if (programs != null) {
             this.fillOutVars(vars);
+            pm.refactorQuoteFunctions(programs);
             pm.loadNew(programs);
             this.history.clear();
             if (printMode) System.out.println("Program '" + programs.getLast().getName() + "' loaded successfully!");

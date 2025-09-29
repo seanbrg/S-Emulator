@@ -32,6 +32,12 @@ public class Neutral extends AbstractInstruction {
 
     @Override
     public List<Variable> getVars() { return List.of(v); }
+    
+    @Override
+    public Variable getPrimaryVar() { return v; }
+
+    @Override
+    public Variable getSecondaryVar() { return v; }
 
     @Override
     public Label execute() {

@@ -34,6 +34,13 @@ public class ZeroVariable extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(v); }
 
     @Override
+    public Variable getPrimaryVar() { return v; }
+
+    @Override
+    public Variable getSecondaryVar() { return v; }
+
+
+    @Override
     public Label execute() {
         v.setValue(0);
         return FixedLabel.EMPTY;

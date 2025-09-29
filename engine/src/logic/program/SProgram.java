@@ -32,6 +32,13 @@ public class SProgram implements Program {
         }
     }
 
+    public SProgram(String name, String userStr) {
+        this.userStr = userStr == null ? name : userStr;
+        this.name = name;
+        this.instructions = new ArrayList<>();
+        this.labels = new HashMap<>();
+    }
+
 
     @Override
     public void run() {
@@ -132,6 +139,16 @@ public class SProgram implements Program {
             }
         }
         return true;
+    }
+
+    @Override
+    public void setInstrList(List<Instruction> newInstrList) {
+        this.instructions = newInstrList;
+    }
+
+    @Override
+    public void setLabelMap(Map<Label, Instruction> newLabelsMap) {
+        this.labels = newLabelsMap;
     }
 
 }

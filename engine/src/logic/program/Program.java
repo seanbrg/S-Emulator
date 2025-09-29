@@ -24,4 +24,8 @@ public interface Program {
     int cycles();
 
     boolean checkLabels();
+
+    void setInstrList(List<Instruction> newInstrList);
+
+    void setLabelMap(Map<Label, Instruction> newLabelsMap);
 }

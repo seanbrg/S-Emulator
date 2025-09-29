@@ -36,6 +36,12 @@ public class JumpNotZero extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(v); }
 
     @Override
+    public Variable getPrimaryVar() { return v; }
+
+    @Override
+    public Variable getSecondaryVar() { return v; }
+
+    @Override
     public LabelDTO getArgLabelDTO() { return new LabelDTO(target.getLabel()); }
 
     @Override

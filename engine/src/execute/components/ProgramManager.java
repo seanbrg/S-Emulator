@@ -1,5 +1,8 @@
 package execute.components;
 
+import logic.arguments.Argument;
+import logic.arguments.QuoteArgument;
+import logic.arguments.VarArgument;
 import logic.instructions.Instruction;
 import logic.instructions.api.basic.Decrease;
 import logic.instructions.api.basic.Increase;
@@ -8,6 +11,7 @@ import logic.instructions.api.basic.Neutral;
 import logic.instructions.api.synthetic.*;
 import logic.labels.FixedLabel;
 import logic.labels.Label;
+import logic.labels.NumericLabel;
 import logic.program.Program;
 import logic.program.SProgram;
 import logic.variables.Var;
@@ -15,10 +19,10 @@ import logic.variables.Variable;
 import logic.variables.VariableType;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ProgramManager {
     private Map<String, List<Program>> savedFunctions;
+    private Map<String, Program> quotableFunctions;
     private Map<String, Integer> maxDegrees;
     private String mainName;
 
@@ -32,6 +36,7 @@ public class ProgramManager {
     public ProgramManager(Map<String, Variable> tempVarsMap) {
         this.labelGenerator = new  LabelGenerator();
         this.savedFunctions = new HashMap<>();
+        this.quotableFunctions = new HashMap<>();
         this.maxDegrees = new HashMap<>();
         this.tempVarsMap = tempVarsMap;
         this.currentTemps = 0;
@@ -82,6 +87,128 @@ public class ProgramManager {
         currentTemps = tempVarsMap.values()
                 .stream().max(Comparator.comparing(Variable::getNum))
                 .map(Variable::getNum).orElse(0);
+    }
+
+    public void refactorQuoteFunctions(List<Program> programs) {
+        // deep-copy the quote functions to new ones with new vars and labels
+
+        Set<Variable> usedVars = programs.getFirst().getVariables();
+        Set<Label> usedLbls = new HashSet<>(programs.getFirst().getLabels().keySet());
+        Map<Variable, Variable> newVarsMap = new HashMap<>();
+        Map<Label, Label> newLblsMap = new HashMap<>();
+
+        for (int i = 1; i < programs.size(); i++) {
+            for (Variable quotedVar : programs.get(i).getVariables()) {
+                if (usedVars.contains(quotedVar) && !newVarsMap.containsKey(quotedVar)) {
+                    // a reused variable is encountered in the first time
+                    Variable newVar = generateTempVar();
+                    newVarsMap.put(quotedVar, newVar);
+                    usedVars.add(newVar);
+                }
+            }
+            for (Label quotedLbl : programs.get(i).getLabels().keySet()) {
+                if (usedLbls.contains(quotedLbl) && !newLblsMap.containsKey(quotedLbl)) {
+                    // a reused label is encountered in the first time
+                    Label newLbl = labelGenerator.newLabel();
+                    newLblsMap.put(quotedLbl, newLbl);
+                    usedLbls.add(newLbl);
+                }
+            }
+        }
+
+        for (Label lbl : usedLbls) {
+            if (!newLblsMap.containsKey(lbl)) {
+                newLblsMap.put(lbl, lbl);
+            }
+        }
+        for (Variable var : usedVars) {
+            if (!newVarsMap.containsKey(var)) {
+                newVarsMap.put(var, var);
+            }
+        }
+
+        quotableFunctions.clear();
+        for (Program program : programs) {
+            String name = program.getName();
+            String userStr = program.getUserStr();
+            quotableFunctions.put(program.getName(), new SProgram(name, userStr));
+        }
+
+        for (int i = 1; i < programs.size(); i++) {
+            List<Instruction> newInstrList = new ArrayList<>();
+            Map<Label, Instruction> newLabelsMap = new HashMap<>();
+            for (Instruction instr : programs.get(i).getInstructions()) {
+                Label oldSelfLabel = instr.getSelfLabel();
+                Label newSelfLabel = oldSelfLabel;
+                Label oldTgtLabel = instr.getTargetLabel();
+                Label newTgtLabel = oldTgtLabel;
+
+                if (oldSelfLabel instanceof NumericLabel) newSelfLabel = newLblsMap.get(oldSelfLabel);
+                if (oldTgtLabel instanceof NumericLabel) newTgtLabel = newLblsMap.get(oldTgtLabel);
+
+                Variable oldPrmVar = instr.getPrimaryVar();
+                Variable oldScdVar = instr.getSecondaryVar();
+
+                Instruction newInstr = copyInstr(instr, newSelfLabel, newTgtLabel,
+                        newVarsMap.get(oldPrmVar), newVarsMap.get(oldScdVar), newVarsMap);
+
+                if (instr instanceof Quote quo) {
+                    quo.setFunction(quotableFunctions.get(quo.getFunction().getName()));
+                    quo.setArgs(recursiveFixArgs(quo.getArgs(), newVarsMap));
+                }
+
+                newInstrList.add(newInstr);
+                if (newSelfLabel instanceof NumericLabel) newLabelsMap.put(newSelfLabel, newInstr);
+            }
+            Program editedFunc = quotableFunctions.get(programs.get(i).getName());
+            editedFunc.setInstrList(newInstrList);
+            editedFunc.setLabelMap(newLabelsMap);
+        }
+    }
+
+    private Instruction copyInstr(Instruction instr, Label selfLabel, Label targetLabel,
+                                  Variable primaryVar, Variable secondaryVar,
+                                  Map<Variable, Variable> newVarsMap) {
+        return switch (instr.getData().name().toUpperCase()) {
+            case "INCREASE" -> new Increase(selfLabel, primaryVar);
+            case "DECREASE" -> new Decrease(selfLabel, primaryVar);
+            case "JNZ" -> new JumpNotZero(selfLabel, primaryVar, targetLabel);
+            case "NO_OP" -> new Neutral(selfLabel, primaryVar);
+            case "ZERO_VARIABLE" -> new ZeroVariable(selfLabel, primaryVar);
+            case "GOTO_LABEL" -> new GoToLabel(selfLabel, targetLabel);
+            case "ASSIGNMENT" -> new Assignment(selfLabel, primaryVar, secondaryVar);
+            case "CONSTANT_ASSIGNMENT" -> new ConstantAssignment(selfLabel, primaryVar, instr.getConst());
+            case "JUMP_ZERO" -> new JumpZero(selfLabel, primaryVar, targetLabel);
+            case "JUMP_EQUAL_CONSTANT" -> new JumpEqualConstant(selfLabel, primaryVar, instr.getConst(), targetLabel);
+            case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, primaryVar, secondaryVar, targetLabel);
+            case "QUOTE" -> {
+                String funcName = ((Quote)instr).getFunction().getName();
+                Program newFunc = quotableFunctions.values().stream()
+                        .filter(f -> f.getName().equals(funcName))
+                        .findFirst().orElse(((Quote)instr).getFunction());
+                List<Argument> newArgs = recursiveFixArgs(((Quote)instr).getArgs(), newVarsMap);
+                yield new Quote(selfLabel, primaryVar, newFunc, newArgs);
+            }
+
+            default -> null;
+        };
+    }
+
+    private List<Argument> recursiveFixArgs(List<Argument> args, Map<Variable, Variable> newVarsMap) {
+        List<Argument> newArgs = new ArrayList<>();
+        for (Argument arg : args) {
+            if (arg instanceof VarArgument varArg) {
+                newArgs.add(new VarArgument(newVarsMap.get(varArg.get())));
+            }
+            if (arg instanceof QuoteArgument quoteArg) {
+                List<Argument> innerArgs = recursiveFixArgs(quoteArg.getQuoteInstruction().getArgs(), newVarsMap);
+                Program innerFunc = quotableFunctions.get(quoteArg.getQuoteInstruction().getFunction().getName());
+                Label innerSelfLabel = quoteArg.getQuoteInstruction().getSelfLabel();
+                Variable innerVar = quoteArg.getQuoteInstruction().getVars().getFirst();
+                newArgs.add(new QuoteArgument(new Quote(innerSelfLabel, innerVar, innerFunc, innerArgs)));
+            }
+        }
+        return newArgs;
     }
 
     private Variable generateTempVar() {
@@ -290,11 +417,22 @@ public class ProgramManager {
             result.add(new Decrease(FixedLabel.EMPTY, t2, lineNum++, instr));
             result.add(new JumpNotZero(FixedLabel.EMPTY, t2, loop, lineNum++, instr));
             result.add(new JumpZero(FixedLabel.EMPTY, t1, target, lineNum, instr));
-        } else {
+        }
+
+        // ---- QUOTE ----
+        else if (instr instanceof Quote quo) {
+            result.addAll(expandQuote(quo.getFunction(), self, lineNum));
+        }
+        else {
             result.add(instr);
         }
 
         return result;
+    }
+
+    private List<Instruction> expandQuote(Program function, Label selfLabel, int lineNum) {
+        //TODO: expand quote
+        return List.of();
     }
 
     public void debugStart(String func, int degree) {

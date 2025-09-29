@@ -33,6 +33,12 @@ public class Increase extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(v); }
 
     @Override
+    public Variable getPrimaryVar() { return v; }
+
+    @Override
+    public Variable getSecondaryVar() { return v; }
+
+    @Override
     public Label execute() {
         v.setValue(v.getValue() + 1);
         return FixedLabel.EMPTY;

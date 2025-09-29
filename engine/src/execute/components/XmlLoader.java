@@ -30,6 +30,9 @@ public class XmlLoader {
     }
 
     public List<Program> parse(String filePath, Map<String, Variable> varsMap, boolean printMode) {
+
+        //printMode = true;  // for debug
+
         File file = new File(filePath);
         if (!file.exists()) {
             if (printMode) System.out.println("Error: File does not exist.");
@@ -73,6 +76,7 @@ public class XmlLoader {
             }
             programs.addFirst(result);
 
+            if (printMode) System.out.println("Program loaded successfully.");
             return programs;
 
         } catch (Exception e) {

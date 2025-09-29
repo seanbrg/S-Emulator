@@ -18,8 +18,8 @@ import java.util.List;
 
 public class Quote extends AbstractInstruction {
     private final Variable v;
-    private final Program function;
-    private final List<Argument> args;
+    private Program function;
+    private List<Argument> args;
 
     public Quote(Label selfLabel, Variable v, Program function, List<Argument> args, int num, Instruction parent) {
         super(InstructionData.ZERO_VARIABLE,  selfLabel, num, parent);
@@ -62,8 +62,8 @@ public class Quote extends AbstractInstruction {
             if (arg instanceof VarArgument) {
                 result.add(arg.get());
             }
-            else if (arg instanceof QuoteArgument) {
-                result.addAll(((QuoteArgument) arg).getQuoteInstruction().getVars());
+            else if (arg instanceof QuoteArgument quo) {
+                result.addAll(quo.getQuoteInstruction().getVars());
             }
         }
         return result;
@@ -78,11 +78,21 @@ public class Quote extends AbstractInstruction {
             if (arg instanceof VarArgument) {
                 result.add(new VariableDTO(arg.get()));
             }
-            else if (arg instanceof QuoteArgument) {
-                result.addAll(((QuoteArgument) arg).getQuoteInstruction().getVarsDTO());
+            else if (arg instanceof QuoteArgument quo) {
+                result.addAll(quo.getQuoteInstruction().getVarsDTO());
             }
         }
         return result;
+    }
+
+    @Override
+    public Variable getPrimaryVar() {
+        return v;
+    }
+
+    @Override
+    public Variable getSecondaryVar() {
+        return v;
     }
 
     @Override
@@ -90,11 +100,21 @@ public class Quote extends AbstractInstruction {
         int cycles = 5;
         cycles += function.cycles();
         for (Argument arg : args) {
-            if (arg instanceof QuoteArgument) {
-                cycles += ((QuoteArgument) arg).getQuoteInstruction().getCycles();
+            if (arg instanceof QuoteArgument quo) {
+                cycles += (quo.getQuoteInstruction().getCycles());
             }
         }
         return cycles;
     }
 
+    public Program getFunction() { return function; }
+    public void setFunction(Program function) { this.function = function; }
+
+    public List<Argument> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<Argument> arguments) {
+        this.args = arguments;
+    }
 }

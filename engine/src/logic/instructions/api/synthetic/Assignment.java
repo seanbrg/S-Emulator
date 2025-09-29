@@ -36,6 +36,13 @@ public class Assignment extends AbstractInstruction {
     public List<Variable> getVars() { return List.of(x, y); }
 
     @Override
+    public Variable getPrimaryVar() { return x; }
+
+    @Override
+    public Variable getSecondaryVar() { return y; }
+
+
+    @Override
     public Label execute() {
         x.setValue(y.getValue());
         return FixedLabel.EMPTY;
