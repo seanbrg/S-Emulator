@@ -61,6 +61,9 @@ public class Assignment extends AbstractInstruction {
 
     @Override
     public String print() {
+        if (x == null || y == null) {
+            return " :( ";
+        }
         return x.getName() + " <- " + y.getName();
     }
     public Variable getX() { return x; }

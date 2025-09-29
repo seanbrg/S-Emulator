@@ -215,10 +215,7 @@ public class ProgramManager {
                     innerSelfLabel = newLblsMap.get(innerSelfLabel);
                 }
 
-                Variable innerVar = quoteArg.getQuoteInstruction().getVars().getFirst();
-                if (newVarsMap != null) {
-                    innerVar = newVarsMap.get(innerVar);
-                }
+                Variable innerVar = generateTempVar();
                 newArgs.add(new QuoteArgument(new Quote(innerSelfLabel, innerVar, innerFunc, innerArgs)));
             }
         }
