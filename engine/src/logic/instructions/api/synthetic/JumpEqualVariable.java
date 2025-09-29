@@ -9,6 +9,7 @@ import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JumpEqualVariable extends AbstractInstruction {
@@ -36,7 +37,7 @@ public class JumpEqualVariable extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(x),  new VariableDTO(y)); }
 
     @Override
-    public List<Variable> getVars() { return List.of(x, y); }
+    public List<Variable> getVars() { return new ArrayList<>(List.of(x, y)); }
 
     @Override
     public Variable getPrimaryVar() { return x; }

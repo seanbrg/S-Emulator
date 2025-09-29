@@ -90,4 +90,7 @@ public class Var implements Variable {
     public void setValue(long value) {
         this.value = Math.max(value, 0);
     }
+
+    @Override
+    public String toString() { return name + " = " + value; }
 }

@@ -20,7 +20,7 @@ public class QuoteArgument implements Argument {
     @Override
     public Variable get() {
         quoteInstruction.execute();
-        return quoteInstruction.getVars().getFirst();
+        return quoteInstruction.getPrimaryVar();
     }
 
     public Quote getQuoteInstruction() {

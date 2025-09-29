@@ -8,6 +8,7 @@ import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,7 +34,12 @@ public class Assignment extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(x), new VariableDTO(y)); }
 
     @Override
-    public List<Variable> getVars() { return List.of(x, y); }
+    public List<Variable> getVars() {
+        List<Variable> vars = new ArrayList<>(2);
+        if (x != null) vars.add(x);
+        if (y != null) vars.add(y);
+        return vars;
+    }
 
     @Override
     public Variable getPrimaryVar() { return x; }

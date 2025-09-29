@@ -43,28 +43,16 @@ public class ProgramManager {
     }
 
     public static long runFunction(Program function, List<Variable> argsVars) {
-        Set<Variable> innerFunctionVars = function.getVariables();
-        Map<Integer, Variable> inputFunctionVars = new HashMap<>();
-
-        for (Variable var : innerFunctionVars) {
-            if (var.getType().equals(VariableType.INPUT)) {
-                inputFunctionVars.put(var.getNum() - 1, var);
-            }
-        }
-
-        Variable output = innerFunctionVars.stream()
-                .filter(v -> v.getType().equals(VariableType.OUTPUT))
-                .findFirst()
-                .orElse(null);
+        Map<Integer, Variable> inputFunctionVars = function.getInputs();
 
         for (int i = 0; i < argsVars.size(); i++) {
             long input = argsVars.get(i).getValue();
-            Variable inputVar = inputFunctionVars.get(i);
+            Variable inputVar = inputFunctionVars.get(i + 1);
             if (inputVar != null) inputVar.setValue(input);
         }
 
         function.run();
-        return output.getValue();
+        return function.getOutput().getValue();
     }
 
     public String getMainProgramName() {
@@ -97,15 +85,37 @@ public class ProgramManager {
         Map<Variable, Variable> newVarsMap = new HashMap<>();
         Map<Label, Label> newLblsMap = new HashMap<>();
 
+        quotableFunctions.clear();
+        for (Program program : programs) {
+            String name = program.getName();
+            String userStr = program.getUserStr();
+            quotableFunctions.put(program.getName(), new SProgram(name, userStr));
+        }
+
         for (int i = 1; i < programs.size(); i++) {
+            Map<Integer, Variable> inputVars = new HashMap<>(programs.get(i).getInputs());
+            Variable outputVar = programs.get(i).getOutput();
+
             for (Variable quotedVar : programs.get(i).getVariables()) {
                 if (usedVars.contains(quotedVar) && !newVarsMap.containsKey(quotedVar)) {
                     // a reused variable is encountered in the first time
                     Variable newVar = generateTempVar();
                     newVarsMap.put(quotedVar, newVar);
                     usedVars.add(newVar);
+
+                    if (quotedVar.getType().equals(VariableType.OUTPUT)) {
+                        outputVar = newVar;
+                    }
+                    else if (quotedVar.getType().equals(VariableType.INPUT)) {
+                        inputVars.put(quotedVar.getNum(), newVar);
+                    }
                 }
             }
+
+            Program func = quotableFunctions.get(programs.get(i).getName());
+            func.setOutputVar(outputVar);
+            func.setInputs(inputVars);
+
             for (Label quotedLbl : programs.get(i).getLabels().keySet()) {
                 if (usedLbls.contains(quotedLbl) && !newLblsMap.containsKey(quotedLbl)) {
                     // a reused label is encountered in the first time
@@ -127,13 +137,6 @@ public class ProgramManager {
             }
         }
 
-        quotableFunctions.clear();
-        for (Program program : programs) {
-            String name = program.getName();
-            String userStr = program.getUserStr();
-            quotableFunctions.put(program.getName(), new SProgram(name, userStr));
-        }
-
         for (int i = 1; i < programs.size(); i++) {
             List<Instruction> newInstrList = new ArrayList<>();
             Map<Label, Instruction> newLabelsMap = new HashMap<>();
@@ -150,14 +153,14 @@ public class ProgramManager {
                 Variable oldScdVar = instr.getSecondaryVar();
 
                 Instruction newInstr = copyInstr(instr, newSelfLabel, newTgtLabel,
-                        newVarsMap.get(oldPrmVar), newVarsMap.get(oldScdVar), newVarsMap);
+                        newVarsMap.get(oldPrmVar), newVarsMap.get(oldScdVar), newVarsMap, newLblsMap);
 
                 if (instr instanceof Quote quo) {
                     quo.setFunction(quotableFunctions.get(quo.getFunction().getName()));
-                    quo.setArgs(recursiveFixArgs(quo.getArgs(), newVarsMap));
+                    quo.setArgs(recursiveFixArgs(quo.getArgs(), newVarsMap, newLblsMap));
                 }
 
-                newInstrList.add(newInstr);
+                if (newInstr != null) newInstrList.add(newInstr);
                 if (newSelfLabel instanceof NumericLabel) newLabelsMap.put(newSelfLabel, newInstr);
             }
             Program editedFunc = quotableFunctions.get(programs.get(i).getName());
@@ -168,7 +171,9 @@ public class ProgramManager {
 
     private Instruction copyInstr(Instruction instr, Label selfLabel, Label targetLabel,
                                   Variable primaryVar, Variable secondaryVar,
-                                  Map<Variable, Variable> newVarsMap) {
+                                  Map<Variable, Variable> newVarsMap,
+                                  Map<Label, Label> newLblsMap) {
+
         return switch (instr.getData().name().toUpperCase()) {
             case "INCREASE" -> new Increase(selfLabel, primaryVar);
             case "DECREASE" -> new Decrease(selfLabel, primaryVar);
@@ -183,10 +188,8 @@ public class ProgramManager {
             case "JUMP_EQUAL_VARIABLE" -> new JumpEqualVariable(selfLabel, primaryVar, secondaryVar, targetLabel);
             case "QUOTE" -> {
                 String funcName = ((Quote)instr).getFunction().getName();
-                Program newFunc = quotableFunctions.values().stream()
-                        .filter(f -> f.getName().equals(funcName))
-                        .findFirst().orElse(((Quote)instr).getFunction());
-                List<Argument> newArgs = recursiveFixArgs(((Quote)instr).getArgs(), newVarsMap);
+                Program newFunc = quotableFunctions.get(funcName);
+                List<Argument> newArgs = recursiveFixArgs(((Quote)instr).getArgs(), newVarsMap, newLblsMap);
                 yield new Quote(selfLabel, primaryVar, newFunc, newArgs);
             }
 
@@ -194,17 +197,30 @@ public class ProgramManager {
         };
     }
 
-    private List<Argument> recursiveFixArgs(List<Argument> args, Map<Variable, Variable> newVarsMap) {
+    private List<Argument> recursiveFixArgs(List<Argument> args,
+                                            Map<Variable, Variable> newVarsMap, Map<Label, Label> newLblsMap) {
         List<Argument> newArgs = new ArrayList<>();
         for (Argument arg : args) {
             if (arg instanceof VarArgument varArg) {
-                newArgs.add(new VarArgument(newVarsMap.get(varArg.get())));
+                if (newVarsMap != null) {
+                    newArgs.add(new VarArgument(newVarsMap.get(varArg.get())));
+                } else {
+                    newArgs.add(new VarArgument(varArg.get()));
+                }
             }
             if (arg instanceof QuoteArgument quoteArg) {
-                List<Argument> innerArgs = recursiveFixArgs(quoteArg.getQuoteInstruction().getArgs(), newVarsMap);
+                List<Argument> innerArgs = recursiveFixArgs(quoteArg.getQuoteInstruction().getArgs(), newVarsMap, newLblsMap);
                 Program innerFunc = quotableFunctions.get(quoteArg.getQuoteInstruction().getFunction().getName());
+
                 Label innerSelfLabel = quoteArg.getQuoteInstruction().getSelfLabel();
+                if (newLblsMap != null) {
+                    innerSelfLabel = newLblsMap.get(innerSelfLabel);
+                }
+
                 Variable innerVar = quoteArg.getQuoteInstruction().getVars().getFirst();
+                if (newVarsMap != null) {
+                    innerVar = newVarsMap.get(innerVar);
+                }
                 newArgs.add(new QuoteArgument(new Quote(innerSelfLabel, innerVar, innerFunc, innerArgs)));
             }
         }
@@ -239,7 +255,6 @@ public class ProgramManager {
             return savedFunctions.get(func).get(degree);
         }
     }
-
 
     public int getProgramCycles(String func, int degree) {
         if (savedFunctions.isEmpty()) {
@@ -421,7 +436,7 @@ public class ProgramManager {
 
         // ---- QUOTE ----
         else if (instr instanceof Quote quo) {
-            result.addAll(expandQuote(quo.getFunction(), self, lineNum));
+            result.addAll(expandQuote(quo.getFunction().getName(), self, quo.getPrimaryVar(), lineNum));
         }
         else {
             result.add(instr);
@@ -430,9 +445,17 @@ public class ProgramManager {
         return result;
     }
 
-    private List<Instruction> expandQuote(Program function, Label selfLabel, int lineNum) {
-        //TODO: expand quote
-        return List.of();
+    private List<Instruction> expandQuote(String funcName, Label selfLabel, Variable v, int lineNum) {
+        List<Instruction> result = new ArrayList<>();
+        List<Instruction> oldInstrList = quotableFunctions.get(funcName).getInstructions();
+
+        result.add(new Neutral(selfLabel, v));
+
+        for (Instruction instr : oldInstrList) {
+            result.add(copyInstr(instr, instr.getSelfLabel(), instr.getTargetLabel(),
+                            instr.getPrimaryVar(), instr.getSecondaryVar(), null, null));
+        }
+        return result;
     }
 
     public void debugStart(String func, int degree) {

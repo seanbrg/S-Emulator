@@ -9,6 +9,7 @@ import logic.labels.FixedLabel;
 import logic.labels.Label;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JumpZero extends AbstractInstruction {
@@ -34,7 +35,7 @@ public class JumpZero extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
-    public List<Variable> getVars() { return List.of(v); }
+    public List<Variable> getVars() { return new ArrayList<>(List.of(v)); }
 
     @Override
     public Variable getPrimaryVar() { return v; }

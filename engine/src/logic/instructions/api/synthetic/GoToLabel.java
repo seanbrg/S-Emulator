@@ -8,6 +8,7 @@ import logic.instructions.api.AbstractInstruction;
 import logic.labels.Label;
 import logic.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,10 +30,10 @@ public class GoToLabel extends AbstractInstruction {
     }
 
     @Override
-    public List<VariableDTO> getVarsDTO() { return List.of(); }
+    public List<VariableDTO> getVarsDTO() { return new ArrayList<>(); }
 
     @Override
-    public List<Variable> getVars() { return List.of(); }
+    public List<Variable> getVars() { return new ArrayList<>(); }
 
     @Override
     public Variable getPrimaryVar() { return null; }

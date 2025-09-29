@@ -28,4 +28,12 @@ public interface Program {
     void setInstrList(List<Instruction> newInstrList);
 
     void setLabelMap(Map<Label, Instruction> newLabelsMap);
+
+    Map<Integer, Variable> getInputs();
+
+    Variable getOutput();
+
+    void setOutputVar(Variable newVar);
+
+    void setInputs(Map<Integer, Variable> inputVars);
 }

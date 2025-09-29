@@ -13,6 +13,9 @@ public class SProgram implements Program {
     private String name;
     private List<Instruction> instructions;
     private Map<Label, Instruction> labels;
+    private Set<Variable> vars;
+    private Map<Integer, Variable> inputVars;
+    private Variable outputVar;
 
     public SProgram(String name, Map<Label, Instruction> labels, String userStr) {
         this.userStr = userStr == null ? name : userStr;
@@ -30,6 +33,8 @@ public class SProgram implements Program {
         for (int i = 0; i < instructions.size(); i++) { // number instructions
             instructions.get(i).setNum(i + 1);
         }
+
+        findVariables();
     }
 
     public SProgram(String name, String userStr) {
@@ -100,16 +105,6 @@ public class SProgram implements Program {
     }
 
     @Override
-    public Set<Variable> getVariables() {
-        Set<Variable> innerFunctionVars = new HashSet<>();
-        instructions.forEach(instruction -> {
-            innerFunctionVars.addAll(instruction.getVars());
-        });
-
-        return innerFunctionVars;
-    }
-
-    @Override
     public int maxDegree() {
         return instructions.stream()
                 .mapToInt(Instruction::getDegree)
@@ -144,11 +139,54 @@ public class SProgram implements Program {
     @Override
     public void setInstrList(List<Instruction> newInstrList) {
         this.instructions = newInstrList;
+        findVariables();
     }
 
     @Override
     public void setLabelMap(Map<Label, Instruction> newLabelsMap) {
         this.labels = newLabelsMap;
+    }
+
+    @Override
+    public Set<Variable> getVariables() {
+        return vars;
+    }
+
+    @Override
+    public Map<Integer, Variable> getInputs() {
+        return inputVars;
+    }
+
+    @Override
+    public Variable getOutput() {
+        return outputVar;
+    }
+
+    @Override
+    public void setOutputVar(Variable newVar) {
+        this.outputVar = newVar;
+    }
+
+    @Override
+    public void setInputs(Map<Integer, Variable> inputVars) {
+        this.inputVars = inputVars;
+    }
+
+    private void findVariables() {
+        vars = new HashSet<>();
+        inputVars = new HashMap<>();
+
+        for (Instruction instr : instructions) {
+            vars.addAll(instr.getVars());
+        }
+
+        for (Variable var : vars) {
+            if (var.getType().equals(VariableType.INPUT)) {
+                inputVars.put(var.getNum(), var);
+            }
+        }
+
+        outputVar = vars.stream().filter(var -> var.getType().equals(VariableType.OUTPUT)).findFirst().orElse(null);
     }
 
 }
