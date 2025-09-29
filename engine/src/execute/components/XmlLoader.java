@@ -229,6 +229,16 @@ public class XmlLoader {
                 yield generateQuote(selfLabel, var, funcNameStr, funcArgsStr, vars);
             }
 
+            case "JUMP_EQUAL_FUNCTION" -> {
+                String lbl = args.get("JEFunctionLabel");
+                String funcNameStr = args.get("functionName");
+                String funcArgsStr = args.get("functionArguments");
+                Variable tmp = generateTempVar(vars);
+                Label tgt = parseLabel(lbl);
+                QuoteArgument quoteArg = new QuoteArgument(generateQuote(FixedLabel.EMPTY, tmp, funcNameStr, funcArgsStr, vars));
+                yield new JumpEqualFunction(selfLabel, quoteArg, var, tgt);
+            }
+
             default -> null;
         };
     }

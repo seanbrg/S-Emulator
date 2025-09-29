@@ -194,6 +194,12 @@ public class ProgramManager {
                 List<Argument> newArgs = recursiveFixArgs(((Quote)instr).getArgs(), newVarsMap, newLblsMap);
                 yield new Quote(selfLabel, primaryVar, newFunc, newArgs, lineNum, parent);
             }
+            case "JUMP_EQUAL_FUNCTION" -> {
+                Quote oldQuote = ((JumpEqualFunction)instr).getQuoteArg().getQuoteInstruction();
+                Quote newQuote = (Quote) copyInstr(oldQuote, oldQuote.getSelfLabel(), oldQuote.getTargetLabel(),
+                        oldQuote.getPrimaryVar(), oldQuote.getSecondaryVar(), lineNum, parent, newVarsMap, newLblsMap);
+                yield new JumpEqualFunction(selfLabel, new QuoteArgument(newQuote), primaryVar, targetLabel);
+            }
 
             default -> null;
         };
@@ -433,6 +439,17 @@ public class ProgramManager {
         else if (instr instanceof Quote quo) {
             result.addAll(expandQuote(quo, lineNum));
         }
+
+        // ---- JUMP_EQUAL_FUNCTION ----
+        else if (instr instanceof JumpEqualFunction jef) {
+            Quote oldQuote = jef.getQuoteArg().getQuoteInstruction();
+            Variable v1 = oldQuote.getPrimaryVar();
+            Variable v2 = jef.getPrimaryVar();
+            Label tgt = jef.getTargetLabel();
+            result.add(new Quote(self, v1, oldQuote.getFunction(), oldQuote.getArgs(), lineNum++, instr));
+            result.add(new JumpEqualVariable(FixedLabel.EMPTY, v2, v1, tgt, lineNum, instr));
+        }
+
         else {
             result.add(instr);
         }
