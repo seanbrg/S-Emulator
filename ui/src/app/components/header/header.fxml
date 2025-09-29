@@ -23,8 +23,8 @@
               <items>
                   <Menu mnemonicParsing="false" text="Find...">
                      <items>
-                        <Menu mnemonicParsing="false" text="Find Label..." />
-                        <Menu mnemonicParsing="false" text="Find Variable..." />
+                        <Menu fx:id="menuViewLabels" mnemonicParsing="false" text="Find Label..." />
+                        <Menu fx:id="menuViewVariables" mnemonicParsing="false" text="Find Variable..." />
                      </items>
                   </Menu>
                   <MenuItem fx:id="menuItemExpand" mnemonicParsing="false" text="Expand" />

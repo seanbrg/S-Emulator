@@ -241,4 +241,8 @@ public class ProgramTabController {
     public int getCurrentDegree() {
         return degree;
     }
+
+    public TableView<InstructionDTO> getInstructionsTable() {
+        return programTable;
+    }
 }
