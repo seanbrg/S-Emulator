@@ -22,6 +22,7 @@ public class RunMenuController {
     @FXML private Button buttonDebug;
     @FXML private Button buttonDebugStep;
     @FXML private Button buttonExpand;
+    @FXML private Button buttonDebugStop;
     @FXML private ListView<VariableDTO> resultsList;
     @FXML private TableView<VariableDTO> inputsTable;
     @FXML private TableColumn<VariableDTO, String> varColumn;
@@ -45,6 +46,7 @@ public class RunMenuController {
         buttonDebug.setOnAction(event -> handleDebugStart());
         buttonExpand.setOnAction(event -> handleExpand());
         buttonDebugStep.setOnAction(event -> handleDebugStep());
+        buttonDebugStop.setOnAction(event -> handleDebugStop());
 
         inputVariablesRaw = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
@@ -125,6 +127,11 @@ public class RunMenuController {
         });
     }
 
+    private void handleDebugStop() {
+        debugging.set(false);
+        mainController.clearHighlights();
+    }
+
     private void handleExpand() { mainController.expandProgram(); }
 
     public void setMainController(AppController appController) {
@@ -145,6 +152,8 @@ public class RunMenuController {
         );
 
         buttonDebugStep.disableProperty().bind(debugging.not());
+
+        buttonDebugStop.disableProperty().bind(debugging.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
@@ -179,9 +188,11 @@ public class RunMenuController {
     @FXML
     private void handleRun() {
         Platform.runLater(() -> {
+            mainController.clearHighlights();
             clearLog();
             rebuildInputsFromTable();
             running.set(true);
+            debugging.set(false);
             log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
