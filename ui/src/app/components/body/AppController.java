@@ -95,6 +95,7 @@ public class AppController {
             } else {
                 currentTabController.set(null);
             }
+            clearHighlights();
         });
 
         currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
