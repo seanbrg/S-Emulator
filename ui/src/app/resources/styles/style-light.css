@@ -470,7 +470,15 @@
     -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.15), 8, 0, 0, 2);
 }
 
-.table-row-cell.row-highlight {
-    -fx-background-color: yellow;   /* choose color */
-    -fx-text-fill: black;
+/* highlight for full row */
+.table-row-cell:highlighted {
+    -fx-background-color: -fx-accent, -tertiary-system-background ;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-radius: 0;
+    -fx-opacity: 1.0;
+}
+
+/* optional: make text bold/contrasty when highlighted */
+.table-row-cell:highlighted .text {
+    -fx-font-weight: bold;
 }

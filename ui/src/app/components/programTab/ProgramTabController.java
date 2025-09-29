@@ -32,6 +32,9 @@ public class ProgramTabController {
     private ListProperty<VariableDTO> variables;
     private ListProperty<LabelDTO> labels;
 
+    private static final javafx.css.PseudoClass HIGHLIGHTED =
+            javafx.css.PseudoClass.getPseudoClass("highlighted");
+
     @FXML
     public void initialize() {
         this.instructions = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -168,40 +171,40 @@ public class ProgramTabController {
 
     public void setMainController(AppController mainController) {
         this.mainController = mainController;
-        mainController.highlightedLabelProperty().addListener((obs, old, neu) -> {
-            // refresh forces updateItem to be called on visible cells
-            programTable.refresh();
-        });
-
-        mainController.highlightedVariableProperty().addListener((obs, old, neu) -> {
-            // refresh forces updateItem to be called on visible cells
-            programTable.refresh();
-        });
-
-        programTable.setRowFactory(tv -> new TableRow<InstructionDTO>() {
-            @Override
-            protected void updateItem(InstructionDTO item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    getStyleClass().remove("highlight");
-                    setStyle("");
-                } else {
-                    String highlighted = mainController.highlightedLabelProperty().get();
-                    String label = item.getSelfLabel().getLabel(); // adapt to your getter
-                    if (highlighted != null && highlighted.equals(label)) {
-                        if (!getStyleClass().contains("highlight")) {
-                            getStyleClass().add("highlight");
-                        }
-                    } else {
-                        getStyleClass().remove("highlight");
-                    }
-                }
-            }
-        });
-
-        mainController.highlightedLabelProperty().addListener((obs, old, neu) -> programTable.refresh());
-        mainController.highlightedVariableProperty().addListener((obs, old, neu) -> programTable.refresh());
+        enableRowHighlighting(mainController);
     }
+
+    public void enableRowHighlighting(AppController appController) {
+
+        var sharedHighlights = appController.getHighlightedRows();
+
+        programTable.setRowFactory(tv -> {
+            var row = new javafx.scene.control.TableRow<InstructionDTO>();
+
+            Runnable apply = () -> {
+                var item = row.getItem();
+                boolean on = false;
+                if (item != null && !row.isEmpty()) {
+                    int line = item.getNum();
+                    on = sharedHighlights.contains(line);
+                }
+                row.pseudoClassStateChanged(HIGHLIGHTED, on);
+            };
+
+            // Update when the row’s item changes
+            row.itemProperty().addListener((obs, oldV, newV) -> apply.run());
+
+            // Update when the shared highlight set changes
+            sharedHighlights.addListener((javafx.collections.SetChangeListener<Integer>) ch -> {
+                // Fast path: only refresh this row if its key matches the changed element,
+                // but recalculating is cheap—so we can just:
+                apply.run();
+            });
+
+            return row;
+        });
+    }
+
 
     public void setProgram(String programName, int degree) {
         this.programName = programName;

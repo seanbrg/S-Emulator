@@ -61,6 +61,8 @@ public class AppController {
     private StringProperty highlightedVariable;
     private Scene scene;
     private Engine engine;
+    private javafx.collections.ObservableSet<Integer> highlightedRows;
+
 
     @FXML
     public void initialize() {
@@ -77,6 +79,7 @@ public class AppController {
         this.debugLine = new SimpleIntegerProperty(0);
         this.highlightedLabel = new SimpleStringProperty("");
         this.highlightedVariable = new SimpleStringProperty("");
+        this.highlightedRows = javafx.collections.FXCollections.observableSet(new java.util.HashSet<>());
 
         engine.setPrintMode(false);
         runMenuController.setMainController(this);
@@ -305,17 +308,28 @@ public class AppController {
 
         int degree = tabController.getCurrentDegree();
         debugLine.set(engine.getDebugLine());
+        replaceHighlights(List.of(debugLine.get()));
         Boolean notDone = engine.debugStep(programName, degree);
         runMenuController.setOutputVariables(engine.getOutputs(programName, degree));
 
+        if (!notDone) {clearHighlights();}
         return notDone;
     }
 
-    public StringProperty highlightedLabelProperty() {
-        return highlightedLabel;
+
+    public javafx.collections.ObservableSet<Integer> highlightedRowsProperty() {
+        return highlightedRows;
+    }
+    public javafx.collections.ObservableSet<Integer> getHighlightedRows() {
+        return highlightedRows;
     }
 
-    public StringProperty highlightedVariableProperty() {
-        return highlightedVariable;
+    // Convenience methods for callers (any controller/service can use these):
+    public void highlightRow(int line) { highlightedRows.add(line); }
+    public void unhighlightRow(int line) { highlightedRows.remove(line); }
+    public void replaceHighlights(java.util.Collection<Integer> lines) {
+        highlightedRows.clear();
+        highlightedRows.addAll(lines);
     }
+    public void clearHighlights() { highlightedRows.clear(); }
 }

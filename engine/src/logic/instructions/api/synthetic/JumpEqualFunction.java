@@ -35,7 +35,7 @@ public class JumpEqualFunction extends AbstractInstruction {
 
     @Override
     public String print() {
-        return "IF " + v.getName() + " = " + quote + " GOTO " + target.getLabel();
+        return "IF " + v.getName() + " = " + quote.customString() + " GOTO " + target.getLabel();
     }
 
     @Override
