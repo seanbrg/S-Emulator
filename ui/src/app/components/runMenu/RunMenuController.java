@@ -90,7 +90,7 @@ public class RunMenuController {
                 } else {
                     setText(v.getName() + " = " + v.getValue());
 
-                    // c
+
                     if (previousValues.containsKey(v.getName()) &&
                             !previousValues.get(v.getName()).equals(v.getValue())) {
                         setStyle("-fx-background-color: #eae085; -fx-font-weight: bold;");
