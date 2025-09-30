@@ -176,8 +176,8 @@
                   <Insets left="10.0" top="30.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="newRun" mnemonicParsing="false" text="new run" />
-            <Button fx:id="resume" mnemonicParsing="false" text="resume" />
+            <Button fx:id="buttonNewRun" mnemonicParsing="false" text="new run" />
+            <Button fx:id="buttonDebugResume" mnemonicParsing="false" text="resume" />
             <Button fx:id="reRun" mnemonicParsing="false" text="re run" />
          </children>
       </VBox>

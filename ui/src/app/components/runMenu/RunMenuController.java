@@ -28,7 +28,9 @@ public class RunMenuController {
     @FXML private TableColumn<VariableDTO, String> varColumn;
     @FXML private TableColumn<VariableDTO, Long> valueColumn;
     @FXML private TextArea console;
-    @FXML private Button newRun;
+    @FXML private Button buttonNewRun;
+    @FXML private Button buttonDebugResume;
+
 
 
 
@@ -52,7 +54,10 @@ public class RunMenuController {
         buttonExpand.setOnAction(event -> handleExpand());
         buttonDebugStep.setOnAction(event -> handleDebugStep());
         buttonDebugStop.setOnAction(event -> handleDebugStop());
-        newRun.setOnAction(event -> handleNewRun());
+        buttonNewRun.setOnAction(event -> handleNewRun());
+        buttonDebugResume.setOnAction(event -> handleDebugResume());
+
+
 
 
         inputVariablesRaw = new SimpleListProperty<>();
@@ -62,6 +67,8 @@ public class RunMenuController {
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
+
+        buttonDebugResume.disableProperty().bind(debugging.not());
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
@@ -331,6 +338,33 @@ public class RunMenuController {
             log("=== New Run Started ===");
         });
     }
+
+    @FXML
+    private void handleDebugResume() {
+        Platform.runLater(() -> {
+            if (!debugging.get()) return; // only valid in debug mode
+
+            // Progress through the remaining program steps until finish
+            while (debugging.get()) {
+                storePreviousValues(); // store current output values before step
+
+                debugging.setValue(mainController.debugStep()); // execute next step
+
+                // Update console and variable highlighting
+                log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
+                resultsList.refresh();
+
+                // Update cycle count if you track cycles
+                log(mainController.runCyclesProperty().get() + " cycles accumulated.");
+
+                // Optional: allow GUI to update visually
+                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+            }
+
+            log("Debugging finished. Program resumed normally.");
+        });
+    }
+
 
 
 }
