@@ -8,15 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="engine" exported="" />
-    <orderEntry type="module-library">
-      <library name="JavaFX">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../javafx-sdk-21.0.8/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../javafx-sdk-21.0.8/lib" recursive="false" />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

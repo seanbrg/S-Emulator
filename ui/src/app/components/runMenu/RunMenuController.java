@@ -37,6 +37,9 @@ public class RunMenuController {
     private BooleanProperty running;
     private BooleanProperty debugging;
 
+    // Track previous values for highlighting changes
+    private Map<String, Long> previousValues;
+
 
     @FXML
     public void initialize() {
@@ -54,6 +57,7 @@ public class RunMenuController {
         editedValues = new HashMap<>();
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
+        previousValues = new HashMap<>();
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
@@ -75,12 +79,25 @@ public class RunMenuController {
         varColumn.getStyleClass().add("var-col");   // tag for CSS
         varColumn.setStyle("-fx-alignment: CENTER;"); // exact middle (both axes)
 
-        // ListView <- outputVariables
+        // ListView <- outputVariables with highlighting
         resultsList.itemsProperty().bind(outputVariables);
         resultsList.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(VariableDTO v, boolean empty) {
                 super.updateItem(v, empty);
-                setText(empty || v == null ? null : v.getName() + " = " + v.getValue());
+                if (empty || v == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(v.getName() + " = " + v.getValue());
+
+                    // c
+                    if (previousValues.containsKey(v.getName()) &&
+                            !previousValues.get(v.getName()).equals(v.getValue())) {
+                        setStyle("-fx-background-color: #eae085; -fx-font-weight: bold;");
+                    } else {
+                        setStyle("");
+                    }
+                }
             }
         });
 
@@ -130,6 +147,7 @@ public class RunMenuController {
     private void handleDebugStop() {
         debugging.set(false);
         mainController.clearHighlights();
+        previousValues.clear();
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -159,6 +177,7 @@ public class RunMenuController {
             inputVariablesRaw.clear();
             outputVariables.clear();
             editedValues.clear();
+            previousValues.clear();
             clearLog();
         });
     }
@@ -193,6 +212,7 @@ public class RunMenuController {
             rebuildInputsFromTable();
             running.set(true);
             debugging.set(false);
+            previousValues.clear();
             log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
@@ -241,7 +261,12 @@ public class RunMenuController {
     private void handleDebugStart() {
         rebuildInputsFromTable();
         outputVariables.clear();
-        debugging.set(true); // mainController.debugStart()
+        previousValues.clear();
+
+        // Store initial values
+        storePreviousValues();
+
+        debugging.set(true);
         this.handleDebugStep();
     }
 
@@ -251,11 +276,30 @@ public class RunMenuController {
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
+            previousValues.clear();
+        }
+
+        // Refresh the list to trigger highlighting
+        Platform.runLater(() -> resultsList.refresh());
+    }
+
+    private void storePreviousValues() {
+        previousValues.clear();
+        for (VariableDTO var : outputVariables) {
+            previousValues.put(var.getName(), var.getValue());
         }
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {
+        // Store previous values before updating
+        if (debugging.get()) {
+            storePreviousValues();
+        }
+
         outputVariables.clear();
         outputVariables.addAll(outputs);
+
+        // Trigger refresh to show highlights
+        Platform.runLater(() -> resultsList.refresh());
     }
 }
