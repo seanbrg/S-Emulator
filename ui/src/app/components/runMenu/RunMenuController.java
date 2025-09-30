@@ -171,6 +171,7 @@ public class RunMenuController {
         debugging.set(false);
         mainController.clearHighlights();
         previousValues.clear();
+        mainController.finishDebugging();
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -310,6 +311,7 @@ public class RunMenuController {
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
+            mainController.finishDebugging();
         }
 
         // Refresh the list to trigger highlighting

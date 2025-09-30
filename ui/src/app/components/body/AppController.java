@@ -369,4 +369,16 @@ public class AppController {
         });
     }
 
+    public void finishDebugging() {
+        String programName = currentTabController.get().getProgramName();
+        int degree = currentTabController.get().getCurrentDegree();
+        List<VariableDTO> inputs = currentActualProgramInputs.get();
+
+        HistoryDTO result = engine.recordCurrentState(programName, degree, inputs);
+        if (result == null) throw new RuntimeException("Run failed for program: " + programName);
+
+        programCycles.set(result.getCycles());
+        runMenuController.setOutputVariables(result.getOutputAndTemps());
+        runHistoryController.addRunHistory(result);
+    }
 }

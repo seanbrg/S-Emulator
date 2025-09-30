@@ -57,4 +57,6 @@ public interface Engine {
     List<String> getFuncNamesList();
 
     void clear();
+
+    HistoryDTO recordCurrentState(String programName, int degree, List<VariableDTO> inputs);
 }

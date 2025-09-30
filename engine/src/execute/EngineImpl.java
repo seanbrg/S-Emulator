@@ -233,6 +233,20 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public HistoryDTO recordCurrentState(String programName, int degree, List<VariableDTO> inputs) {
+        runCounter++;
+        int cycles = pm.getProgramCycles(programName, degree);
+
+        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles,
+                new ProgramDTO(pm.getProgram(programName, degree)),
+                inputs,
+                getOutputs(programName, degree));
+
+        history.add(result);
+        return result;
+    }
+
+    @Override
     public void debugStart(String programName, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
         outputVar.setValue(0);
@@ -273,4 +287,5 @@ public class EngineImpl implements Engine {
         history.clear();
         outputVar = null;
     }
+
 }
