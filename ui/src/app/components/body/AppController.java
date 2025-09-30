@@ -210,10 +210,9 @@ public class AppController {
             URL url = getClass().getResource("/app/components/programTab/programTab.fxml");
             fxmlLoader.setLocation(url);
             Tab programTab = fxmlLoader.load();
-            //TODO: change title to include max degree
 
             ProgramTabController tabController = fxmlLoader.getController();
-            tabController.setProgram(programName, degree);
+            tabController.setProgram(programName, degree, engine.maxDegree(programName));
             tabController.setMainController(this);
             List<InstructionDTO> instrList = engine.getInstructionsList(programName, degree);
             List<VariableDTO> varList = engine.getOutputs(programName, degree);
