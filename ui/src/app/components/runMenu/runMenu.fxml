@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runMenu.RunMenuController">
+<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runMenu.RunMenuController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <bottom>
@@ -76,19 +76,19 @@
          <top>
             <HBox prefHeight="22.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="buttonNewRun" mnemonicParsing="false" text="New Run">
+                  <Button fx:id="buttonNewRun" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="New Run">
                      <HBox.margin>
-                        <Insets left="80.0" />
+                        <Insets left="60.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonDebugResume" mnemonicParsing="false" text="Resume">
+                  <Button fx:id="buttonDebugResume" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Resume">
                      <HBox.margin>
-                        <Insets left="5.0" />
+                        <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonExpand" mnemonicParsing="false" text="Expand">
+                  <Button fx:id="buttonExpand" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Expand">
                      <HBox.margin>
-                        <Insets left="5.0" />
+                        <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
                </children>

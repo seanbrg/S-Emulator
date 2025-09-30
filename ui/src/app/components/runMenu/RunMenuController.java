@@ -111,7 +111,7 @@ public class RunMenuController {
                     // Highlight if value changed
                     if (debugging.get() && previousValues.containsKey(v.getName()) &&
                             !previousValues.get(v.getName()).equals(v.getValue())) {
-                        setStyle("-fx-background-color: #eae085; -fx-font-weight: bold;");
+                        setStyle("-fx-background-color: #4a4a4a; -fx-font-weight: bold;");
                     } else {
                         setStyle("");
                     }
@@ -167,6 +167,7 @@ public class RunMenuController {
         mainController.clearHighlights();
         previousValues.clear();
         mainController.finishDebugging();
+        log("=== Debug Stopped ===");
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -189,7 +190,7 @@ public class RunMenuController {
         );
 
         buttonNewRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
+                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)
         );
 
         buttonDebugStep.disableProperty().bind(debugging.not());
@@ -241,6 +242,7 @@ public class RunMenuController {
             running.set(true);
             debugging.set(false);
             previousValues.clear();
+            log("=== Run Finished ===");
             log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
@@ -305,7 +307,8 @@ public class RunMenuController {
         clearLog();
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
-            log("Debugging finished.");
+            clearLog();
+            log("=== Debug Finished ===");
             mainController.finishDebugging();
         }
 

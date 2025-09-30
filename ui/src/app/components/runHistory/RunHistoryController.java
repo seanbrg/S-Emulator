@@ -9,7 +9,10 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -239,8 +242,23 @@ public class RunHistoryController {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Run Status");
-        alert.setHeaderText("Variables at end of run #" + selected.getNum());
+        alert.setHeaderText("Program variables at the end of run #" + selected.getNum() + ":");
         alert.setContentText(sb.toString());
+        Scene scene = runHistory.getScene();
+
+        // Use main window as owner if available
+        if (scene != null && scene.getWindow() != null) {
+            alert.initOwner(scene.getWindow());
+            // Inherit current theme
+            alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+        }
+
+        // Use app icon on the dialog window (if available)
+        try {
+            Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+            dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+        } catch (Exception ignored) { /* icon optional */ }
+
         alert.showAndWait();
     }
 
