@@ -171,7 +171,8 @@ public class SProgram implements Program {
         this.inputVars = inputVars;
     }
 
-    private void findVariables() {
+    @Override
+    public void findVariables() {
         vars = new HashSet<>();
         inputVars = new HashMap<>();
 

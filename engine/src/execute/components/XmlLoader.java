@@ -61,9 +61,14 @@ public class XmlLoader {
             if (printMode) System.out.println("Found " + funcNodes.getLength() + " functions in XML");
             for (int i = 0; i < funcNodes.getLength(); i++) {
                 Element funcElem = (Element) funcNodes.item(i);
-                Program funcProgram = parseFunction(funcElem, varsMap, labels, printMode);
+                Program funcProgram = parseNewFunction(funcElem);
                 if (funcProgram != null) programs.add(funcProgram);
                 else return null;
+            }
+            for (int i = 0; i < funcNodes.getLength(); i++) {
+                Element funcElem = (Element) funcNodes.item(i);
+                Boolean result = parseFunctionInstructions(funcElem, varsMap, labels, printMode);
+                if (!result) return null;
             }
 
             NodeList instrNodes = mainInstrBlock.getElementsByTagName("S-Instruction");
@@ -150,22 +155,35 @@ public class XmlLoader {
         return instructions;
     }
 
-    private Program parseFunction(Element funcElem, Map<String, Variable> varsMap, Map<Label, Instruction> labels, boolean printMode) {
-        List<Instruction> instructions = new ArrayList<>();
+    private Program parseNewFunction(Element funcElem) {
+        String funcName = funcElem.getAttribute("name");
+        String userStr = funcElem.getAttribute("user-string");
+
+        return new SProgram(funcName, userStr);
+    }
+
+    private Boolean parseFunctionInstructions(Element funcElem, Map<String, Variable> varsMap, Map<Label, Instruction> labels, boolean printMode) {
         String funcName = funcElem.getAttribute("name");
         String userStr = funcElem.getAttribute("user-string");
 
         NodeList instrNodes = funcElem.getElementsByTagName("S-Instruction");
         List<Instruction> funcInstructions = parseInstructions(instrNodes, varsMap, labels, printMode);
-        instructions.addAll(funcInstructions);
 
-        Program result = new SProgram(funcName, labels, instructions, userStr);
+        Program func = programs.stream().filter(x -> x.getName().equals(funcName)).findFirst().orElse(null);
 
-        if (!result.checkLabels()) {
-            if (printMode) System.out.println("Error: Program has invalid labels.");
-            return null;
+        if (func == null) {
+            if (printMode) System.out.println("Error: Function definition not found for " + funcName);
+            return false;
         }
-        else return result;
+        func.setInstrList(funcInstructions);
+        func.setLabelMap(labels);
+        func.findVariables();
+
+        if (!func.checkLabels()) {
+            if (printMode) System.out.println("Error: Program has invalid labels.");
+            return false;
+        }
+        else return true;
     }
 
     private Instruction createInstruction(String name,

@@ -36,4 +36,6 @@ public interface Program {
     void setOutputVar(Variable newVar);
 
     void setInputs(Map<Integer, Variable> inputVars);
+
+    void findVariables();
 }
