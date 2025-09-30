@@ -1,4 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: console.ConsoleUI
-Class-Path: engine.jar
-
+Main-Class: app.AppMain
+Class-Path: engine.jar javafx-base.jar javafx-base-win.jar javafx-graphics.jar javafx-graphics-win.jar javafx-controls.jar javafx-fxml.jar javafx-controls-win.jar javafx-fxml-win.jar

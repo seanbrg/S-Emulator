@@ -12,10 +12,10 @@ public class HistoryDTO {
     private List<VariableDTO> outputAndTempVariables;
     private VariableDTO output;
 
-    public HistoryDTO(int num, int degree, int cycles, ProgramDTO program, List<VariableDTO> inputVariables, List<VariableDTO> outputVariables) {
+    public HistoryDTO(int num, int degree, int maxDegree, int cycles, ProgramDTO program, List<VariableDTO> inputVariables, List<VariableDTO> outputVariables) {
         this.num = num;
         this.degree = degree;
-        this.maxDegree = program.getMaxDegree();
+        this.maxDegree = maxDegree;
         this.cycles = cycles;
         this.program = program;
         this.inputVariables = inputVariables;

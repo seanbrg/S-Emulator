@@ -34,6 +34,8 @@ public class RunHistoryController {
     @FXML
     public TableColumn<HistoryDTO, Integer> columnCycles;
     @FXML
+    public TableColumn<HistoryDTO, String> columnProgramName;
+    @FXML
     private Button buttonShowStatus;
     @FXML
     private Button buttonReRun;
@@ -44,7 +46,7 @@ public class RunHistoryController {
     public void initialize() {
         this.historyList = new SimpleListProperty<>(FXCollections.observableArrayList());
         runHistory.itemsProperty().bind(historyList);
-        runHistory.getColumns().setAll(columnNum, columnDegree, columnInputs, columnCycles, columnOutput);
+        runHistory.getColumns().setAll(columnNum, columnProgramName, columnDegree, columnInputs, columnCycles, columnOutput);
 
         buttonShowStatus.setOnAction(e -> showSelectedRunStatus());
         buttonReRun.setOnAction(e -> rerunSelectedRun());
@@ -72,10 +74,36 @@ public class RunHistoryController {
 
     private void setupColumns() {
         setupColumnNum();
+        setupColumnProgramName();
         setupColumnDegree();
         setupColumnInputs();
         setupColumnOutput();
         setupColumnCycles();
+    }
+
+    private void setupColumnProgramName() {
+        columnProgramName.setCellValueFactory
+                (cd -> new ReadOnlyStringWrapper(cd.getValue().getProgram().getProgramName()));
+
+        columnProgramName.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
+            private final Tooltip tooltip = new Tooltip();
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    tooltip.setText("Program: " + item);
+                    tooltip.setStyle("-fx-font-size: 13");
+                    tooltip.setShowDelay(Duration.millis(20));
+                    setTooltip(tooltip);
+                }
+                setAlignment(Pos.CENTER_LEFT);
+            }
+        });
     }
 
     private void setupColumnCycles() {

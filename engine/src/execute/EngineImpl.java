@@ -227,6 +227,7 @@ public class EngineImpl implements Engine {
         // Reset outputs and temp variables
         outputVar.setValue(0);
         tempVarsMap.values().forEach(v -> v.setValue(0));
+        int maxDegree = pm.maxDegree(program);
 
         // Run the program
         pm.runProgram(program, degree);
@@ -244,7 +245,7 @@ public class EngineImpl implements Engine {
         ProgramDTO programDTO = new ProgramDTO(pm.getProgram(program, degree));
 
         // Create history entry with actual input/output values
-        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, currentInputs, outputs);
+        HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles, programDTO, currentInputs, outputs);
 
         // Optional print
         if (printMode) {
@@ -264,8 +265,9 @@ public class EngineImpl implements Engine {
     public HistoryDTO recordCurrentState(String programName, int degree, List<VariableDTO> inputs) {
         runCounter++;
         int cycles = pm.getProgramCycles(programName, degree);
+        int maxDegree = pm.maxDegree(programName);
 
-        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles,
+        HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles,
                 new ProgramDTO(pm.getProgram(programName, degree)),
                 inputs,
                 getOutputs(programName, degree));

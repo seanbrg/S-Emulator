@@ -12,6 +12,7 @@
       <TableView fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0">
           <columns>
               <TableColumn fx:id="columnNum" prefWidth="75.0" text="Num" />
+            <TableColumn fx:id="columnProgramName" prefWidth="75.0" text="Program" />
               <TableColumn fx:id="columnDegree" prefWidth="75.0" text="Degree" />
             <TableColumn fx:id="columnInputs" prefWidth="75.0" text="Inputs" />
             <TableColumn fx:id="columnOutput" prefWidth="75.0" text="Output" />
