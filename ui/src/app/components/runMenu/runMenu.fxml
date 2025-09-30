@@ -78,15 +78,10 @@
                <children>
                   <Button fx:id="buttonNewRun" mnemonicParsing="false" text="New Run">
                      <HBox.margin>
-                        <Insets left="60.0" />
+                        <Insets left="80.0" />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="buttonDebugResume" mnemonicParsing="false" text="Resume">
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="buttonReRun" mnemonicParsing="false" text="Re-Run">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>

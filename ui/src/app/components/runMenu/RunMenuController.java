@@ -21,7 +21,6 @@ public class RunMenuController {
     @FXML public Tooltip tooltipDebugStep;
     @FXML public Tooltip tooltipDebugStop;
     @FXML public Tooltip tooltipRun;
-    @FXML public Button buttonReRun;
     @FXML private AppController mainController;
 
     @FXML private Button buttonRun;
@@ -63,7 +62,6 @@ public class RunMenuController {
         buttonDebugStop.setOnAction(event -> handleDebugStop());
         buttonNewRun.setOnAction(event -> handleNewRun());
         buttonDebugResume.setOnAction(event -> handleDebugResume());
-        buttonReRun.setOnAction(event -> handleReRun());
 
         tooltipDebug.setShowDelay(Duration.millis(50));
         tooltipRun.setShowDelay(Duration.millis(50));
@@ -197,10 +195,6 @@ public class RunMenuController {
         );
 
         buttonNewRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
-        );
-
-        buttonReRun.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
 
