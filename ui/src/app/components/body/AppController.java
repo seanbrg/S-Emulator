@@ -41,7 +41,7 @@ public class AppController {
     @FXML private HBox header;
     @FXML private headerController headerController;
     @FXML private TabPane programTabs;
-    @FXML private TableView runHistory;
+    @FXML private BorderPane runHistory;
     @FXML private RunHistoryController runHistoryController;
     @FXML private TableView instructionHistory;
     @FXML private InstructionHistoryController instructionHistoryController;
@@ -380,5 +380,103 @@ public class AppController {
         programCycles.set(result.getCycles());
         runMenuController.setOutputVariables(result.getOutputAndTemps());
         runHistoryController.addRunHistory(result);
+    }
+
+    public void prepareRerun(HistoryDTO history) {
+        if (history == null) return;
+
+        String programName = history.getProgram().getProgramName();
+        int degree = history.getDegree();
+
+        // Step 1: Switch to the correct program/degree tab
+        Tab targetTab = findOrCreateProgramTab(programName, degree);
+        if (targetTab == null) return;
+
+        programTabs.getSelectionModel().select(targetTab);
+        ProgramTabController tabController = tabControllerMap.get(targetTab);
+        currentTabController.set(tabController);
+
+        // Step 2: FIRST clear the edited values in RunMenuController
+        runMenuController.clearEditedValues();
+
+        // Step 3: Refresh to get the default inputs for this program/degree
+        refreshInputs();
+
+        // Step 4: Load inputs from the selected run and update immediately
+        List<VariableDTO> previousInputs = history.getInputs();
+
+        // Create a map of input name -> value from history
+        Map<String, Long> historyInputValues = new HashMap<>();
+        for (VariableDTO input : previousInputs) {
+            historyInputValues.put(input.getName(), input.getValue());
+        }
+
+        // Update current inputs with values from history
+        List<VariableDTO> updatedInputs = currentRawProgramInputs.stream()
+                .map(v -> new VariableDTO(v.getName(),
+                        historyInputValues.getOrDefault(v.getName(), v.getValue())))
+                .toList();
+
+        // Set the updated inputs BEFORE Platform.runLater
+        currentRawProgramInputs.setAll(updatedInputs);
+
+        // Step 5: Clear previous run state and UI updates
+        Platform.runLater(() -> {
+            // Reset states
+            runMenuController.runningProperty().set(false);
+            runMenuController.debuggingProperty().set(false);
+
+            // Clear highlights and console
+            clearHighlights();
+            runMenuController.clearLog();
+
+            // Clear outputs and cycles
+            runMenuController.clearOutputs();
+            programCycles.set(0);
+            debugLine.set(0);
+
+            // Force table refresh
+            runMenuController.refreshInputTable();
+
+            // Step 6: Log the re-run preparation
+            runMenuController.log("=== Re-Run Prepared ===");
+            runMenuController.log("Program: " + programName + " (Degree: " + degree + ")");
+            runMenuController.log("Inputs loaded from Run #" + history.getNum());
+
+            // Log the actual input values for verification
+            for (VariableDTO input : updatedInputs) {
+                runMenuController.log("  " + input.getName() + " = " + input.getValue());
+            }
+
+            runMenuController.log("You can now modify inputs and click Run or Debug.");
+        });
+    }
+
+    /**
+     * Find existing tab or create new one for the specified program/degree
+     */
+    private Tab findOrCreateProgramTab(String programName, int degree) {
+        // First, try to find existing tab with matching program and degree
+        for (Map.Entry<Tab, ProgramTabController> entry : tabControllerMap.entrySet()) {
+            ProgramTabController controller = entry.getValue();
+            if (controller.getProgramName().equals(programName) &&
+                    controller.getCurrentDegree() == degree) {
+                return entry.getKey();
+            }
+        }
+
+        // If not found, create new tab with the required degree
+        addProgramTab(programName, degree);
+
+        // Find the newly created tab
+        for (Map.Entry<Tab, ProgramTabController> entry : tabControllerMap.entrySet()) {
+            ProgramTabController controller = entry.getValue();
+            if (controller.getProgramName().equals(programName) &&
+                    controller.getCurrentDegree() == degree) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 }

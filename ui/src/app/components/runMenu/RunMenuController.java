@@ -37,13 +37,10 @@ public class RunMenuController {
     @FXML private Button buttonDebugResume;
 
 
-
-
     private ListProperty<VariableDTO> inputVariablesRaw;
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
     private ReadOnlyListWrapper<VariableDTO> outputVariables;
     private Map<String, Long> editedValues;
-    private BooleanProperty preparingNewRun;
     private BooleanProperty running;
     private BooleanProperty debugging;
 
@@ -74,10 +71,9 @@ public class RunMenuController {
         editedValues = new HashMap<>();
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
-        preparingNewRun = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
 
-        inputsTable.disableProperty().bind(preparingNewRun.not());
+        buttonDebugResume.disableProperty().bind(debugging.not());
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
@@ -164,14 +160,10 @@ public class RunMenuController {
         });
     }
 
-    private void handleReRun() {
-    }
-
     private void handleDebugStop() {
         debugging.set(false);
         mainController.clearHighlights();
         previousValues.clear();
-        mainController.finishDebugging();
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -182,26 +174,20 @@ public class RunMenuController {
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
 
         buttonRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not()).or(debugging)
+                mainController.currentTabControllerProperty().isNull()
         );
 
         buttonDebug.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun.not())
+                mainController.currentTabControllerProperty().isNull().or(debugging)
         );
 
         buttonExpand.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
 
-        buttonNewRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
-        );
-
         buttonDebugStep.disableProperty().bind(debugging.not());
 
         buttonDebugStop.disableProperty().bind(debugging.not());
-
-        buttonDebugResume.disableProperty().bind(debugging.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
@@ -237,14 +223,12 @@ public class RunMenuController {
     @FXML
     private void handleRun() {
         Platform.runLater(() -> {
-            preparingNewRun.setValue(false);
             mainController.clearHighlights();
             clearLog();
             rebuildInputsFromTable();
             running.set(true);
             debugging.set(false);
             previousValues.clear();
-            log("=== Run Finished ===");
             log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
@@ -257,9 +241,6 @@ public class RunMenuController {
         return debugging;
     }
 
-    public BooleanProperty preparingNewRunProperty() {
-        return preparingNewRun;
-    }
 
     public ReadOnlyListProperty<VariableDTO> actualInputVariablesProperty() {
         return ActualInputVariables;
@@ -297,7 +278,6 @@ public class RunMenuController {
         rebuildInputsFromTable();
         outputVariables.clear();
         previousValues.clear();
-        preparingNewRun.setValue(false);
         debugging.set(true);
         this.handleDebugStep();
     }
@@ -311,7 +291,6 @@ public class RunMenuController {
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
-            mainController.finishDebugging();
         }
 
         // Refresh the list to trigger highlighting
@@ -334,11 +313,11 @@ public class RunMenuController {
             Platform.runLater(() -> resultsList.refresh());
         }
     }
+
     @FXML
     private void handleNewRun() {
         Platform.runLater(() -> {
             // Reset run/debug states
-            preparingNewRun.set(true);
             running.set(false);
             debugging.set(false);
 
@@ -363,6 +342,61 @@ public class RunMenuController {
 
     @FXML
     private void handleDebugResume() {
-        this.handleRun();
+        Platform.runLater(() -> {
+            if (!debugging.get()) return; // only valid in debug mode
+
+            // Progress through the remaining program steps until finish
+            while (debugging.get()) {
+                storePreviousValues(); // store current output values before step
+
+                debugging.setValue(mainController.debugStep()); // execute next step
+
+                // Update console and variable highlighting
+                log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
+                resultsList.refresh();
+
+                // Update cycle count if you track cycles
+                log(mainController.runCyclesProperty().get() + " cycles accumulated.");
+
+                // Optional: allow GUI to update visually
+                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+            }
+
+            log("Debugging finished. Program resumed normally.");
+        });
+    }
+
+    /**
+     * Clear all output variables
+     */
+    public void clearOutputs() {
+        outputVariables.clear();
+        previousValues.clear();
+        Platform.runLater(() -> resultsList.refresh());
+    }
+
+    /**
+     * Clear edited values map (used for re-run to reset manual edits)
+     */
+    public void clearEditedValues() {
+        editedValues.clear();
+    }
+
+    /**
+     * Force refresh of input table
+     */
+    public void refreshInputTable() {
+        inputsTable.refresh();
+    }
+
+    /**
+     * Set input variables (used for re-run)
+     */
+    public void setInputVariables(List<VariableDTO> inputs) {
+        // Clear edited values
+        editedValues.clear();
+
+        // Refresh the table to show the new values
+        Platform.runLater(() -> inputsTable.refresh());
     }
 }

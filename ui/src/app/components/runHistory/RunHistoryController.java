@@ -3,25 +3,36 @@ package app.components.runHistory;
 import app.util.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.HistoryDTO;
+import execute.dto.VariableDTO;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.util.Duration;
 
-public class RunHistoryController {
-    @FXML private AppController mainController;
+import java.util.List;
 
-    @FXML private TableView<HistoryDTO> runHistory;
-    @FXML public TableColumn<HistoryDTO, Integer> columnNum;
-    @FXML public TableColumn<HistoryDTO, String> columnDegree;
-    @FXML public TableColumn<HistoryDTO, String> columnInputs;
-    @FXML public TableColumn<HistoryDTO, String> columnOutput;
-    @FXML public TableColumn<HistoryDTO, Integer> columnCycles;
+public class RunHistoryController {
+    @FXML
+    private AppController mainController;
+
+    @FXML
+    private TableView<HistoryDTO> runHistory;
+    @FXML
+    public TableColumn<HistoryDTO, Integer> columnNum;
+    @FXML
+    public TableColumn<HistoryDTO, String> columnDegree;
+    @FXML
+    public TableColumn<HistoryDTO, String> columnInputs;
+    @FXML
+    public TableColumn<HistoryDTO, String> columnOutput;
+    @FXML
+    public TableColumn<HistoryDTO, Integer> columnCycles;
+    @FXML
+    private Button buttonShowStatus;
+    @FXML
+    private Button buttonReRun;
 
     private ListProperty<HistoryDTO> historyList;
 
@@ -30,6 +41,17 @@ public class RunHistoryController {
         this.historyList = new SimpleListProperty<>(FXCollections.observableArrayList());
         runHistory.itemsProperty().bind(historyList);
         runHistory.getColumns().setAll(columnNum, columnDegree, columnInputs, columnCycles, columnOutput);
+
+        buttonShowStatus.setOnAction(e -> showSelectedRunStatus());
+        buttonReRun.setOnAction(e -> rerunSelectedRun());
+
+        // Disable buttons when no selection
+        buttonShowStatus.disableProperty().bind(
+                runHistory.getSelectionModel().selectedItemProperty().isNull()
+        );
+        buttonReRun.disableProperty().bind(
+                runHistory.getSelectionModel().selectedItemProperty().isNull()
+        );
 
         runHistory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         fitColumns();
@@ -42,7 +64,6 @@ public class RunHistoryController {
         );
 
         setupColumns();
-
     }
 
     private void setupColumns() {
@@ -152,7 +173,6 @@ public class RunHistoryController {
                 setAlignment(Pos.CENTER);
             }
         });
-
     }
 
     private void setupColumnNum() {
@@ -186,15 +206,48 @@ public class RunHistoryController {
     }
 
     public void setMainController(AppController mainController) {
-        this.mainController =  mainController;
+        this.mainController = mainController;
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             historyList.clear();
         });
     }
 
-
     public void addRunHistory(HistoryDTO result) {
         historyList.add(result);
+    }
+
+    private HistoryDTO getSelectedRun() {
+        return runHistory.getSelectionModel().getSelectedItem();
+    }
+
+    /**
+     * Show all variables of the selected run in a popup.
+     */
+    private void showSelectedRunStatus() {
+        HistoryDTO selected = getSelectedRun();
+        if (selected == null) return;
+
+        List<VariableDTO> outputs = selected.getOutputAndTemps();
+
+        // Build a simple string of variable name = value
+        StringBuilder sb = new StringBuilder();
+        for (VariableDTO var : outputs) {
+            sb.append(var.getName()).append(" = ").append(var.getValue()).append("\n");
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Run Status");
+        alert.setHeaderText("Variables at end of run #" + selected.getNum());
+        alert.setContentText(sb.toString());
+        alert.showAndWait();
+    }
+
+    private void rerunSelectedRun() {
+        HistoryDTO selected = getSelectedRun();
+        if (selected == null || mainController == null) return;
+
+        // Delegate to main controller for the actual re-run preparation
+        mainController.prepareRerun(selected);
     }
 }
