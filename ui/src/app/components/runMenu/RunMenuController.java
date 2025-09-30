@@ -77,8 +77,6 @@ public class RunMenuController {
         preparingNewRun = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
 
-        buttonDebugResume.disableProperty().bind(debugging.not());
-
         inputsTable.disableProperty().bind(preparingNewRun.not());
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
@@ -183,7 +181,7 @@ public class RunMenuController {
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
 
         buttonRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not())
+                mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not()).or(debugging)
         );
 
         buttonDebug.disableProperty().bind(
@@ -201,6 +199,8 @@ public class RunMenuController {
         buttonDebugStep.disableProperty().bind(debugging.not());
 
         buttonDebugStop.disableProperty().bind(debugging.not());
+
+        buttonDebugResume.disableProperty().bind(debugging.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
@@ -243,6 +243,7 @@ public class RunMenuController {
             running.set(true);
             debugging.set(false);
             previousValues.clear();
+            log("=== Run Finished ===");
             log(mainController.runCyclesProperty().get() + " cycles requested.");
         });
     }
@@ -360,30 +361,6 @@ public class RunMenuController {
 
     @FXML
     private void handleDebugResume() {
-        Platform.runLater(() -> {
-            if (!debugging.get()) return; // only valid in debug mode
-
-            // Progress through the remaining program steps until finish
-            while (debugging.get()) {
-                storePreviousValues(); // store current output values before step
-
-                debugging.setValue(mainController.debugStep()); // execute next step
-
-                // Update console and variable highlighting
-                log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
-                resultsList.refresh();
-
-                // Update cycle count if you track cycles
-                log(mainController.runCyclesProperty().get() + " cycles accumulated.");
-
-                // Optional: allow GUI to update visually
-                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
-            }
-
-            log("Debugging finished. Program resumed normally.");
-        });
+        this.handleRun();
     }
-
-
-
 }
