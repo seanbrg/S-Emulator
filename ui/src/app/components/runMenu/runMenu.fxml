@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runMenu.RunMenuController">
+<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="app.components.runMenu.RunMenuController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <top>
@@ -176,6 +176,9 @@
                   <Insets left="10.0" top="30.0" />
                </VBox.margin>
             </Button>
+            <Button fx:id="newRun" mnemonicParsing="false" text="new run" />
+            <Button fx:id="resume" mnemonicParsing="false" text="resume" />
+            <Button fx:id="reRun" mnemonicParsing="false" text="re run" />
          </children>
       </VBox>
    </right>

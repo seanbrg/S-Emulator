@@ -28,6 +28,8 @@ public class RunMenuController {
     @FXML private TableColumn<VariableDTO, String> varColumn;
     @FXML private TableColumn<VariableDTO, Long> valueColumn;
     @FXML private TextArea console;
+    @FXML private Button newRun;
+
 
 
     private ListProperty<VariableDTO> inputVariablesRaw;
@@ -50,6 +52,8 @@ public class RunMenuController {
         buttonExpand.setOnAction(event -> handleExpand());
         buttonDebugStep.setOnAction(event -> handleDebugStep());
         buttonDebugStop.setOnAction(event -> handleDebugStop());
+        newRun.setOnAction(event -> handleNewRun());
+
 
         inputVariablesRaw = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
@@ -302,4 +306,31 @@ public class RunMenuController {
         // Trigger refresh to show highlights
         Platform.runLater(() -> resultsList.refresh());
     }
+    @FXML
+    private void handleNewRun() {
+        Platform.runLater(() -> {
+            // Reset run/debug states
+            running.set(false);
+            debugging.set(false);
+
+            // Reset inputs to 0
+            var zeroed = inputsTable.getItems().stream()
+                    .map(v -> new VariableDTO(v.getName(), 0L))
+                    .toList();
+            inputVariablesRaw.setAll(zeroed);
+            ActualInputVariables.clear();
+
+
+            outputVariables.clear();
+            editedValues.clear();
+            previousValues.clear();
+            clearLog();
+            mainController.clearHighlights();
+
+
+            log("=== New Run Started ===");
+        });
+    }
+
+
 }
