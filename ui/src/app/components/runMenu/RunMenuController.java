@@ -21,6 +21,7 @@ public class RunMenuController {
     @FXML public Tooltip tooltipDebugStep;
     @FXML public Tooltip tooltipDebugStop;
     @FXML public Tooltip tooltipRun;
+    @FXML public Button buttonReRun;
     @FXML private AppController mainController;
 
     @FXML private Button buttonRun;
@@ -43,6 +44,7 @@ public class RunMenuController {
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
     private ReadOnlyListWrapper<VariableDTO> outputVariables;
     private Map<String, Long> editedValues;
+    private BooleanProperty preparingNewRun;
     private BooleanProperty running;
     private BooleanProperty debugging;
 
@@ -61,6 +63,7 @@ public class RunMenuController {
         buttonDebugStop.setOnAction(event -> handleDebugStop());
         buttonNewRun.setOnAction(event -> handleNewRun());
         buttonDebugResume.setOnAction(event -> handleDebugResume());
+        buttonReRun.setOnAction(event -> handleReRun());
 
         tooltipDebug.setShowDelay(Duration.millis(50));
         tooltipRun.setShowDelay(Duration.millis(50));
@@ -73,9 +76,12 @@ public class RunMenuController {
         editedValues = new HashMap<>();
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
+        preparingNewRun = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
 
         buttonDebugResume.disableProperty().bind(debugging.not());
+
+        inputsTable.disableProperty().bind(preparingNewRun.not());
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
@@ -108,8 +114,8 @@ public class RunMenuController {
                 } else {
                     setText(v.getName() + " = " + v.getValue());
 
-                    // c
-                    if (previousValues.containsKey(v.getName()) &&
+                    // Highlight if value changed
+                    if (debugging.get() && previousValues.containsKey(v.getName()) &&
                             !previousValues.get(v.getName()).equals(v.getValue())) {
                         setStyle("-fx-background-color: #eae085; -fx-font-weight: bold;");
                     } else {
@@ -162,6 +168,9 @@ public class RunMenuController {
         });
     }
 
+    private void handleReRun() {
+    }
+
     private void handleDebugStop() {
         debugging.set(false);
         mainController.clearHighlights();
@@ -176,14 +185,22 @@ public class RunMenuController {
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
 
         buttonRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
+                mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not())
         );
 
         buttonDebug.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(debugging)
+                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun.not())
         );
 
         buttonExpand.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
+        buttonNewRun.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
+        buttonReRun.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
 
@@ -225,6 +242,7 @@ public class RunMenuController {
     @FXML
     private void handleRun() {
         Platform.runLater(() -> {
+            preparingNewRun.setValue(false);
             mainController.clearHighlights();
             clearLog();
             rebuildInputsFromTable();
@@ -243,6 +261,9 @@ public class RunMenuController {
         return debugging;
     }
 
+    public BooleanProperty preparingNewRunProperty() {
+        return preparingNewRun;
+    }
 
     public ReadOnlyListProperty<VariableDTO> actualInputVariablesProperty() {
         return ActualInputVariables;
@@ -280,21 +301,20 @@ public class RunMenuController {
         rebuildInputsFromTable();
         outputVariables.clear();
         previousValues.clear();
-
-        // Store initial values
-        storePreviousValues();
-
+        preparingNewRun.setValue(false);
         debugging.set(true);
         this.handleDebugStep();
     }
 
     private void handleDebugStep() {
+        // Store previous values BEFORE executing the step
+        storePreviousValues();
+
         debugging.setValue(mainController.debugStep());
         clearLog();
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
-            previousValues.clear();
         }
 
         // Refresh the list to trigger highlighting
@@ -309,21 +329,19 @@ public class RunMenuController {
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {
-        // Store previous values before updating
-        if (debugging.get()) {
-            storePreviousValues();
-        }
-
         outputVariables.clear();
         outputVariables.addAll(outputs);
 
         // Trigger refresh to show highlights
-        Platform.runLater(() -> resultsList.refresh());
+        if (debugging.get()) {
+            Platform.runLater(() -> resultsList.refresh());
+        }
     }
     @FXML
     private void handleNewRun() {
         Platform.runLater(() -> {
             // Reset run/debug states
+            preparingNewRun.set(true);
             running.set(false);
             debugging.set(false);
 
