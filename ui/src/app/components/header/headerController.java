@@ -63,7 +63,8 @@ public class headerController {
         File file = chooseXmlFile();
         if (file == null) return;
 
-        final String path = file.getPath();
+        final String newPath = file.getPath();
+        final String oldPath = loadLabel.getText();
         loadLabel.setText("Loading file...");
         progressBar.setProgress(0);
         progressBar.setVisible(true);
@@ -72,11 +73,11 @@ public class headerController {
         Timeline spinner = startContinuousProgress();
 
         // background load (no UI work inside)
-        Task<List<String>> task = mainController.createLoadTask(path);
+        Task<List<String>> task = mainController.createLoadTask(newPath);
 
         // when task leaves RUNNING, finish the bar and then open/notify
-        task.setOnSucceeded(e -> finish(true, task.getValue(), path, spinner));
-        task.setOnFailed(e -> finish(false, null, path, spinner));
+        task.setOnSucceeded(e -> finish(true, task.getValue(), newPath, spinner));
+        task.setOnFailed(e -> finish(false, null, oldPath, spinner));
 
         new Thread(task, "load-xml").start();
     }
@@ -94,12 +95,12 @@ public class headerController {
             // stall 0.2s after reaching 100%
             var stall = new PauseTransition(Duration.seconds(0.2));
             stall.setOnFinished(__ -> {
+                loadLabel.setText(path);
                 if (ok) {
-                    loadLabel.setText(path);
                     mainController.newProgram(funcNames);
                 }
                 else {
-
+                    mainController.alertLoadFailed();
                 }
                 progressBar.setVisible(false);
             });

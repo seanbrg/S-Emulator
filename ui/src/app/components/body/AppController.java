@@ -12,6 +12,7 @@ import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -19,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
@@ -179,10 +181,10 @@ public class AppController {
     public Task<List<String>> createLoadTask(String filePath) {
         return new Task<>() {
             @Override protected List<String> call() {
-                engine.clear();
                 if (!engine.loadFromXML(filePath)) {
                     throw new RuntimeException("Load failed: " + filePath);
                 }
+                //engine.clear();
                 return engine.getFuncNamesList();
             }
         };
@@ -300,6 +302,8 @@ public class AppController {
         engine.debugStart(programName, degree, inputs);
     }
 
+
+
     public Boolean debugStep() {
         ProgramTabController tabController = currentTabController.get();
         if (tabController == null) return false;
@@ -311,7 +315,14 @@ public class AppController {
         debugLine.set(engine.getDebugLine());
         replaceHighlights(List.of(debugLine.get()));
         Boolean notDone = engine.debugStep(programName, degree);
-        runMenuController.setOutputVariables(engine.getOutputs(programName, degree));
+
+        // Get ALL variables (outputs, inputs, temps) for debugging display
+        List<List<VariableDTO>> varsByType = engine.getVarByType();
+        List<VariableDTO> allVariables = new java.util.ArrayList<>();
+        for (List<VariableDTO> varList : varsByType) {
+            allVariables.addAll(varList);
+        }
+        runMenuController.setOutputVariables(allVariables);
 
         if (!notDone) {clearHighlights();}
         return notDone;
@@ -333,4 +344,29 @@ public class AppController {
         highlightedRows.addAll(lines);
     }
     public void clearHighlights() { highlightedRows.clear(); }
+
+    public void alertLoadFailed() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Load Failed");
+            alert.setHeaderText("Failed to load program file!");
+            alert.setContentText("Please check the file format and try again.");
+
+            // Use main window as owner if available
+            if (scene != null && scene.getWindow() != null) {
+                alert.initOwner(scene.getWindow());
+                // Inherit current theme
+                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+            }
+
+            // Use app icon on the dialog window (if available)
+            try {
+                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+            } catch (Exception ignored) { /* icon optional */ }
+
+            alert.showAndWait();
+        });
+    }
+
 }

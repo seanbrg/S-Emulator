@@ -677,3 +677,73 @@
 .table-row-cell:highlighted .text {
     -fx-font-weight: bold;
 }
+
+/* ===== Dark Dialog (matches muted gray theme) ===== */
+.dialog-pane {
+    /* surfaces & border consistent with the app */
+    -fx-background-color: derive(-system-background, -12%), derive(-system-background, -16%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+
+    /* text + spacing */
+    -fx-text-fill: -label-color;
+    -fx-font-size: 13px;
+    -fx-padding: 12;
+}
+
+/* Header strip: subtle divider like your TabPane/menu surfaces */
+.dialog-pane > .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 10 12 8 12;
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 0 0 1 0;
+}
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: -label-color;
+    -fx-font-weight: 600;
+}
+.dialog-pane > .header-panel .graphic-container {
+    -fx-padding: 0 8 0 0;
+}
+
+/* Content text */
+.dialog-pane .content {
+    -fx-padding: 12;
+}
+.dialog-pane .content.label {
+    -fx-text-fill: -label-color;
+}
+
+/* Button bar (reuse your button look with the same tokens) */
+.dialog-pane .button-bar .container {
+    -fx-background-color: transparent;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 12;
+}
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: derive(-secondary-system-background, 10%);
+}
+.dialog-pane .button-bar .button:pressed {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+/* “Default” (OK) button uses your blue accent */
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: -system-blue;
+    -fx-text-fill: white;
+}
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: derive(-system-blue, 15%);
+}
+
+/* Remove bright focus rings to match the rest of your dark styling */
+.dialog-pane,
+.dialog-pane .button {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
