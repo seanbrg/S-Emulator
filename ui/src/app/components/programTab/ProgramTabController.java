@@ -60,6 +60,8 @@ public class ProgramTabController {
         setupColumnCycles();
     }
 
+
+
     private void setupColumnCycles() {
         columnCycles.setCellValueFactory
                 (cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getData().getCycles()));
