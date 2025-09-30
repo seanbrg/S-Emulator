@@ -247,7 +247,35 @@ public class RunHistoryController {
         HistoryDTO selected = getSelectedRun();
         if (selected == null || mainController == null) return;
 
-        // Delegate to main controller for the actual re-run preparation
-        mainController.prepareRerun(selected);
+        // Step 1: Reset inputs to zero (like New Run)
+        List<VariableDTO> zeroedInputs = selected.getInputs().stream()
+                .map(v -> new VariableDTO(v.getName(), 0L))
+                .toList();
+
+        mainController.getRunMenuController().setInputVariables(zeroedInputs);
+        mainController.getRunMenuController().refreshInputTable();
+
+        // Step 2: Fill inputs with actual values from the selected row
+        List<VariableDTO> inputsFromRow = selected.getInputs();
+
+        List<VariableDTO> updatedInputs = zeroedInputs.stream()
+                .map(v -> inputsFromRow.stream()
+                        .filter(h -> h.getName().equals(v.getName()))
+                        .findFirst()
+                        .orElse(v))
+                .toList();
+
+        mainController.getRunMenuController().setInputVariables(updatedInputs);
+        mainController.getRunMenuController().refreshInputTable();
+
+        // Optional: log info
+        mainController.getRunMenuController().log("=== Re-Run Prepared ===");
+        mainController.getRunMenuController().log("Program: " + selected.getProgram().getProgramName() +
+                " (Degree: " + selected.getDegree() + ")");
+        mainController.getRunMenuController().log("Inputs loaded from Run #" + selected.getNum());
+        for (VariableDTO input : updatedInputs) {
+            mainController.getRunMenuController().log("  " + input.getName() + " = " + input.getValue());
+        }
     }
+
 }

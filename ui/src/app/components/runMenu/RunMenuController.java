@@ -261,13 +261,7 @@ public class RunMenuController {
         javafx.application.Platform.runLater(() -> console.clear());
     }
 
-    private void rebuildInputsFromTable() {
-        var rebuilt = inputsTable.getItems().stream()
-                .map(v -> copyWithValue(v, editedValues.getOrDefault(v.getName(), v.getValue())))
-                .toList();
-        ActualInputVariables.clear();
-        ActualInputVariables.setAll(rebuilt);   // now SAFE (backing list is modifiable)
-    }
+
 
     // adjust the constructor to your actual DTO shape
     private VariableDTO copyWithValue(VariableDTO src, long newValue) {
@@ -389,14 +383,23 @@ public class RunMenuController {
         inputsTable.refresh();
     }
 
-    /**
-     * Set input variables (used for re-run)
-     */
-    public void setInputVariables(List<VariableDTO> inputs) {
-        // Clear edited values
-        editedValues.clear();
 
-        // Refresh the table to show the new values
+    public void setInputVariables(List<VariableDTO> inputs) {
+        editedValues.clear();
+        inputVariablesRaw.setAll(inputs);
+        rebuildInputsFromTable();  // <-- add this line
         Platform.runLater(() -> inputsTable.refresh());
     }
+
+    private void rebuildInputsFromTable() {
+        var rebuilt = inputsTable.getItems().stream()
+                .map(v -> copyWithValue(v, editedValues.getOrDefault(v.getName(), v.getValue())))
+                .toList();
+        ActualInputVariables.clear();
+        ActualInputVariables.setAll(rebuilt);
+    }
+
+
+
+
 }

@@ -32,7 +32,5 @@ public class HistoryDTO {
     public List<VariableDTO> getOutputAndTemps() { return this.outputAndTempVariables; }
     public VariableDTO getOutput() { return this.output; }
 
-    public char[] getProgramName() {
-        return null;
-    }
+
 }
