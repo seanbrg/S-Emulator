@@ -104,6 +104,9 @@ public class RunMenuController {
         inputsTable.setEditable(true);
         valueColumn.setEditable(true);
 
+
+
+
         valueColumn.setCellFactory(col -> new TableCell<VariableDTO, Long>() {
             private final TextField tf = new TextField();
             {
