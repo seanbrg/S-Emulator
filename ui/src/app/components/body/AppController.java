@@ -210,6 +210,7 @@ public class AppController {
             URL url = getClass().getResource("/app/components/programTab/programTab.fxml");
             fxmlLoader.setLocation(url);
             Tab programTab = fxmlLoader.load();
+            //TODO: change title to include max degree
 
             ProgramTabController tabController = fxmlLoader.getController();
             tabController.setProgram(programName, degree);
