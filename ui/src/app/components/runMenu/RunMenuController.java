@@ -41,6 +41,7 @@ public class RunMenuController {
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
     private ReadOnlyListWrapper<VariableDTO> outputVariables;
     private Map<String, Long> editedValues;
+    private BooleanProperty preparingNewRun;
     private BooleanProperty running;
     private BooleanProperty debugging;
 
@@ -71,6 +72,7 @@ public class RunMenuController {
         editedValues = new HashMap<>();
         running = new SimpleBooleanProperty(false);
         debugging = new SimpleBooleanProperty(false);
+        preparingNewRun = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
 
         buttonDebugResume.disableProperty().bind(debugging.not());
@@ -164,6 +166,7 @@ public class RunMenuController {
         debugging.set(false);
         mainController.clearHighlights();
         previousValues.clear();
+        mainController.finishDebugging();
     }
 
     private void handleExpand() { mainController.expandProgram(); }
@@ -174,20 +177,28 @@ public class RunMenuController {
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
 
         buttonRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull()
+                mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not()).or(debugging)
         );
 
         buttonDebug.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(debugging)
+                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun.not())
         );
 
         buttonExpand.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull()
         );
 
+        buttonNewRun.disableProperty().bind(
+                mainController.currentTabControllerProperty().isNull()
+        );
+
         buttonDebugStep.disableProperty().bind(debugging.not());
 
         buttonDebugStop.disableProperty().bind(debugging.not());
+
+        buttonDebugResume.disableProperty().bind(debugging.not());
+
+        inputsTable.disableProperty().bind(preparingNewRun.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesRaw.clear();
@@ -223,6 +234,7 @@ public class RunMenuController {
     @FXML
     private void handleRun() {
         Platform.runLater(() -> {
+            preparingNewRun.setValue(false);
             mainController.clearHighlights();
             clearLog();
             rebuildInputsFromTable();
@@ -250,6 +262,14 @@ public class RunMenuController {
         return outputVariables.getReadOnlyProperty();
     }
 
+    public BooleanProperty preparingNewRunProperty() {
+        return preparingNewRun;
+    }
+
+    public void setPreparingNewRun(boolean val) {
+        preparingNewRun.setValue(val);
+    }
+
     public void log(String line) {
         javafx.application.Platform.runLater(() -> {
             console.appendText(line + System.lineSeparator());
@@ -272,6 +292,7 @@ public class RunMenuController {
         rebuildInputsFromTable();
         outputVariables.clear();
         previousValues.clear();
+        preparingNewRun.setValue(false);
         debugging.set(true);
         this.handleDebugStep();
     }
@@ -285,6 +306,7 @@ public class RunMenuController {
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
+            mainController.finishDebugging();
         }
 
         // Refresh the list to trigger highlighting
@@ -312,6 +334,7 @@ public class RunMenuController {
     private void handleNewRun() {
         Platform.runLater(() -> {
             // Reset run/debug states
+            preparingNewRun.set(true);
             running.set(false);
             debugging.set(false);
 
@@ -336,28 +359,7 @@ public class RunMenuController {
 
     @FXML
     private void handleDebugResume() {
-        Platform.runLater(() -> {
-            if (!debugging.get()) return; // only valid in debug mode
-
-            // Progress through the remaining program steps until finish
-            while (debugging.get()) {
-                storePreviousValues(); // store current output values before step
-
-                debugging.setValue(mainController.debugStep()); // execute next step
-
-                // Update console and variable highlighting
-                log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
-                resultsList.refresh();
-
-                // Update cycle count if you track cycles
-                log(mainController.runCyclesProperty().get() + " cycles accumulated.");
-
-                // Optional: allow GUI to update visually
-                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
-            }
-
-            log("Debugging finished. Program resumed normally.");
-        });
+        this.handleRun();
     }
 
     /**

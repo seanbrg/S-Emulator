@@ -1,5 +1,6 @@
 package app.components.runHistory;
 
+import app.components.runMenu.RunMenuController;
 import app.util.ColumnResizer;
 import app.components.body.AppController;
 import execute.dto.HistoryDTO;
@@ -245,6 +246,8 @@ public class RunHistoryController {
 
     private void rerunSelectedRun() {
         HistoryDTO selected = getSelectedRun();
+        RunMenuController runMenuController = mainController.getRunMenuController();
+
         if (selected == null || mainController == null) return;
 
         // Step 1: Reset inputs to zero (like New Run)
@@ -252,8 +255,9 @@ public class RunHistoryController {
                 .map(v -> new VariableDTO(v.getName(), 0L))
                 .toList();
 
-        mainController.getRunMenuController().setInputVariables(zeroedInputs);
-        mainController.getRunMenuController().refreshInputTable();
+        runMenuController.setInputVariables(zeroedInputs);
+        runMenuController.refreshInputTable();
+        runMenuController.setPreparingNewRun(true);
 
         // Step 2: Fill inputs with actual values from the selected row
         List<VariableDTO> inputsFromRow = selected.getInputs();
@@ -265,39 +269,17 @@ public class RunHistoryController {
                         .orElse(v))
                 .toList();
 
-        mainController.getRunMenuController().setInputVariables(updatedInputs);
-        mainController.getRunMenuController().refreshInputTable();
+        runMenuController.setInputVariables(updatedInputs);
+        runMenuController.refreshInputTable();
 
         // Optional: log info
-        mainController.getRunMenuController().log("=== Re-Run Prepared ===");
-        mainController.getRunMenuController().log("Program: " + selected.getProgram().getProgramName() +
+        runMenuController.clearLog();
+        runMenuController.log("=== Re-Run Prepared ===");
+        runMenuController.log("Program: " + selected.getProgram().getProgramName() +
                 " (Degree: " + selected.getDegree() + ")");
-        mainController.getRunMenuController().log("Inputs loaded from Run #" + selected.getNum());
+        runMenuController.log("Inputs loaded from Run #" + selected.getNum());
         for (VariableDTO input : updatedInputs) {
-            mainController.getRunMenuController().log("  " + input.getName() + " = " + input.getValue());
-        }
-        printSelectedInputs();
-    }
-
-
-
-    public void printSelectedInputs() {
-        // Get the selected row
-        HistoryDTO selected = runHistory.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            System.out.println("No row selected.");
-            return;
-        }
-
-        // Extract input variables
-        List<VariableDTO> inputVariables = selected.getInputs();
-
-        // Print them
-        System.out.println("Inputs from selected run #" + selected.getNum() + ":");
-        for (VariableDTO var : inputVariables) {
-            System.out.println(var.getName() + " = " + var.getValue());
+            runMenuController.log("  " + input.getName() + " = " + input.getValue());
         }
     }
-
-
 }
