@@ -89,7 +89,7 @@ public class ProgramTabController {
 
     private void setupColumnCycles() {
         columnCycles.setCellValueFactory
-                (cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getData().getCycles()));
+                (cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getCycles()));
 
         columnCycles.setCellFactory(col -> new TableCell<InstructionDTO, Integer>() {
             private final Tooltip tooltip = new Tooltip();

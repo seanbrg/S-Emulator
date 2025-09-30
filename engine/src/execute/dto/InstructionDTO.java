@@ -13,6 +13,7 @@ public class InstructionDTO {
     private final LabelDTO argLabel;
     private final InstructionDTO parent;
     private final String name;
+    private final int cycles;
 
     public InstructionDTO(Instruction instr) {
         this.selfLabel = instr.getSelfLabelDTO();
@@ -21,6 +22,7 @@ public class InstructionDTO {
         this.k = instr.getConst();
         this.variables = instr.getVarsDTO();
         this.argLabel = instr.getArgLabelDTO();
+        this.cycles = instr.getCycles();
 
         Instruction localParent = instr.getParent();
         if (localParent != null) {
@@ -39,4 +41,5 @@ public class InstructionDTO {
     public LabelDTO getArgLabel() { return argLabel; }
     public InstructionDTO getParent() { return parent; }
     public String getName() { return name; }
+    public Integer getCycles() { return cycles; }
 }
