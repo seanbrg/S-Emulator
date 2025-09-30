@@ -10,7 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -28,6 +31,7 @@ public class ProgramTabController {
 
     private String programName;
     int degree;
+    int maxDegree;
     private ListProperty<InstructionDTO> instructions;
     private ListProperty<VariableDTO> variables;
     private ListProperty<LabelDTO> labels;
@@ -68,12 +72,27 @@ public class ProgramTabController {
 
 
         programTab.setOnCloseRequest(event -> {
-            String nameForDialog = (programName == null ? "this tab" : programName + " (" + degree + ")");
+            String nameForDialog = (programName == null ? "this tab" : programName + " (" + degree + "/" + maxDegree + ")");
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                     "Close tab " + nameForDialog + "?",
                     ButtonType.YES, ButtonType.NO);
             alert.setHeaderText(null);
             alert.setTitle("Confirm Close");
+            Scene scene = programTab.getTabPane() != null ? programTab.getTabPane().getScene() : null;
+
+            // Use main window as owner if available
+            if (scene != null && scene.getWindow() != null) {
+                alert.initOwner(scene.getWindow());
+                // Inherit current theme
+                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+            }
+
+            // Use app icon on the dialog window (if available)
+            try {
+                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+            } catch (Exception ignored) { /* icon optional */ }
+
 
             if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
                 event.consume(); // cancel close
@@ -227,7 +246,8 @@ public class ProgramTabController {
     public void setProgram(String programName, int degree, int maxDegree) {
         this.programName = programName;
         this.degree = degree;
-        this.programTab.setText(this.programName + " (" + this.degree + "/" + maxDegree + ")");
+        this.maxDegree = maxDegree;
+        this.programTab.setText(this.programName + " (" + this.degree + "/" + this.maxDegree + ")");
     }
 
     public Tab getTab() { return programTab; }

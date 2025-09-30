@@ -77,6 +77,11 @@ public class JumpEqualFunction extends AbstractInstruction {
         return 1 + quote.getQuoteInstruction().getCycles();
     }
 
+    @Override
+    public int getDegree() {
+        return 1 + quote.getQuoteInstruction().getDegree();
+    }
+
     public QuoteArgument getQuoteArg() {
         return quote;
     }

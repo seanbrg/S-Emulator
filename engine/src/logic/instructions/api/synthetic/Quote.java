@@ -109,7 +109,7 @@ public class Quote extends AbstractInstruction {
 
     @Override
     public int getDegree() {
-        return function.maxDegree();
+        return 1 + function.maxDegree();
     }
 
     public Program getFunction() { return function; }
