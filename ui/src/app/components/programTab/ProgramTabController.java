@@ -48,7 +48,9 @@ public class ProgramTabController {
         programTable.widthProperty().addListener((o, a, b) -> fitColumns());
         programTable.getItems().addListener(
                 (javafx.collections.ListChangeListener<? super InstructionDTO>) c ->
-                        javafx.application.Platform.runLater(this::fitColumns)
+                {
+                    javafx.application.Platform.runLater(this::fitColumns);
+                }
         );
 
         setupColumnLabel();
@@ -56,33 +58,6 @@ public class ProgramTabController {
         setupColumnType();
         setupColumnNum();
         setupColumnCycles();
-
-        // Make tab closable (native JavaFX close button)
-        programTab.setClosable(true);
-
-        programTab.tabPaneProperty().addListener((obs, oldTP, newTP) -> {
-            if (newTP != null && newTP.getTabClosingPolicy() == TabPane.TabClosingPolicy.UNAVAILABLE) {
-                newTP.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-            }
-        });
-
-
-        programTab.setOnCloseRequest(event -> {
-            String nameForDialog = (programName == null ? "this tab" : programName + " (" + degree + ")");
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Close tab " + nameForDialog + "?",
-                    ButtonType.YES, ButtonType.NO);
-            alert.setHeaderText(null);
-            alert.setTitle("Confirm Close");
-
-            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
-                event.consume(); // cancel close
-                return;
-            }
-
-
-
-        });
     }
 
     private void setupColumnCycles() {
@@ -200,6 +175,7 @@ public class ProgramTabController {
     }
 
     public void enableRowHighlighting(AppController appController) {
+
         var sharedHighlights = appController.getHighlightedRows();
 
         programTable.setRowFactory(tv -> {
@@ -215,12 +191,20 @@ public class ProgramTabController {
                 row.pseudoClassStateChanged(HIGHLIGHTED, on);
             };
 
+            // Update when the row’s item changes
             row.itemProperty().addListener((obs, oldV, newV) -> apply.run());
-            sharedHighlights.addListener((javafx.collections.SetChangeListener<Integer>) ch -> apply.run());
+
+            // Update when the shared highlight set changes
+            sharedHighlights.addListener((javafx.collections.SetChangeListener<Integer>) ch -> {
+                // Fast path: only refresh this row if its key matches the changed element,
+                // but recalculating is cheap—so we can just:
+                apply.run();
+            });
 
             return row;
         });
     }
+
 
     public void setProgram(String programName, int degree) {
         this.programName = programName;

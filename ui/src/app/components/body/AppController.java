@@ -300,8 +300,6 @@ public class AppController {
         engine.debugStart(programName, degree, inputs);
     }
 
-
-
     public Boolean debugStep() {
         ProgramTabController tabController = currentTabController.get();
         if (tabController == null) return false;
@@ -313,14 +311,7 @@ public class AppController {
         debugLine.set(engine.getDebugLine());
         replaceHighlights(List.of(debugLine.get()));
         Boolean notDone = engine.debugStep(programName, degree);
-
-        // Get ALL variables (outputs, inputs, temps) for debugging display
-        List<List<VariableDTO>> varsByType = engine.getVarByType();
-        List<VariableDTO> allVariables = new java.util.ArrayList<>();
-        for (List<VariableDTO> varList : varsByType) {
-            allVariables.addAll(varList);
-        }
-        runMenuController.setOutputVariables(allVariables);
+        runMenuController.setOutputVariables(engine.getOutputs(programName, degree));
 
         if (!notDone) {clearHighlights();}
         return notDone;
@@ -342,5 +333,4 @@ public class AppController {
         highlightedRows.addAll(lines);
     }
     public void clearHighlights() { highlightedRows.clear(); }
-
 }

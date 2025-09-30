@@ -90,8 +90,8 @@ public class RunMenuController {
                 } else {
                     setText(v.getName() + " = " + v.getValue());
 
-                    // Highlight if value changed
-                    if (debugging.get() && previousValues.containsKey(v.getName()) &&
+                    // c
+                    if (previousValues.containsKey(v.getName()) &&
                             !previousValues.get(v.getName()).equals(v.getValue())) {
                         setStyle("-fx-background-color: #eae085; -fx-font-weight: bold;");
                     } else {
@@ -262,19 +262,21 @@ public class RunMenuController {
         rebuildInputsFromTable();
         outputVariables.clear();
         previousValues.clear();
+
+        // Store initial values
+        storePreviousValues();
+
         debugging.set(true);
         this.handleDebugStep();
     }
 
     private void handleDebugStep() {
-        // Store previous values BEFORE executing the step
-        storePreviousValues();
-
         debugging.setValue(mainController.debugStep());
         clearLog();
         log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
         if (!debugging.get()) {
             log("Debugging finished.");
+            previousValues.clear();
         }
 
         // Refresh the list to trigger highlighting
@@ -289,12 +291,15 @@ public class RunMenuController {
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {
+        // Store previous values before updating
+        if (debugging.get()) {
+            storePreviousValues();
+        }
+
         outputVariables.clear();
         outputVariables.addAll(outputs);
 
         // Trigger refresh to show highlights
-        if (debugging.get()) {
-            Platform.runLater(() -> resultsList.refresh());
-        }
+        Platform.runLater(() -> resultsList.refresh());
     }
 }
