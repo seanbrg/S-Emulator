@@ -215,22 +215,50 @@ public class EngineImpl implements Engine {
 
     @Override
     public HistoryDTO runProgramAndRecord(String program, int degree, List<VariableDTO> inputs) {
+        // Load input values into the program
         loadInputs(inputs);
-        this.runProgram(program, degree);
+
+        // Capture actual input variable values after loading
+        List<VariableDTO> currentInputs = pm.getProgram(program, degree).getVariables().stream()
+                .filter(v -> v.getType() == VariableType.INPUT)
+                .map(v -> new VariableDTO(v.getName(), v.getValue()))
+                .toList();
+
+        // Reset outputs and temp variables
+        outputVar.setValue(0);
+        tempVarsMap.values().forEach(v -> v.setValue(0));
+
+        // Run the program
+        pm.runProgram(program, degree);
+
+        // Capture output variables
         List<VariableDTO> outputs = getOutputs(program, degree);
+
+        // Get cycles
         int cycles = pm.getProgramCycles(program, degree);
 
+        // Increment run counter
         runCounter++;
-        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(program, degree));
-        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, inputs, outputs);
 
+        // Wrap program in DTO
+        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(program, degree));
+
+        // Create history entry with actual input/output values
+        HistoryDTO result = new HistoryDTO(runCounter, degree, cycles, programDTO, currentInputs, outputs);
+
+        // Optional print
         if (printMode) {
-            System.out.printf("Run #%d complete: outputs: %s, cycles = %d%n", runCounter, outputs.toString(), cycles);
+            System.out.printf("Run #%d complete: inputs: %s, outputs: %s, cycles = %d%n",
+                    runCounter, currentInputs.toString(), outputs.toString(), cycles);
         }
 
+        // Add to history
         history.add(result);
+
         return result;
     }
+
+
 
     @Override
     public HistoryDTO recordCurrentState(String programName, int degree, List<VariableDTO> inputs) {

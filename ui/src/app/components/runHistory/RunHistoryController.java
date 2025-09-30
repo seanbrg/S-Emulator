@@ -276,6 +276,28 @@ public class RunHistoryController {
         for (VariableDTO input : updatedInputs) {
             mainController.getRunMenuController().log("  " + input.getName() + " = " + input.getValue());
         }
+        printSelectedInputs();
     }
+
+
+
+    public void printSelectedInputs() {
+        // Get the selected row
+        HistoryDTO selected = runHistory.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            System.out.println("No row selected.");
+            return;
+        }
+
+        // Extract input variables
+        List<VariableDTO> inputVariables = selected.getInputs();
+
+        // Print them
+        System.out.println("Inputs from selected run #" + selected.getNum() + ":");
+        for (VariableDTO var : inputVariables) {
+            System.out.println(var.getName() + " = " + var.getValue());
+        }
+    }
+
 
 }
