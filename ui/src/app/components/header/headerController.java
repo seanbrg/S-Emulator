@@ -94,9 +94,12 @@ public class headerController {
             // stall 0.2s after reaching 100%
             var stall = new PauseTransition(Duration.seconds(0.2));
             stall.setOnFinished(__ -> {
-                loadLabel.setText(ok ? path : "Failed to load: " + path);
                 if (ok) {
-                        mainController.newProgram(funcNames);
+                    loadLabel.setText(path);
+                    mainController.newProgram(funcNames);
+                }
+                else {
+
                 }
                 progressBar.setVisible(false);
             });

@@ -15,10 +15,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="app.components.runMenu.RunMenuController">
+<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runMenu.RunMenuController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
-         <top>
+         <bottom>
+            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefRowCount="8" prefWidth="400.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </TextArea>
+         </bottom>
+         <center>
             <HBox BorderPane.alignment="CENTER">
                <children>
                   <BorderPane maxHeight="-Infinity" maxWidth="-Infinity">
@@ -65,14 +72,33 @@
                   </BorderPane>
                </children>
             </HBox>
-         </top>
-         <center>
-            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefRowCount="8" prefWidth="400.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-            </TextArea>
          </center>
+         <top>
+            <HBox prefHeight="22.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="buttonNewRun" mnemonicParsing="false" text="New Run">
+                     <HBox.margin>
+                        <Insets left="60.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="buttonDebugResume" mnemonicParsing="false" text="Resume">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="reRun" mnemonicParsing="false" text="Re-Run">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="buttonExpand" mnemonicParsing="false" text="Expand">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </top>
       </BorderPane>
    </center>
    <right>
@@ -90,7 +116,7 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip fx:id="tooltipRun" text="Run">
+                  <Tooltip fx:id="tooltipRun" text="Run Mode">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -109,7 +135,7 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip fx:id="tooltipDebug" text="Start run in Debug mode" textAlignment="CENTER">
+                  <Tooltip fx:id="tooltipDebug" text="Debug Mode" textAlignment="CENTER">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -128,7 +154,7 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip fx:id="tooltipDebugStep" text="Debug Step Foward" textAlignment="CENTER">
+                  <Tooltip fx:id="tooltipDebugStep" text="Step Forward" textAlignment="CENTER">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -147,7 +173,7 @@
                   </ImageView>
                </graphic>
                <tooltip>
-                  <Tooltip fx:id="tooltipDebugStep1" text="Stop Debug" textAlignment="CENTER">
+                  <Tooltip fx:id="tooltipDebugStop" text="Stop Debug" textAlignment="CENTER">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -157,28 +183,6 @@
                   <Insets left="10.0" right="10.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="buttonExpand" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0">
-               <graphic>
-                  <ImageView fx:id="imageExpand" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../resources/images/expand.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <tooltip>
-                  <Tooltip fx:id="tooltipExpand" text="Expand Program" textAlignment="CENTER">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </Tooltip>
-               </tooltip>
-               <VBox.margin>
-                  <Insets left="10.0" top="30.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="buttonNewRun" mnemonicParsing="false" text="new run" />
-            <Button fx:id="buttonDebugResume" mnemonicParsing="false" text="resume" />
-            <Button fx:id="reRun" mnemonicParsing="false" text="re run" />
          </children>
       </VBox>
    </right>

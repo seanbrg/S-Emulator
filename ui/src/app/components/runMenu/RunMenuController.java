@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,10 @@ import java.util.Map;
 
 public class RunMenuController {
     @FXML public VBox vBox;
+    @FXML public Tooltip tooltipDebug;
+    @FXML public Tooltip tooltipDebugStep;
+    @FXML public Tooltip tooltipDebugStop;
+    @FXML public Tooltip tooltipRun;
     @FXML private AppController mainController;
 
     @FXML private Button buttonRun;
@@ -57,8 +62,10 @@ public class RunMenuController {
         buttonNewRun.setOnAction(event -> handleNewRun());
         buttonDebugResume.setOnAction(event -> handleDebugResume());
 
-
-
+        tooltipDebug.setShowDelay(Duration.millis(50));
+        tooltipRun.setShowDelay(Duration.millis(50));
+        tooltipDebugStep.setShowDelay(Duration.millis(50));
+        tooltipDebugStop.setShowDelay(Duration.millis(50));
 
         inputVariablesRaw = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
