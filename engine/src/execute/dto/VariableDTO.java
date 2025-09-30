@@ -58,4 +58,8 @@ public class VariableDTO {
             case VariableType.TEMP ->  "z" + num;
         };
     }
+
+    public boolean isOutput() {
+        return this.type == VariableType.OUTPUT;
+    }
 }

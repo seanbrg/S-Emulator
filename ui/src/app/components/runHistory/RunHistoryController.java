@@ -18,7 +18,7 @@ public class RunHistoryController {
 
     @FXML private TableView<HistoryDTO> runHistory;
     @FXML public TableColumn<HistoryDTO, Integer> columnNum;
-    @FXML public TableColumn<HistoryDTO, Integer> columnDegree;
+    @FXML public TableColumn<HistoryDTO, String> columnDegree;
     @FXML public TableColumn<HistoryDTO, String> columnInputs;
     @FXML public TableColumn<HistoryDTO, String> columnOutput;
     @FXML public TableColumn<HistoryDTO, Integer> columnCycles;
@@ -71,7 +71,7 @@ public class RunHistoryController {
                     setStyle("-fx-text-fill: #df6565;");
                     tooltip.setText("Cycles: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER);
@@ -81,7 +81,7 @@ public class RunHistoryController {
 
     private void setupColumnOutput() {
         columnOutput.setCellValueFactory
-                (cd -> new ReadOnlyStringWrapper(cd.getValue().getOutputs().toString()));
+                (cd -> new ReadOnlyStringWrapper(cd.getValue().getOutput().toString()));
 
         columnOutput.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
             private final Tooltip tooltip = new Tooltip();
@@ -96,7 +96,7 @@ public class RunHistoryController {
                     setText(item);
                     tooltip.setText("Outputs: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER_LEFT);
@@ -121,7 +121,7 @@ public class RunHistoryController {
                     setText(item);
                     tooltip.setText("Inputs: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER);
@@ -131,13 +131,13 @@ public class RunHistoryController {
 
     private void setupColumnDegree() {
         columnDegree.setCellValueFactory
-                (cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getDegree()));
+                (cd -> new ReadOnlyStringWrapper(String.format("%d/%d", cd.getValue().getDegree(), cd.getValue().getMaxDegree())));
 
-        columnDegree.setCellFactory(col -> new TableCell<HistoryDTO, Integer>() {
+        columnDegree.setCellFactory(col -> new TableCell<HistoryDTO, String>() {
             private final Tooltip tooltip = new Tooltip();
 
             @Override
-            protected void updateItem(Integer item, boolean empty) {
+            protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
@@ -146,7 +146,7 @@ public class RunHistoryController {
                     setText(item.toString());
                     tooltip.setText("Expansion degree: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER);
@@ -172,7 +172,7 @@ public class RunHistoryController {
                     setText(item.toString());
                     tooltip.setText("Num: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
 
                 }

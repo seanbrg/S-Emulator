@@ -105,7 +105,7 @@ public class ProgramTabController {
                     setStyle("-fx-text-fill: #df6565;");
                     tooltip.setText("Cycles: " + item);
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER);
@@ -150,7 +150,7 @@ public class ProgramTabController {
                     setText(item);
                     setStyle("-fx-text-fill: #43974f;");
                     tooltip.setStyle("-fx-font-size: 13");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     if (item.equals("B")) tooltip.setText("Basic instruction");
                     else if (item.equals("S")) tooltip.setText("Synthetic instruction");
                     setTooltip(tooltip);
@@ -183,7 +183,7 @@ public class ProgramTabController {
                     setStyle("-fx-text-fill: #407abd;");
                     setText(item);
                     tooltip.setStyle("-fx-font-size: 13;");
-                    tooltip.setShowDelay(Duration.millis(500));
+                    tooltip.setShowDelay(Duration.millis(20));
                     tooltip.setText("Label " + item);
                     setTooltip(tooltip);
                 }

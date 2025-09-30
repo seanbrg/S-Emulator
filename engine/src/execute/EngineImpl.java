@@ -198,7 +198,7 @@ public class EngineImpl implements Engine {
         }
         for (HistoryDTO r : history) {
             System.out.printf("#%d | degree = %d | inputs = %s | outputs = %s | cycles = %d%n",
-                    r.getNum(), r.getDegree(), r.getInputs().toString(), r.getOutputs().getFirst().getValue(), r.getCycles());
+                    r.getNum(), r.getDegree(), r.getInputs().toString(), r.getOutputAndTemps().getFirst().getValue(), r.getCycles());
         }
     }
 

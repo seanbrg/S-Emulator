@@ -142,7 +142,7 @@ public class AppController {
         if (result == null) throw new RuntimeException("Run failed for program: " + programName);
 
         programCycles.set(result.getCycles());
-        runMenuController.setOutputVariables(result.getOutputs());
+        runMenuController.setOutputVariables(result.getOutputAndTemps());
         runHistoryController.addRunHistory(result);
     }
 
