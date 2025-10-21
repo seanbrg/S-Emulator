@@ -1,11 +1,11 @@
-package app.components.body;
+package client.components.body;
 
-import app.components.expandWindow.ExpandWindowController;
-import app.components.instructionHistory.InstructionHistoryController;
-import app.components.header.headerController;
-import app.components.programTab.ProgramTabController;
-import app.components.runHistory.RunHistoryController;
-import app.components.runMenu.RunMenuController;
+import client.components.expandWindow.ExpandWindowController;
+import client.components.instructionHistory.InstructionHistoryController;
+import client.components.header.headerController;
+import client.components.programTab.ProgramTabController;
+import client.components.runHistory.RunHistoryController;
+import client.components.runMenu.RunMenuController;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.HistoryDTO;
@@ -168,8 +168,8 @@ public class AppController {
         if (scene == null) return;
 
         String cssPath = dark ?
-                "/app/resources/styles/style-dark.css" :
-                "/app/resources/styles/style-light.css";
+                "/client/resources/styles/style-dark.css" :
+                "/client/resources/styles/style-light.css";
 
         URL resource = getClass().getResource(cssPath);
         if (resource != null) {
@@ -180,7 +180,9 @@ public class AppController {
 
     public Task<List<String>> createLoadTask(String filePath) {
         return new Task<>() {
-            @Override protected List<String> call() {
+            @Override
+            protected List<String> call() {
+
                 if (!engine.loadFromXML(filePath)) {
                     throw new RuntimeException("Load failed: " + filePath);
                 }
@@ -209,7 +211,7 @@ public class AppController {
     private void addProgramTab(String programName, int degree) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            URL url = getClass().getResource("/app/components/programTab/programTab.fxml");
+            URL url = getClass().getResource("/client/components/programTab/programTab.fxml");
             fxmlLoader.setLocation(url);
             Tab programTab = fxmlLoader.load();
 
@@ -234,7 +236,7 @@ public class AppController {
     public void expandProgram() {
         try {
             FXMLLoader fx = new FXMLLoader(getClass().getResource(
-                    "/app/components/expandWindow/expandWindow.fxml"));
+                    "/client/components/expandWindow/expandWindow.fxml"));
 
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();
@@ -249,7 +251,7 @@ public class AppController {
             s.setTitle("Choose Expansion Degree");
             Scene dialogScene = new Scene(root);
             dialogScene.getStylesheets().addAll(scene.getStylesheets()); // inherit theme
-            s.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+            s.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
             s.setScene(dialogScene);
             s.setResizable(false);
             s.showAndWait();
@@ -362,7 +364,7 @@ public class AppController {
             // Use app icon on the dialog window (if available)
             try {
                 Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
-                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
             } catch (Exception ignored) { /* icon optional */ }
 
             alert.showAndWait();

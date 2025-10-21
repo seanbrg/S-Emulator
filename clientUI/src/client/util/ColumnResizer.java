@@ -1,4 +1,4 @@
-package app.util;
+package client.util;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

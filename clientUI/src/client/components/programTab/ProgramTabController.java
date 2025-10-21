@@ -1,7 +1,7 @@
-package app.components.programTab;
+package client.components.programTab;
 
-import app.util.ColumnResizer;
-import app.components.body.AppController;
+import client.util.ColumnResizer;
+import client.components.body.AppController;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
@@ -15,8 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.util.List;
 
 public class ProgramTabController {
     @FXML private AppController mainController;
@@ -90,7 +88,7 @@ public class ProgramTabController {
             // Use app icon on the dialog window (if available)
             try {
                 Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
-                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
             } catch (Exception ignored) { /* icon optional */ }
 
 

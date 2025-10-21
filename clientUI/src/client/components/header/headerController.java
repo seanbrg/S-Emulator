@@ -1,9 +1,7 @@
-package app.components.header;
+package client.components.header;
 
-import app.components.body.AppController;
-import app.components.programTab.ProgramTabController;
-import execute.dto.InstructionDTO;
-import execute.dto.VariableDTO;
+import client.components.body.AppController;
+import client.components.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;

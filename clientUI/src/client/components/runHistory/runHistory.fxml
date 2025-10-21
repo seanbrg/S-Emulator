@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.runHistory.RunHistoryController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.runHistory.RunHistoryController">
    <center>
       <TableView fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0">
           <columns>

@@ -1,6 +1,6 @@
-package app.components.runMenu;
+package client.components.runMenu;
 
-import app.components.body.AppController;
+import client.components.body.AppController;
 import execute.dto.VariableDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;

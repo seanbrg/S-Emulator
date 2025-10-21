@@ -1,7 +1,7 @@
-package app.components.instructionHistory;
+package client.components.instructionHistory;
 
-import app.util.ColumnResizer;
-import app.components.body.AppController;
+import client.util.ColumnResizer;
+import client.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;

@@ -1,8 +1,8 @@
-package app.components.runHistory;
+package client.components.runHistory;
 
-import app.components.runMenu.RunMenuController;
-import app.util.ColumnResizer;
-import app.components.body.AppController;
+import client.components.runMenu.RunMenuController;
+import client.util.ColumnResizer;
+import client.components.body.AppController;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
 import javafx.beans.property.*;
@@ -284,7 +284,7 @@ public class RunHistoryController {
         // Use app icon on the dialog window (if available)
         try {
             Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
-            dlg.getIcons().add(new Image(getClass().getResourceAsStream("/app/resources/images/icon.png")));
+            dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
         } catch (Exception ignored) { /* icon optional */ }
 
         alert.showAndWait();

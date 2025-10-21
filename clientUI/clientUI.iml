@@ -7,7 +7,9 @@
     </content>
     <orderEntry type="jdk" jdkName="ms-21" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="javafx" level="project" />
     <orderEntry type="module" module-name="engine" />
+    <orderEntry type="library" name="okHttp" level="project" />
+    <orderEntry type="library" name="google-gson-2" level="project" />
+    <orderEntry type="library" name="javafx" level="project" />
   </component>
 </module>

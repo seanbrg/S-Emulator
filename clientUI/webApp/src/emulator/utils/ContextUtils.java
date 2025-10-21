@@ -11,11 +11,13 @@ public class ContextUtils {
     public static Engine getEngine(ServletContext servletContext) {
 
         synchronized (engineLock) {
-            if (servletContext.getAttribute(Constants.ENGINE) == null) {
-                servletContext.setAttribute(Constants.ENGINE, new EngineImpl());
+            if (servletContext.getAttribute(WebConstants.ENGINE) == null) { // create new engine if not exists
+                Engine engine = new EngineImpl();
+                engine.setPrintMode(false);
+                servletContext.setAttribute(WebConstants.ENGINE, engine);
             }
         }
-        return (Engine) servletContext.getAttribute(Constants.ENGINE);
+        return (Engine) servletContext.getAttribute(WebConstants.ENGINE);
     }
 
 

@@ -1,4 +1,4 @@
-package app;
+package client;
 
 import app.util.Launcher;
 

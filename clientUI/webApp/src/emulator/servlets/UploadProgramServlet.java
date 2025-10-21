@@ -1,6 +1,5 @@
 package emulator.servlets;
 
-import emulator.utils.Constants;
 import emulator.utils.ContextUtils;
 import execute.Engine;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,19 +9,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 
-import jakarta.servlet.ServletException;
+import static emulator.utils.ServletsUtils.sendError;
 
-@WebServlet (name = "uploadProgramServlet", urlPatterns = {"/uploadProgram"})
-public class uploadProgramServlet extends HttpServlet {
+@WebServlet (name = "UploadProgramServlet", urlPatterns = {"/uploadProgram"})
+public class UploadProgramServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Engine engine = ContextUtils.getEngine(getServletContext());
-        Boolean printMode = Boolean.parseBoolean(request.getParameter(Constants.PRINTMODE));
 
         try (InputStream in = request.getInputStream()) {
             if (in == null) {
@@ -34,14 +30,6 @@ public class uploadProgramServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Error loading program: " + e.getMessage());
-        }
-    }
-
-    private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
-        resp.setStatus(status);
-        resp.setContentType("application/json; charset=UTF-8");
-        try (PrintWriter out = resp.getWriter()) {
-            out.print("Error loading program: " + message);
         }
     }
 }
