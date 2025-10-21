@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
-public class XmlFileLoader {
+public class XmlLoader {
 
     private List<Program> programs;
 
-    public XmlFileLoader() {
+    public XmlLoader() {
         this.programs = new ArrayList<>();
     }
 

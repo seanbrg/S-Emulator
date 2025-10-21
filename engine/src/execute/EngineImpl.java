@@ -1,6 +1,6 @@
 package execute;
 
-import execute.components.XmlFileLoader;
+import execute.components.XmlLoader;
 import execute.dto.*;
 import execute.components.ProgramManager;
 import logic.program.Program;
@@ -121,7 +121,7 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromXML(String filePath) {
         Map<String, Variable> vars = new HashMap<>();
-        XmlFileLoader loader = new XmlFileLoader();
+        XmlLoader loader = new XmlLoader();
         List<Program> programs = loader.parseDoc(filePath, vars, printMode);
 
         if (programs != null) {
@@ -140,7 +140,7 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromStream(InputStream inputStream) {
         Map<String, Variable> vars = new HashMap<>();
-        XmlFileLoader loader = new XmlFileLoader();
+        XmlLoader loader = new XmlLoader();
         List<Program> programs = loader.parseStream(inputStream, vars, printMode);
 
         if (programs != null) {
