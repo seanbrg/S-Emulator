@@ -1,12 +1,13 @@
-package src.client.util;
+package client.util;
 
+import client.components.login.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import src.client.components.dashboardBody.DashboardBodyController;
+import client.components.dashboardBody.DashboardBodyController;
 
 import java.net.URL;
 
@@ -29,7 +30,7 @@ public class Launcher extends Application {
         primaryStage.show();
 
         // Pass stage to LoginController
-        src.client.components.login.LoginController controller = loader.getController();
+        LoginController controller = loader.getController();
         controller.setPrimaryStage(primaryStage);
     }
 

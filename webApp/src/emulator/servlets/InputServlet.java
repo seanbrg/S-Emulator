@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static emulator.utils.ServletsUtils.sendError;
@@ -57,4 +60,49 @@ public class InputServlet extends HttpServlet {
             }
         }
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Engine engine = ContextUtils.getEngine(getServletContext());
+        if (engine == null) {
+            sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized.");
+            return;
+        }
+
+        // Optional but helpful: verify content type
+        String ct = request.getContentType();
+        if (ct == null || !ct.toLowerCase().contains("application/json")) {
+            sendError(response, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Content-Type must be application/json.");
+            return;
+        }
+        if (request.getContentLengthLong() == 0) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            return;
+        }
+
+        try (InputStream in = request.getInputStream();
+             InputStreamReader reader = new InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)) {
+
+            java.lang.reflect.Type listType =
+                    new com.google.gson.reflect.TypeToken<java.util.List<VariableDTO>>() {}.getType();
+
+            java.util.List<VariableDTO> varsDto = GSON.fromJson(reader, listType);
+            if (varsDto == null) {
+                sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON: expected an array of variables.");
+                return;
+            }
+
+            synchronized (engine) {
+                engine.loadInputs(varsDto);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+
+        } catch (com.google.gson.JsonSyntaxException e) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Malformed JSON: " + e.getMessage());
+        } catch (Exception e) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Error loading inputs: " + e.getMessage());
+        }
+    }
+
+
 }

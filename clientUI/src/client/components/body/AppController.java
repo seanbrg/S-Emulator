@@ -1,13 +1,13 @@
-package src.client.components.body;
+package client.components.body;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import src.client.components.expandWindow.ExpandWindowController;
-import src.client.components.instructionHistory.InstructionHistoryController;
-import src.client.components.header.headerController;
-import src.client.components.programTab.ProgramTabController;
-import src.client.components.runHistory.RunHistoryController;
-import src.client.components.runMenu.RunMenuController;
+import client.components.expandWindow.ExpandWindowController;
+import client.components.instructionHistory.InstructionHistoryController;
+import client.components.header.headerController;
+import client.components.programTab.ProgramTabController;
+import client.components.runHistory.RunHistoryController;
+import client.components.runMenu.RunMenuController;
 import client.util.HttpUtils;
 
 

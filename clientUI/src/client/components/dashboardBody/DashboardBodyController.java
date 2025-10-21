@@ -1,4 +1,4 @@
-package src.client.components.dashboardBody;
+package client.components.dashboardBody;
 
 import emulator.utils.WebConstants;
 import javafx.application.Platform;
@@ -15,7 +15,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import src.client.components.availableUsers.AvailableUsersController;
+import client.components.availableUsers.AvailableUsersController;
 import emulator.utils.HttpClientUtil;
 
 import java.io.Closeable;

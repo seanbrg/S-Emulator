@@ -1,4 +1,4 @@
-package src.client.components.login;
+package client.components.login;
 
 import emulator.utils.WebConstants;
 import javafx.application.Platform;
@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import src.client.components.dashboardBody.DashboardBodyController;
+import client.components.dashboardBody.DashboardBodyController;
 import emulator.utils.HttpClientUtil;
 
 import java.io.IOException;

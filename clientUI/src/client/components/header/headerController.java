@@ -1,6 +1,6 @@
-package src.client.components.header;
+package client.components.header;
 
-import src.client.components.programTab.ProgramTabController;
+import client.components.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
