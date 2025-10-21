@@ -6,6 +6,8 @@ import client.components.header.headerController;
 import client.components.programTab.ProgramTabController;
 import client.components.runHistory.RunHistoryController;
 import client.components.runMenu.RunMenuController;
+import client.util.HttpUtils;
+import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.HistoryDTO;
@@ -30,8 +32,18 @@ import javafx.scene.layout.HBox;
 import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okio.BufferedSink;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -182,11 +194,44 @@ public class AppController {
         return new Task<>() {
             @Override
             protected List<String> call() {
+                String httpUrl = WebConstants.UPLOAD_URL;
 
-                if (!engine.loadFromXML(filePath)) {
-                    throw new RuntimeException("Load failed: " + filePath);
-                }
-                //engine.clear();
+                File file = new File(filePath);
+
+                HttpUtils.post(httpUrl,
+                    new RequestBody() {
+                        @Nullable
+                        @Override
+                        public MediaType contentType() {
+                            return MediaType.parse("application/xml");
+                        }
+
+                        @Override
+                        public void writeTo(@NotNull BufferedSink sink) throws IOException {
+                            try (FileInputStream in = new FileInputStream(file)) {
+                                sink.writeAll(okio.Okio.source(in)); // efficiently streams the file
+                            }
+                        }
+                    },
+                    new Callback() {
+
+                        @Override
+                        public void onFailure(okhttp3.Call call, IOException e) {
+                            alertLoadFailed();
+                        }
+
+                        @Override
+                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                            if (!response.isSuccessful()) {
+                                alertLoadFailed();
+                            } else {
+                                System.out.println("Upload successful: " + response.code());
+                            }
+                            response.close();
+                        }
+                    }
+                );
+
                 return engine.getFuncNamesList();
             }
         };
