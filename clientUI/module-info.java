@@ -1,6 +1,10 @@
 module clientUI {
     requires javafx.controls;
     requires javafx.fxml;
+    requires engine;
+    requires okhttp3;
+    requires annotations;
+    requires okio;
 
     opens app.util to javafx.fxml;
     opens app.components.body to javafx.fxml;

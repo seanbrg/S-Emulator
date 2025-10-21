@@ -1,4 +1,4 @@
-package client.util;
+package src.client.util;
 
 import okhttp3.*;
 
@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public class HttpUtils {
 
-    private final static SimpleCookieManager simpleCookieManager = new SimpleCookieManager();
+    private final static client.util.SimpleCookieManager simpleCookieManager = new client.util.SimpleCookieManager();
     private final static OkHttpClient HTTP_CLIENT =
             new OkHttpClient.Builder()
                     .cookieJar(simpleCookieManager)

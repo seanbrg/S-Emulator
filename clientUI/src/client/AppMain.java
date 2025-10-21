@@ -1,9 +1,7 @@
-package client;
-
-import app.util.Launcher;
+package src.client;
 
 public class AppMain {
     public static void main(String[] args) {
-        Launcher.main(args);
+        client.util.Launcher.main(args);
     }
 }

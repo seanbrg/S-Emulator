@@ -1,4 +1,4 @@
-package client.util;
+package src.client.util;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
