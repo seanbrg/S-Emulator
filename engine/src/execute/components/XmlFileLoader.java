@@ -18,21 +18,18 @@ import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class XmlLoader {
+public class XmlFileLoader {
 
     private List<Program> programs;
 
-    public XmlLoader() {
+    public XmlFileLoader() {
         this.programs = new ArrayList<>();
     }
 
-    public List<Program> parse(String filePath, Map<String, Variable> varsMap, boolean printMode) {
-
-        //printMode = true;  // for debug
-
+    public List<Program> parseDoc(String filePath, Map<String, Variable> varsMap, boolean printMode) {
         File file = new File(filePath);
         if (!file.exists()) {
             if (printMode) System.out.println("Error: File does not exist.");
@@ -43,10 +40,49 @@ public class XmlLoader {
             return null;
         }
 
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+        try {
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            return parse(doc, varsMap, printMode);
+        }
+        catch (Exception e) {
+            if (printMode) {
+                System.out.println("Error parsing XML: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public List<Program> parseStream(InputStream in, Map<String, Variable> varsMap, boolean printMode) {
+        if (in == null) {
+            if (printMode) System.out.println("Error: InputStream is null.");
+            return null;
+        }
+
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(file);
+            Document doc = dBuilder.parse(in);
+            return parse(doc, varsMap, printMode);
+        }
+        catch (Exception e) {
+            if (printMode) {
+                System.out.println("Error parsing XML: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private List<Program> parse(Document doc, Map<String, Variable> varsMap, boolean printMode) throws ParserConfigurationException {
+        //printMode = true; // for debug
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Element rootElement = doc.getDocumentElement();
             String programName = rootElement.getAttribute("name");
             List<Instruction> instructions;
@@ -85,11 +121,7 @@ public class XmlLoader {
             return programs;
 
         } catch (Exception e) {
-            if (printMode) {
-                System.out.println("Error parsing XML: " + e.getMessage());
-                e.printStackTrace();
-            }
-            return null;
+            throw e;
         }
     }
 

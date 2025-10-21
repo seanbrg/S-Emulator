@@ -1,6 +1,6 @@
 package execute;
 
-import execute.components.XmlLoader;
+import execute.components.XmlFileLoader;
 import execute.dto.*;
 import execute.components.ProgramManager;
 import logic.program.Program;
@@ -8,6 +8,7 @@ import logic.variables.Var;
 import logic.variables.Variable;
 import logic.variables.VariableType;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -120,8 +121,27 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromXML(String filePath) {
         Map<String, Variable> vars = new HashMap<>();
-        XmlLoader loader = new XmlLoader();
-        List<Program> programs = loader.parse(filePath, vars, printMode);
+        XmlFileLoader loader = new XmlFileLoader();
+        List<Program> programs = loader.parseDoc(filePath, vars, printMode);
+
+        if (programs != null) {
+            this.fillOutVars(vars);
+            pm.refactorQuoteFunctions(programs);
+            pm.loadNew(programs);
+            this.history.clear();
+            if (printMode) System.out.println("Program '" + programs.getLast().getName() + "' loaded successfully!");
+            return true;
+        } else {
+            if (printMode) System.out.println("Program not loaded. Keeping previous program.");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean loadFromStream(InputStream inputStream) {
+        Map<String, Variable> vars = new HashMap<>();
+        XmlFileLoader loader = new XmlFileLoader();
+        List<Program> programs = loader.parseStream(inputStream, vars, printMode);
 
         if (programs != null) {
             this.fillOutVars(vars);

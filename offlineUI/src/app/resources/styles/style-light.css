@@ -1,0 +1,484 @@
+/* Muted Light Theme */
+
+.root {
+    -fx-background-color: #ffffff;   /* white background */
+    -fx-text-fill: #2b2b2b;         /* dark gray text for contrast */
+}
+
+/* Base colors */
+* {
+    -system-blue: #3a82d0;                  /* keep the same blue */
+    -system-green: #4fb06f;                 /* keep the same green */
+    -system-red: #d46a5a;                   /* keep the same red */
+    -system-background: #ffffff;            /* white background */
+    -secondary-system-background: #f0f0f0;  /* light gray */
+    -tertiary-system-background: #e0e0e0;   /* medium light gray */
+    -label-color: #2b2b2b;                 /* dark gray text */
+    -secondary-label: #555555;             /* medium gray text */
+    -tertiary-label: #777777;              /* lighter gray text */
+    -system-fill: #999999;                 /* medium gray fill */
+    -secondary-system-fill: #aaaaaa;       /* lighter gray fill */
+    -separator: #cccccc;                   /* light gray separator */
+}
+
+/* Button styles */
+.button {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 5 10 5 10;
+}
+
+.button:hover {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.button:pressed {
+    -fx-background-color: derive(-secondary-system-background, -20%);
+}
+
+/* ComboBox styles */
+.combo-box {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -label-color;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -secondary-system-background;
+    -fx-border-color: -separator;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* Label styles */
+.label {
+    -fx-text-fill: -label-color;
+}
+
+/* Pane styles */
+.pane {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* HBox and VBox styles */
+.hbox, .vbox {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* File load button */
+#loadFileButton {
+    -fx-background-color: -system-blue;
+    -fx-text-fill: white;
+}
+
+#loadFileButton:hover {
+    -fx-background-color: derive(-system-blue, 20%);
+}
+
+/* Small round buttons */
+#expandButton, #collapseButton {
+    -fx-background-radius: 12;
+    -fx-min-width: 24px;
+    -fx-min-height: 24px;
+    -fx-max-width: 24px;
+    -fx-max-height: 24px;
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-padding: 0;
+}
+
+#expandButton:hover, #collapseButton:hover {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* File loaded label */
+#fileLoadedLabel {
+    -fx-text-fill: -system-green;
+}
+
+/* Degree label */
+#degreeLabel {
+    -fx-text-fill: -secondary-label;
+}
+
+/* Program selector */
+#selectProgram {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+}
+
+/* ScrollPane styles */
+.scroll-pane {
+    -fx-background: -system-background;
+    -fx-background-color: -system-background;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: -system-background;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: -system-background;
+}
+
+/* ScrollBar styles */
+.scroll-bar {
+    -fx-background-color: -system-background;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: -secondary-system-background;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: -secondary-system-background;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -tertiary-system-background;
+}
+
+/* BorderPane styles */
+.border-pane {
+    -fx-background-color: -system-background;
+}
+
+
+
+/* Menu styles */
+.menu-bar {
+    
+    -fx-border-color: derive(-system-background, -20%);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-bar .menu {
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu:showing {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.menu-bar .menu-item {
+    -fx-background-color: derive(-system-background, -15%);
+}
+
+.menu-bar .menu-item:focused {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: derive(-secondary-system-background, -5%);
+}
+
+.menu-bar .menu .label {
+    -fx-text-fill: -label-color;
+}
+
+.menu-bar .menu-item .label {
+    -fx-text-fill: -label-color;
+}
+
+.context-menu {
+    -fx-background-color: derive(-system-background, -15%);
+    -fx-border-color: derive(-system-background, -20%);
+}
+
+
+/* =============================
+   TabPane styling (shared idea)
+   ============================= */
+.tab-pane {
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+}
+
+/* Header strip */
+.tab-pane:top > .tab-header-area {
+    -fx-padding: 4 8 0 8;
+}
+
+/* Hide the default header background; each theme sets colors below */
+.tab-pane > .tab-header-area > .headers-region {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+/* Tab pill */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 6 12 6 12;
+    -fx-border-radius: 8 8 0 0;
+    -fx-border-insets: 0;
+}
+
+/* Tab label */
+.tab-pane .tab .tab-label {
+    -fx-font-weight: 500;
+}
+
+/* Close button only on hover/selected */
+.tab-pane .tab .tab-close-button {
+    -fx-opacity: 0.0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 100;
+}
+.tab-pane .tab:hover .tab-close-button,
+.tab-pane .tab:selected .tab-close-button {
+    -fx-opacity: 0.85;
+}
+
+/* Content area */
+.tab-pane > .tab-content-area {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 8 8 8;
+    -fx-padding: 0;
+}
+
+/* ===== Light theme TabPane ===== */
+.tab-pane:top > .tab-header-area {
+    
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -label-color;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: rgba(0,0,0,0.06);
+    -fx-border-color: rgba(0,0,0,0.12);
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: derive(-system-background, -2%);
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-border-width: 1;
+}
+
+
+/* === Light mode TabPane fixes === */
+
+/* 1. Ensure tab text visible (dark text) */
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+/* 2. All tabs visible (even unselected) */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-opacity: 1.0;
+}
+
+/* 3. Remove blue focus ring */
+.tab-pane .tab:selected:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* ==== Remove blue focus ring on tabs (common) ==== */
+.tab-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.tab-pane .tab .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+
+/* ==== Light: make unselected tabs visible ==== */
+.tab-pane:top > .tab-header-area {
+    
+}
+/* Base (unselected) */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-opacity: 1.0;
+    -fx-background-color: rgba(0,0,0,0.04);
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-text-fill: #333333;
+}
+/* Hover */
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: rgba(0,0,0,0.06);
+    -fx-border-color: rgba(0,0,0,0.16);
+}
+/* Selected */
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-border-color: rgba(0,0,0,0.20);
+    -fx-text-fill: #111111;
+}
+
+/* === Unified surface tokens === */
+.root {
+    -surface-bg: derive(-system-background, -15%);
+    -surface-border: derive(-system-background, -20%);
+}
+
+/* === Use the same surface for MenuBar, header HBox (.surface), and Tab header strip === */
+.menu-bar,
+.surface,
+.tab-pane:top > .tab-header-area {
+    
+    -fx-border-color: -surface-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+
+/* === SURFACE FIX (final override) === */
+.root {
+    -surface-bg: derive(-system-background, -8%);
+    -surface-border: rgba(0,0,0,0.12);
+}
+.menu-bar,
+.surface,
+.tab-pane:top > .tab-header-area {
+    -fx-background-color: -surface-bg;
+    -fx-border-color: -surface-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+
+/* === SplitPane customization (Light) === */
+.split-pane-divider {
+    -fx-padding: 0 2 0 2;              /* make divider very thin (1px) */
+    -fx-background-color: rgba(0,0,0,0.12);
+}
+
+.split-pane-divider:hover {
+    -fx-background-color: rgba(0,0,0,0.20);
+}
+
+
+/* Hide TableView headers without using -fx-size */
+.table-view .column-header-background {
+    visibility: hidden;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+/* Collapse header row & filler without -fx-size */
+.table-view .column-header,
+.table-view .filler {
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+/* Global light progress bar */
+.progress-bar {
+    -fx-background-color: transparent;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #f3f4f6;   /* light gray track */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: #e5e7eb;       /* subtle outline */
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-accent; /* keep default blue */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+
+/* Indeterminate look */
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: -fx-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+
+
+/* Variable column: center text, no per-cell borders (no horizontal lines) */
+.table-view .table-cell.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;           /* removes those row lines */
+    -fx-border-color: transparent; /* just in case */
+}
+
+/* Header for the var column: center, no left line.
+   If you want a baseline under the header, set border-width to 0 0 1 0 instead. */
+.table-view .column-header.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.darker-vbox {
+    /* pick one of these two lines: */
+    -fx-background-color: derive(-system-background, -13%);                 /* fixed hex (a bit darker) */
+}
+
+/* Light-mode tooltip */
+.tooltip {
+    -fx-background-color: #ffffff;      /* bg */
+    -fx-text-fill: #111827;             /* text (very dark gray) */
+    -fx-border-color: #e5e7eb;          /* subtle border */
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 10;
+    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.15), 8, 0, 0, 2);
+}
+
+/* highlight for full row */
+.table-row-cell:highlighted {
+    -fx-background-color: -fx-accent, -tertiary-system-background ;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-radius: 0;
+    -fx-opacity: 1.0;
+}
+
+/* optional: make text bold/contrasty when highlighted */
+.table-row-cell:highlighted .text {
+    -fx-font-weight: bold;
+}

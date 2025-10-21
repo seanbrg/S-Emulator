@@ -6,6 +6,7 @@ import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
 import logic.variables.Variable;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,8 @@ public interface Engine {
     List<VariableDTO> getInputs(String func, int degree);
 
     int getCycles(String program, int degree);
+
+    boolean loadFromStream(InputStream inputStream);
 
     void fillOutVars(Map<String, Variable> vars);
 

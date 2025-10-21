@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox fx:id="header" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="8" styleClass="surface" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.components.header.headerController">
+   <children>
+      <MenuBar maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="150.0" useSystemMenuBar="true">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem fx:id="menuItemLoad" mnemonicParsing="false" text="Load" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="View">
+              <items>
+                  <Menu mnemonicParsing="false" text="Find...">
+                     <items>
+                        <Menu fx:id="menuViewLabels" mnemonicParsing="false" text="Find Label..." />
+                        <Menu fx:id="menuViewVariables" mnemonicParsing="false" text="Find Variable..." />
+                     </items>
+                  </Menu>
+                  <MenuItem fx:id="menuItemExpand" mnemonicParsing="false" text="Expand" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Settings">
+               <items>
+                  <Menu mnemonicParsing="false" text="Theme...">
+                    <items>
+                      <MenuItem fx:id="menuItemThemeLight" mnemonicParsing="false" text="Light" />
+                        <MenuItem fx:id="menuItemThemeDark" mnemonicParsing="false" text="Dark" />
+                    </items>
+                  </Menu>
+               </items>
+            </Menu>
+        </menus>
+         <padding>
+            <Insets left="3.0" top="8.0" />
+         </padding>
+      </MenuBar>
+      <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin>
+      </ProgressBar>
+      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+         <HBox.margin>
+            <Insets left="20.0" />
+         </HBox.margin>
+          <image>
+              <Image url="@../../resources/images/file.png" />
+          </image>
+      </ImageView>
+      <Label fx:id="loadLabel" text="Label">
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </Label>
+   </children>
+</HBox>

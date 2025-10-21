@@ -1,0 +1,749 @@
+/* Muted Dark Gray Theme */
+
+.root {
+    -fx-background-color: #2b2b2b;   /* softer gray background */
+    -fx-text-fill: #e0e0e0;          /* off-white text for less contrast */
+}
+
+/* Base colors */
+* {
+    -system-blue: #3a82d0;                  /* toned-down blue */
+    -system-green: #4fb06f;                 /* softer green */
+    -system-red: #d46a5a;                   /* muted red */
+    -system-background: #2b2b2b;
+    -secondary-system-background: #3a3a3a;  /* medium gray */
+    -tertiary-system-background: #4a4a4a;   /* lighter gray */
+    -label-color: #e0e0e0;
+    -secondary-label: #bbbbbb;
+    -tertiary-label: #999999;
+    -system-fill: #666666;
+    -secondary-system-fill: #555555;
+    -separator: #505050;
+}
+
+/* Button styles */
+.button {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 5 10 5 10;
+}
+
+.button:hover {
+    -fx-background-color: derive(-secondary-system-background, 10%);
+}
+
+.button:pressed {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* ComboBox styles */
+.combo-box {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -label-color;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -secondary-system-background;
+    -fx-border-color: -separator;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: derive(-secondary-system-background, 10%);
+}
+
+/* Label styles */
+.label {
+    -fx-text-fill: -label-color;
+}
+
+/* Pane styles */
+.pane {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* HBox and VBox styles */
+.hbox, .vbox {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+/* File load button */
+#loadFileButton {
+    -fx-background-color: -system-blue;
+    -fx-text-fill: white;
+}
+
+#loadFileButton:hover {
+    -fx-background-color: derive(-system-blue, 20%);
+}
+
+/* Small round buttons */
+#expandButton, #collapseButton {
+    -fx-background-radius: 12;
+    -fx-min-width: 24px;
+    -fx-min-height: 24px;
+    -fx-max-width: 24px;
+    -fx-max-height: 24px;
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-padding: 0;
+}
+
+#expandButton:hover, #collapseButton:hover {
+    -fx-background-color: derive(-secondary-system-background, 10%);
+}
+
+/* File loaded label */
+#fileLoadedLabel {
+    -fx-text-fill: -system-green;
+}
+
+/* Degree label */
+#degreeLabel {
+    -fx-text-fill: -secondary-label;
+}
+
+/* Program selector */
+#selectProgram {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+}
+
+/* ScrollPane styles */
+.scroll-pane {
+    -fx-background: -system-background;
+    -fx-background-color: -system-background;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: -system-background;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: -system-background;
+}
+
+/* ScrollBar styles */
+.scroll-bar {
+    -fx-background-color: -system-background;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: -secondary-system-background;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: -secondary-system-background;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -tertiary-system-background;
+}
+
+/* BorderPane styles */
+.border-pane {
+    -fx-background-color: -system-background;
+}
+
+/* Menu styles */
+.menu-bar {
+    
+    -fx-border-color: derive(-system-background, -20%);
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-bar .menu {
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu:showing {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: derive(-secondary-system-background, -5%);
+}
+
+.menu-bar .menu-item {
+    -fx-background-color: derive(-system-background, -15%);
+}
+
+.menu-bar .menu-item:focused {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+
+.menu-bar .menu .label {
+    -fx-text-fill: -label-color;
+}
+
+.menu-bar .menu-item .label {
+    -fx-text-fill: -label-color;
+}
+
+.context-menu {
+    -fx-background-color: derive(-system-background, -15%);
+    -fx-border-color: derive(-system-background, -20%);
+}
+
+
+/* =============================
+   TabPane styling (shared idea)
+   ============================= */
+.tab-pane {
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+}
+
+/* Header strip */
+.tab-pane:top > .tab-header-area {
+    -fx-padding: 4 8 0 8;
+}
+
+/* Hide the default header background; each theme sets colors below */
+.tab-pane > .tab-header-area > .headers-region {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+/* Tab pill */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 6 12 6 12;
+    -fx-border-radius: 8 8 0 0;
+    -fx-border-insets: 0;
+}
+
+/* Tab label */
+.tab-pane .tab .tab-label {
+    -fx-font-weight: 500;
+}
+
+/* Close button only on hover/selected */
+.tab-pane .tab .tab-close-button {
+    -fx-opacity: 0.0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 100;
+}
+.tab-pane .tab:hover .tab-close-button,
+.tab-pane .tab:selected .tab-close-button {
+    -fx-opacity: 0.85;
+}
+
+/* Content area */
+.tab-pane > .tab-content-area {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 8 8 8;
+    -fx-padding: 0;
+}
+
+/* ===== Dark theme TabPane ===== */
+.tab-pane:top > .tab-header-area {
+    
+    -fx-border-color: derive(-system-background, -30%);
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -label-color;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: derive(-system-background, -10%);
+    -fx-border-color: derive(-system-background, -25%);
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: derive(-system-background, -7%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 10, 0, 0, 2);
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: derive(-system-background, -12%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+}
+
+
+/* === Dark mode TabPane fixes === */
+
+/* 1. Ensure tab text is white */
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
+    -fx-text-fill: white;
+}
+
+/* 2. All tabs visible (even unselected) */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-opacity: 1.0;
+}
+
+/* 3. Remove blue focus ring */
+.tab-pane .tab:selected:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* ==== Remove blue focus ring on tabs (common) ==== */
+.tab-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.tab-pane .tab .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+
+/* ==== Dark: make unselected tabs visible ==== */
+.tab-pane:top > .tab-header-area {
+    
+}
+/* Base (unselected) */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #2e2e2e;   /* unselected tab base */
+    -fx-text-fill: rgba(255,255,255,0.8);
+}
+/* Hover */
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: derive(-system-background, -16%);
+    -fx-border-color: derive(-system-background, -26%);
+}
+
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #1c1c1c;   /* darker selected tab */
+    -fx-text-fill: white;
+}
+
+
+/* === Unified surface tokens === */
+.root {
+    -surface-bg: derive(-system-background, -15%);
+    -surface-border: derive(-system-background, -20%);
+}
+
+/* === Use the same surface for MenuBar, header HBox (.surface), and Tab header strip === */
+.menu-bar,
+.surface,
+.tab-pane:top > .tab-header-area {
+    
+    -fx-border-color: -surface-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+/* Remove thin white line under tabs (dark) */
+.tab-pane:top > .tab-header-area {
+    -fx-border-width: 0;              /* was 0 0 1 0 somewhere above */
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+/* Modena also draws a line on the header background region */
+.tab-pane:top > .tab-header-area > .tab-header-background {
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+/* If the line is the top border of the content area, kill that too */
+.tab-pane > .tab-content-area {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+
+
+
+/* === SURFACE FIX (final override) === */
+.root {
+    -surface-bg: derive(-system-background, -15%);
+    -surface-border: derive(-system-background, -20%);
+}
+.menu-bar,
+.surface,
+.tab-pane:top > .tab-header-area {
+    -fx-background-color: -surface-bg;
+    -fx-border-color: -surface-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+/* === SplitPane Dark theme border fix === */
+.split-pane {
+    -fx-background-color: transparent;   /* remove white background */
+    -fx-border-color: transparent;       /* remove white border */
+    -fx-border-width: 0;
+}
+
+/* === SplitPane customization (Dark) === */
+.split-pane-divider {
+    -fx-padding: 0 2 0 2;              /* make divider very thin (1px) */
+    -fx-background-color: derive(-system-background, -25%);
+}
+
+.split-pane-divider:hover {
+    -fx-background-color: derive(-system-background, -35%);
+}
+
+
+/* === TableView Dark Theme === */
+
+/* Hide the header row entirely */
+.table-view .column-header-background {
+    visibility: hidden;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+/* Hide TableView headers without using -fx-size */
+.table-view .column-header-background {
+    visibility: hidden;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+/* Collapse header row & filler without -fx-size */
+.table-view .column-header,
+.table-view .filler {
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+/* Base background of the table */
+.table-view {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-control-inner-background: derive(-system-background, -8%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-text-fill: white;
+}
+
+/* Alternate row coloring (slightly darker) */
+.table-row-cell:odd {
+    -fx-background-color: derive(-system-background, -12%);
+}
+
+/* Hovered row */
+.table-row-cell:hover {
+    -fx-background-color: derive(-system-background, -18%);
+}
+
+/* Selected row */
+.table-row-cell:selected {
+    -fx-background-color: derive(-system-background, -25%);
+    -fx-text-fill: white;
+}
+
+/* Empty placeholder text ("No content in table") */
+.table-view .placeholder .label {
+    -fx-text-fill: rgba(255,255,255,0.6);
+}
+
+/* === TableView grid lines in dark mode === */
+.table-view .table-cell {
+    -fx-border-color: derive(-system-background, +15%);          /* vertical & horizontal grid lines */
+    -fx-border-width: 0 0 0 1;       /* keep only bottom + right borders */
+    -fx-border-insets: 0;
+    -fx-padding: 0 4 0 4;            /* optional: keeps text from touching */
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-border-color: derive(-system-background, +15%);
+    -fx-border-width: 0 0 0 1;
+}
+
+/* Global dark progress bar */
+.progress-bar {
+    -fx-background-color: transparent; /* no outer box */
+}
+
+.progress-bar > .track {
+    -fx-background-color: #1f2937;     /* dark background */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: #374151;         /* subtle outline */
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-accent;  /* keep default blue */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+
+/* Indeterminate keeps same blue and shape */
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: -fx-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+
+/* === ListView Dark Theme — mimic TableView === */
+.list-view {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-control-inner-background: derive(-system-background, -8%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.list-cell {
+    -fx-background-color: derive(-system-background, -8%);
+    -fx-text-fill: white;
+    /* mimic table grid lines as dividers */
+    -fx-border-color: derive(-system-background, +15%);
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0 4 0 4;
+}
+
+.list-cell:odd {
+    -fx-background-color: derive(-system-background, -12%);
+}
+
+.list-cell:hover {
+    -fx-background-color: derive(-system-background, -18%);
+}
+
+.list-cell:selected {
+    -fx-background-color: derive(-system-background, -25%);
+    -fx-text-fill: white;
+}
+
+/* Placeholder message ("No content in list") */
+.list-view .placeholder .label {
+    -fx-text-fill: rgba(255,255,255,0.6);
+}
+
+/* Optional: remove bright focus ring to match your tab styling */
+.list-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Variable column: center text, no per-cell borders (no horizontal lines) */
+.table-view .table-cell.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;           /* removes those row lines */
+    -fx-border-color: transparent; /* just in case */
+}
+
+/* Header for the var column: center, no left line.
+   If you want a baseline under the header, set border-width to 0 0 1 0 instead. */
+.table-view .column-header.var-col {
+    -fx-alignment: CENTER;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+/* Slightly darker console bg */
+.text-area.console {
+    -fx-control-inner-background: derive(-system-background, -30%);  /* ~6–8% darker */
+    -fx-background-color: derive(-system-background, -30%);
+    -fx-text-fill: #e5e7eb;
+    -fx-border-color: derive(-system-background, -35%);
+}
+
+.text-field.console {
+    -fx-control-inner-background: derive(-system-background, -30%);  /* ~6–8% darker */
+    -fx-background-color: derive(-system-background, -30%);
+    -fx-text-fill: #e5e7eb;
+    -fx-border-color: derive(-system-background, -35%);
+}
+
+
+/* If you want a hair darker, swap to one of these: */
+/* #1c1e20   (~10% darker) */
+/* #191b1d   (~12% darker) */
+
+/* Slightly-darker panel for dark mode */
+.darker-vbox {
+    /* pick one of these two lines: */
+    -fx-background-color: derive(-system-background, -20%);                 /* fixed hex (a bit darker) */
+}
+
+
+/* === Dark Spinner (gray, theme tokens) === */
+.spinner {
+    -fx-background-color: -secondary-system-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -separator;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.spinner:focused {
+    -fx-border-color: derive(-separator, 15%); /* subtle focus */
+}
+
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: -label-color;
+    -fx-prompt-text-fill: -secondary-label;
+    -fx-highlight-fill: derive(-secondary-system-background, -12%);
+    -fx-highlight-text-fill: -label-color;
+    -fx-padding: 6 8;
+}
+
+/* Arrow buttons (gray, no accent) */
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -secondary-system-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 6 6 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0 8;
+}
+.spinner .decrement-arrow-button {
+    -fx-background-radius: 6 0 0 6;
+}
+
+/* Hover / press */
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: derive(-secondary-system-background, 8%);
+}
+.spinner .increment-arrow-button:armed,
+.spinner .decrement-arrow-button:armed {
+    -fx-background-color: derive(-secondary-system-background, -8%);
+}
+
+/* Arrow glyph color */
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -label-color;
+}
+
+/* Disabled */
+.spinner:disabled,
+.spinner:disabled .text-field,
+.spinner:disabled .increment-arrow,
+.spinner:disabled .decrement-arrow {
+    -fx-opacity: 0.55;
+}
+
+/* highlight for full row */
+.table-row-cell:highlighted {
+    -fx-background-color: -fx-accent, -tertiary-system-background ;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-radius: 0;
+    -fx-opacity: 1.0;
+}
+
+/* optional: make text bold/contrasty when highlighted */
+.table-row-cell:highlighted .text {
+    -fx-font-weight: bold;
+}
+
+/* ===== Dark Dialog (matches muted gray theme) ===== */
+.dialog-pane {
+    /* surfaces & border consistent with the app */
+    -fx-background-color: derive(-system-background, -12%), derive(-system-background, -16%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+
+    /* text + spacing */
+    -fx-text-fill: -label-color;
+    -fx-font-size: 13px;
+    -fx-padding: 12;
+}
+
+/* Header strip: subtle divider like your TabPane/menu surfaces */
+.dialog-pane > .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 10 12 8 12;
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 0 0 1 0;
+}
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: -label-color;
+    -fx-font-weight: 600;
+}
+.dialog-pane > .header-panel .graphic-container {
+    -fx-padding: 0 8 0 0;
+}
+
+/* Content text */
+.dialog-pane .content {
+    -fx-padding: 12;
+}
+.dialog-pane .content.label {
+    -fx-text-fill: -label-color;
+}
+
+/* Button bar (reuse your button look with the same tokens) */
+.dialog-pane .button-bar .container {
+    -fx-background-color: transparent;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-color: -secondary-system-background;
+    -fx-text-fill: -label-color;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 12;
+}
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: derive(-secondary-system-background, 10%);
+}
+.dialog-pane .button-bar .button:pressed {
+    -fx-background-color: derive(-secondary-system-background, -10%);
+}
+/* “Default” (OK) button uses your blue accent */
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: -system-blue;
+    -fx-text-fill: white;
+}
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: derive(-system-blue, 15%);
+}
+
+/* Remove bright focus rings to match the rest of your dark styling */
+.dialog-pane,
+.dialog-pane .button {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

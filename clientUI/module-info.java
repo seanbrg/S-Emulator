@@ -1,11 +1,10 @@
-module ui {
+module clientUI {
     requires javafx.controls;
     requires javafx.fxml;
-    requires engine;
 
-    opens app.util to javafx.fxml, engine;
-    opens app.components.body to javafx.fxml, engine;
-    opens app.components.runHistory to javafx.fxml, engine;
+    opens app.util to javafx.fxml;
+    opens app.components.body to javafx.fxml;
+    opens app.components.runHistory to javafx.fxml;
     opens app.components.programTab to javafx.fxml;
     opens app.components.header to javafx.fxml;
     opens app.components.instructionHistory to javafx.fxml;
