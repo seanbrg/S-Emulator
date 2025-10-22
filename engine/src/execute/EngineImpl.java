@@ -297,6 +297,16 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public ProgramDTO getProgramDTO(String programName, int degree) {
+        return new ProgramDTO(pm.getProgram(programName, degree));
+    }
+
+    @Override
+    public boolean isProgramExists(String programName, int degree) {
+        return pm.getProgram(programName, degree) != null;
+    }
+
+    @Override
     public void debugStart(String programName, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
         outputVar.setValue(0);

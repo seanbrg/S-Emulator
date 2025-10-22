@@ -1,9 +1,6 @@
 package execute;
 
-import execute.dto.HistoryDTO;
-import execute.dto.InstructionDTO;
-import execute.dto.LabelDTO;
-import execute.dto.VariableDTO;
+import execute.dto.*;
 import logic.variables.Variable;
 
 import java.io.InputStream;
@@ -62,4 +59,8 @@ public interface Engine {
     void clear();
 
     HistoryDTO recordCurrentState(String programName, int degree, List<VariableDTO> inputs);
+
+    ProgramDTO getProgramDTO(String programName, int degree);
+
+    boolean isProgramExists(String programName, int degree);
 }

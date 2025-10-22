@@ -18,15 +18,16 @@ public class UploadProgramServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        Engine engine = ContextUtils.getEngine(getServletContext());
-
-
         try (InputStream in = request.getInputStream()) {
+            Engine engine = ContextUtils.getEngine(getServletContext());
+
             if (in == null) {
                 sendError(response, HttpServletResponse.SC_BAD_REQUEST, "No input stream found in request.");
                 return;
             }
-            engine.loadFromStream(in);
+            synchronized (engine) {
+                engine.loadFromStream(in);
+            }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
