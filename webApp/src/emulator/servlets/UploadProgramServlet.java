@@ -1,18 +1,18 @@
 package emulator.servlets;
 
 import emulator.utils.ContextUtils;
+import emulator.utils.WebConstants;
 import execute.Engine;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 import static emulator.utils.ServletsUtils.sendError;
 
-@WebServlet (name = "UploadProgramServlet", urlPatterns = {"/uploadProgram"})
+@WebServlet (name = "UploadProgramServlet", urlPatterns = {WebConstants.UPLOAD_PATH})
 public class UploadProgramServlet extends HttpServlet {
 
     @Override

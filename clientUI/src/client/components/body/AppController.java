@@ -1,4 +1,4 @@
-package src.client.components.body;
+package client.components.body;
 
 import client.components.expandWindow.ExpandWindowController;
 import client.components.instructionHistory.InstructionHistoryController;
