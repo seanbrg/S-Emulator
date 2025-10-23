@@ -2,6 +2,7 @@ package client.util;
 
 import okhttp3.*;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 public class HttpUtils {
@@ -21,13 +22,24 @@ public class HttpUtils {
         simpleCookieManager.removeCookiesOf(domain);
     }
 
-    public static void get(String url, Callback callback) {
+    public static void getAsync(String url, Callback callback) {
         runAsync(url, "GET", null, callback);
     }
 
-    public static void post(String url, RequestBody body, Callback callback) {
+    public static void postAsync(String url, RequestBody body, Callback callback) {
         runAsync(url, "POST", body, callback);
     }
+
+    public static Response getSync(String url) throws IOException {
+        Request req = new Request.Builder().url(url).get().build();
+        return HTTP_CLIENT.newCall(req).execute(); // blocking
+    }
+
+    public static Response postSync(String url, RequestBody body) throws IOException {
+        Request req = new Request.Builder().url(url).post(body).build();
+        return HTTP_CLIENT.newCall(req).execute(); // blocking
+    }
+
 
     private static void runAsync(String url, String method, RequestBody body, Callback callback) {
         Request.Builder builder = new Request.Builder().url(url);

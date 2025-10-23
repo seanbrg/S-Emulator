@@ -307,10 +307,18 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public ProgramDTO[] getAllProgramDTOs() {
+    public List<ProgramDTO> getAllProgramDTOs() {
         return pm.getAllPrograms().stream()
                 .map(ProgramDTO::new)
-                .toArray(ProgramDTO[]::new);
+                .toList();
+    }
+
+    @Override
+    public List<String> getAllProgramNames() {
+        return pm.getAllPrograms().stream()
+                .map(Program::getName)
+                .distinct()
+                .toList();
     }
 
     @Override

@@ -8,6 +8,7 @@ import client.components.runHistory.RunHistoryController;
 import client.components.runMenu.RunMenuController;
 import client.util.HttpUtils;
 
+import com.google.gson.Gson;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;
@@ -36,7 +37,9 @@ import javafx.stage.Stage;
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import okio.BufferedSink;
+import okio.Okio;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -192,48 +195,34 @@ public class AppController {
     public Task<List<String>> createLoadTask(String filePath) {
         return new Task<>() {
             @Override
-            protected List<String> call() {
-                String postProgramHttpUrl = WebConstants.PROGRAMS_URL;
-                String getListHttpUrl = WebConstants.PROGRAMS_LIST_URL;
+            protected List<String> call() throws IOException {
+                String uploadUrl = WebConstants.PROGRAMS_URL;
+                String listUrl = WebConstants.PROGRAMS_LIST_URL;
 
                 File file = new File(filePath);
-
-                HttpUtils.post(postProgramHttpUrl,
-                    new RequestBody() {
-                        @Nullable
-                        @Override
-                        public MediaType contentType() {
-                            return MediaType.parse("application/xml");
-                        }
-
-                        @Override
-                        public void writeTo(@NotNull BufferedSink sink) throws IOException {
-                            try (FileInputStream in = new FileInputStream(file)) {
-                                sink.writeAll(okio.Okio.source(in)); // efficiently streams the file
-                            }
-                        }
-                    },
-                    new Callback() {
-
-                        @Override
-                        public void onFailure(okhttp3.Call call, IOException e) {
-                            alertLoadFailed();
-                        }
-
-                        @Override
-                        public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                            if (!response.isSuccessful()) {
-                                alertLoadFailed();
-                            } else {
-                                System.out.println("Upload successful: " + response.code());
-                            }
-                            response.close();
+                RequestBody requestBody = new RequestBody() {
+                    @Override
+                    public MediaType contentType() {
+                        return MediaType.parse("application/xml");
+                    }
+                    @Override
+                    public void writeTo(BufferedSink sink) throws IOException {
+                        try (FileInputStream in = new FileInputStream(file)) {
+                            sink.writeAll(Okio.source(in));
                         }
                     }
-                );
+                };
 
-                List<String> funcNames = http
-                return engine.getFuncNamesList();
+                try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
+                    if (!r.isSuccessful()) throw new IOException("Upload failed: " + r.code());
+                }
+                List<String> funcNames;
+                try (Response r = HttpUtils.getSync(listUrl)) {
+                    if (!r.isSuccessful()) throw new IOException("List fetch failed: " + r.code());
+                    String json = r.body().string();
+                    funcNames = new Gson().fromJson(json, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
+                }
+                return funcNames;
             }
         };
     }
@@ -330,7 +319,7 @@ public class AppController {
 
         int degree = tabController.getCurrentDegree();
 
-        currentRawProgramInputs.setAll(engine.getInputs(programName, degree)); // or get by program name if needed
+        currentRawProgramInputs.setAll(engine.getInputs(programName, degree)); // or getAsync by program name if needed
     }
 
     public IntegerProperty runCyclesProperty() {

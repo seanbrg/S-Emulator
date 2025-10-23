@@ -64,5 +64,7 @@ public interface Engine {
 
     boolean isProgramExists(String programName, int degree);
 
-    ProgramDTO[] getAllProgramDTOs();
+    List<ProgramDTO> getAllProgramDTOs();
+
+    List<String> getAllProgramNames();
 }
