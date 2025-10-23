@@ -1,5 +1,7 @@
 package client.components.dashboardBody;
 
+import client.components.login.LoginController;
+import client.util.HttpUtils;
 import emulator.utils.WebConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +18,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import client.components.availableUsers.AvailableUsersController;
-import emulator.utils.HttpClientUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class DashboardBodyController implements Closeable {
     public void logout() {
         System.out.println("Logging out user: " + currentUsername.get());
 
-        HttpClientUtil.runAsync(WebConstants.LOGOUT_URL, new Callback() {
+        HttpUtils.getAsync(WebConstants.LOGOUT_URL, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 System.err.println("Logout request failed: " + e.getMessage());
@@ -85,7 +86,7 @@ public class DashboardBodyController implements Closeable {
                 loader.setLocation(getClass().getResource("/client/components/login/Login.fxml"));
                 Parent root = loader.load();
 
-                src.client.components.login.LoginController controller = loader.getController();
+                LoginController controller = loader.getController();
                 controller.setPrimaryStage(primaryStage);
 
                 Scene scene = new Scene(root);

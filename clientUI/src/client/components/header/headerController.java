@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.List;
 
 import javafx.animation.*;
-import src.client.components.body.AppController;
+import client.components.body.AppController;
 
 public class headerController {
     @FXML private AppController mainController;
