@@ -9,13 +9,11 @@ import client.components.runMenu.RunMenuController;
 import client.util.HttpUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;
-import execute.dto.HistoryDTO;
-import execute.dto.InstructionDTO;
-import execute.dto.LabelDTO;
-import execute.dto.VariableDTO;
+import execute.dto.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -34,22 +32,21 @@ import javafx.scene.layout.HBox;
 import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import okio.BufferedSink;
 import okio.Okio;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 
 public class AppController {
     @FXML private HBox header;
@@ -97,7 +94,6 @@ public class AppController {
         this.highlightedVariable = new SimpleStringProperty("");
         this.highlightedRows = javafx.collections.FXCollections.observableSet(new java.util.HashSet<>());
 
-        engine.setPrintMode(false);
         runMenuController.setMainController(this);
         headerController.setMainController(this);
         runHistoryController.setMainController(this);
@@ -252,28 +248,62 @@ public class AppController {
     }
 
     private void addProgramTab(String programName, int degree) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            URL url = getClass().getResource("/client/components/programTab/programTab.fxml");
-            fxmlLoader.setLocation(url);
-            Tab programTab = fxmlLoader.load();
+        // Build URLs (encode the name to be safe)
+        String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
+        String pullFuncUrl = WebConstants.PROGRAMS_URL +
+                "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
+                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
+        String pullVarsUrl = pullFuncUrl + "&" + WebConstants.PROGRAM_VARLIST + "=true";
 
-            ProgramTabController tabController = fxmlLoader.getController();
-            tabController.setProgram(programName, degree, engine.maxDegree(programName));
-            tabController.setMainController(this);
-            List<InstructionDTO> instrList = engine.getInstructionsList(programName, degree);
-            List<VariableDTO> varList = engine.getOutputs(programName, degree);
-            List<LabelDTO> inputList = engine.getLabels(programName, degree);
-            tabController.setInstructionsList(FXCollections.observableList(instrList));
-            tabController.setVariablesList(FXCollections.observableList(varList));
-            tabController.setLabelsList(FXCollections.observableList(inputList));
+        // 1) Async fetch both endpoints in parallel
+        CompletableFuture<String> funcJsonFut = HttpUtils.getAsyncBody(pullFuncUrl);
+        CompletableFuture<String> varsJsonFut = HttpUtils.getAsyncBody(pullVarsUrl);
 
-            this.programTabs.getTabs().add(programTab);
-            this.tabControllerMap.put(programTab, tabController);
+        // 2) When both are ready, parse and construct the UI data (off UI thread)
+        funcJsonFut.thenCombine(varsJsonFut, (funcJson, varsJson) -> {
+                    Gson gson = new Gson();
+                    ProgramDTO programDTO = gson.fromJson(funcJson, ProgramDTO.class);
+                    List<VariableDTO> varList = gson.fromJson(varsJson, new TypeToken<List<VariableDTO>>() {}.getType());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                    return new Object[] { programDTO, varList };
+                })
+                // 3) Now update the UI
+                .thenAccept(result -> Platform.runLater(() -> {
+                    try {
+                        ProgramDTO programDTO = (ProgramDTO) result[0];
+                        @SuppressWarnings("unchecked")
+                        List<VariableDTO> varList = (List<VariableDTO>) result[1];
+
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getResource("/client/components/programTab/programTab.fxml"));
+                        Tab programTab = fxmlLoader.load();
+                        ProgramTabController tabController = fxmlLoader.getController();
+
+                        tabController.setProgram(programName, degree, programDTO.getMaxDegree());
+                        tabController.setMainController(this);
+
+                        List<InstructionDTO> instrList = programDTO.getInstructions();
+                        List<LabelDTO> inputList = programDTO.getLabels().keySet().stream().map(LabelDTO::new).toList();
+
+                        tabController.setInstructionsList(FXCollections.observableList(instrList));
+                        tabController.setVariablesList(FXCollections.observableList(varList));
+                        tabController.setLabelsList(FXCollections.observableList(inputList));
+
+                        this.programTabs.getTabs().add(programTab);
+                        this.tabControllerMap.put(programTab, tabController);
+                    } catch (IOException io) {
+                        io.printStackTrace();
+                        // show your alert/toast here if you have one
+                    }
+                }))
+                // 4) Error handling (network or JSON)
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> {
+                        // alertLoadFailed() or your preferred UI error
+                    });
+                    return null;
+                });
     }
 
     public void expandProgram() {

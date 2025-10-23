@@ -7,6 +7,7 @@ public class WebConstants {
     public static final String ENGINE = "engine";
     public static final String PROGRAM_NAME = "programName";
     public static final String PROGRAM_DEGREE = "programDegree";
+    public static final String PROGRAM_VARLIST = "programVarList";
 
     // paths
     public final static String WILDCARD_PATH = "/*";

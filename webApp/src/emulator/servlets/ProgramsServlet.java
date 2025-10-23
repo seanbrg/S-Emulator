@@ -5,6 +5,7 @@ import emulator.utils.ContextUtils;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.dto.ProgramDTO;
+import execute.dto.VariableDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 import static emulator.utils.ServletsUtils.sendError;
 
@@ -31,6 +33,7 @@ public class ProgramsServlet extends HttpServlet {
         final String path = req.getPathInfo(); // null, "/", or "/list"
         final String name = req.getParameter(WebConstants.PROGRAM_NAME);
         final String degreeStr = req.getParameter(WebConstants.PROGRAM_DEGREE);
+        final String varListStr = req.getParameter(WebConstants.PROGRAM_VARLIST);
 
         // 1) Exact /programs with query params -> specific program
         if (path == null || "/".equals(path)) {
@@ -45,16 +48,42 @@ public class ProgramsServlet extends HttpServlet {
                 try { degree = Integer.parseInt(degreeStr); }
                 catch (NumberFormatException e) { sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "'programDegree' must be an integer."); return; }
 
-                ProgramDTO dto;
-                synchronized (engine) {
-                    if (!engine.isProgramExists(name, degree)) {
-                        sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
-                        return;
-                    }
-                    dto = engine.getProgramDTO(name, degree);
+                boolean varList = false;
+                if (varListStr != null) {
+                    try { varList = Boolean.parseBoolean(varListStr); }
+                    catch (Exception e) { sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "'programVarList' must be true or false."); return; }
                 }
-                try (PrintWriter out = resp.getWriter()) { out.print(GSON.toJson(dto)); }
-                return;
+
+                if (varList) {
+                    // return variable list of specific program
+                    List<VariableDTO> varsDto;
+                    synchronized (engine) {
+                        if (!engine.isProgramExists(name, degree)) {
+                            sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
+                            return;
+                        }
+                        varsDto = engine.getOutputs(name, degree);
+                    }
+                    try (PrintWriter out = resp.getWriter()) {
+                        out.print(GSON.toJson(varsDto));
+                    }
+                    return;
+                }
+                else {
+                    // return program DTO
+                    ProgramDTO dto;
+                    synchronized (engine) {
+                        if (!engine.isProgramExists(name, degree)) {
+                            sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
+                            return;
+                        }
+                        dto = engine.getProgramDTO(name, degree);
+                    }
+                    try (PrintWriter out = resp.getWriter()) {
+                        out.print(GSON.toJson(dto));
+                    }
+                    return;
+                }
             }
 
             // No query params -> list all
