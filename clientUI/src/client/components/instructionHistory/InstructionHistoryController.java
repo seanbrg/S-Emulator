@@ -1,4 +1,4 @@
-package client.components.instructionHistory;
+package src.client.components.instructionHistory;
 
 import client.util.ColumnResizer;
 import execute.dto.InstructionDTO;
@@ -15,11 +15,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
+import src.client.components.body.AppController;
 
 import java.util.List;
 
 public class InstructionHistoryController {
-    @FXML private client.components.body.DashboardController mainController;
+    @FXML private AppController mainController;
 
     @FXML private TableView<InstructionDTO> instructionHistory;
     @FXML private TableColumn<InstructionDTO, String> columnLabel;
@@ -162,7 +163,7 @@ public class InstructionHistoryController {
         ColumnResizer.lockToContent(instructionHistory, 2);
     }
 
-    public void setMainController(client.components.body.DashboardController mainController) {
+    public void setMainController(AppController mainController) {
         this.mainController =  mainController;
 
         this.mainController.currentTabControllerProperty().addListener((obs, oldTab, newTab) -> {

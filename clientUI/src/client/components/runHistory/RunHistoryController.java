@@ -1,6 +1,7 @@
-package client.components.runHistory;
+package src.client.components.runHistory;
 
-import client.components.runMenu.RunMenuController;
+import src.client.components.body.AppController;
+import src.client.components.runMenu.RunMenuController;
 import client.util.ColumnResizer;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class RunHistoryController {
     @FXML
-    private client.components.body.DashboardController mainController;
+    private AppController mainController;
 
     @FXML
     private TableView<HistoryDTO> runHistory;
@@ -236,7 +237,7 @@ public class RunHistoryController {
         ColumnResizer.lockToContent(runHistory, 2);
     }
 
-    public void setMainController(client.components.body.DashboardController mainController) {
+    public void setMainController(AppController mainController) {
         this.mainController = mainController;
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
@@ -252,9 +253,7 @@ public class RunHistoryController {
         return runHistory.getSelectionModel().getSelectedItem();
     }
 
-    /**
-     * Show all variables of the selected run in a popup.
-     */
+
     private void showSelectedRunStatus() {
         HistoryDTO selected = getSelectedRun();
         if (selected == null) return;
@@ -284,7 +283,7 @@ public class RunHistoryController {
         try {
             Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
             dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-        } catch (Exception ignored) { /* icon optional */ }
+        } catch (Exception ignored) {  }
 
         alert.showAndWait();
     }

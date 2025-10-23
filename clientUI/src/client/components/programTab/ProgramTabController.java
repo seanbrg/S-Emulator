@@ -1,4 +1,4 @@
-package client.components.programTab;
+package src.client.components.programTab;
 
 import client.util.ColumnResizer;
 import execute.dto.InstructionDTO;
@@ -14,9 +14,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import src.client.components.body.AppController;
 
 public class ProgramTabController {
-    @FXML private client.components.body.DashboardController mainController;
+    @FXML private AppController mainController;
 
     @FXML private Tab programTab;
     @FXML private TableView<InstructionDTO> programTable;
@@ -88,7 +89,7 @@ public class ProgramTabController {
             try {
                 Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
                 dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-            } catch (Exception ignored) { /* icon optional */ }
+            } catch (Exception ignored) {  }
 
 
             if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
@@ -212,12 +213,12 @@ public class ProgramTabController {
         ColumnResizer.lockToContent(programTable, 2);
     }
 
-    public void setMainController(client.components.body.DashboardController mainController) {
+    public void setMainController(AppController mainController) {
         this.mainController = mainController;
         enableRowHighlighting(mainController);
     }
 
-    public void enableRowHighlighting(client.components.body.DashboardController dashboardController) {
+    public void enableRowHighlighting(AppController dashboardController) {
         var sharedHighlights = dashboardController.getHighlightedRows();
 
         programTable.setRowFactory(tv -> {

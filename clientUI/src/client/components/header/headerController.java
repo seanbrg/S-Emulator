@@ -1,6 +1,6 @@
-package client.components.header;
+package src.client.components.header;
 
-import client.components.programTab.ProgramTabController;
+import src.client.components.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,9 +14,10 @@ import java.io.File;
 import java.util.List;
 
 import javafx.animation.*;
+import src.client.components.body.AppController;
 
 public class headerController {
-    @FXML private client.components.body.DashboardController mainController;
+    @FXML private AppController mainController;
 
     @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
@@ -48,7 +49,7 @@ public class headerController {
 
     }
 
-    public void setMainController(client.components.body.DashboardController mainController) {
+    public void setMainController(AppController mainController) {
         this.mainController = mainController;
         javafx.application.Platform.runLater(this::enableDynamicViewMenus);
     }

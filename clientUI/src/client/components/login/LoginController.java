@@ -1,88 +1,117 @@
 package src.client.components.login;
 
-import client.util.HttpUtils;
+import emulator.utils.WebConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.Response;
+import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import src.client.components.dashboardBody.DashboardBodyController;
+import emulator.utils.HttpClientUtil;
 
 import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField userNameTextField;
-    @FXML private Label errorMessageLabel;
+    @FXML
+    private TextField userNameTextField;
 
-    private final StringProperty errorMessageProperty = new SimpleStringProperty();
+    @FXML
+    private Label errorMessageLabel;
+
     private Stage primaryStage;
+    private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
     @FXML
     public void initialize() {
-        errorMessageLabel.textProperty().bind(errorMessageProperty);
-    }
+        if (errorMessageLabel != null) {
+            errorMessageLabel.textProperty().bind(errorMessageProperty);
+        }
 
-    public void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
+        HttpClientUtil.setCookieManagerLoggingFacility(line ->
+                Platform.runLater(() -> System.out.println("Cookie: " + line))
+        );
     }
 
     @FXML
-    private void loginButtonClicked() {
-        String username = userNameTextField.getText().trim();
-        if (username.isEmpty()) {
-            errorMessageProperty.set("Username cannot be empty");
+    private void handleLogin(ActionEvent event) {
+        String userName = userNameTextField.getText();
+
+        if (userName == null || userName.trim().isEmpty()) {
+            errorMessageProperty.set("User name is empty. You can't login with empty user name");
             return;
         }
 
-        // Server login endpoint
-        String url = HttpUrl.parse("http://localhost:8080/semulator/login")
+        String finalUrl = HttpUrl
+                .parse(WebConstants.LOGIN_URL)
                 .newBuilder()
-                .addQueryParameter("username", username)
+                .addQueryParameter(WebConstants.USERNAME, userName.trim())
                 .build()
                 .toString();
 
-        HttpUtils.getAsync(url, new Callback() {
+        System.out.println("Attempting login for: " + userName);
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> errorMessageProperty.set("Server error: " + e.getMessage()));
+                Platform.runLater(() ->
+                        errorMessageProperty.set("Connection failed: " + e.getMessage())
+                );
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    String body = response.body() != null ? response.body().string() : "<no body>";
-                    Platform.runLater(() -> errorMessageProperty.set("Login failed: " + body));
+                String responseBody = response.body().string();
+
+                if (response.code() == 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            switchToDashboard(userName.trim());
+                        } catch (IOException e) {
+                            errorMessageProperty.set("Failed to load dashboard: " + e.getMessage());
+                        }
+                    });
                 } else {
-                    Platform.runLater(() -> switchToDashboard());
+                    Platform.runLater(() ->
+                            errorMessageProperty.set("Login failed: " + responseBody)
+                    );
                 }
+                response.close();
             }
         });
     }
 
-    private void switchToDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/components/dashboardBody/Dashboard.fxml"));
-            Parent root = loader.load();
-            DashboardBodyController controller = loader.getController();
-            controller.setStage(primaryStage);
-            controller.setActive();
+    @FXML
+    private void handleQuit(ActionEvent event) {
+        Platform.exit();
+    }
 
-            Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void switchToDashboard(String username) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/client/components/dashboardBody/DashboardBody.fxml"));
+        Parent root = loader.load();
+
+        DashboardBodyController controller = loader.getController();
+        controller.setUsername(username);
+        controller.setPrimaryStage(primaryStage);
+
+        Scene scene = new Scene(root);
+        String css = getClass().getResource("/client/resources/styles/style-dark.css").toExternalForm();
+        scene.getStylesheets().add(css);
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("S-Emulator - " + username);
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 }

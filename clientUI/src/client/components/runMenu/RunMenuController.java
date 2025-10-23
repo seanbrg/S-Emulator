@@ -1,4 +1,4 @@
-package client.components.runMenu;
+package src.client.components.runMenu;
 
 import execute.dto.VariableDTO;
 import javafx.application.Platform;
@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import src.client.components.body.AppController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class RunMenuController {
     @FXML public Tooltip tooltipDebugStep;
     @FXML public Tooltip tooltipDebugStop;
     @FXML public Tooltip tooltipRun;
-    @FXML private client.components.body.DashboardController mainController;
+    @FXML private AppController mainController;
 
     @FXML private Button buttonRun;
     @FXML private Button buttonDebug;
@@ -171,7 +172,7 @@ public class RunMenuController {
 
     private void handleExpand() { mainController.expandProgram(); }
 
-    public void setMainController(client.components.body.DashboardController dashboardController) {
+    public void setMainController(AppController dashboardController) {
         mainController = dashboardController;
 
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
