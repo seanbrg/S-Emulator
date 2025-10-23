@@ -62,7 +62,7 @@ public class ProgramsServlet extends HttpServlet {
                             sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
                             return;
                         }
-                        varsDto = engine.getOutputs(name, degree);
+                        varsDto = engine.getOutputs(name, degree); // <- the main point of this block
                     }
                     try (PrintWriter out = resp.getWriter()) {
                         out.print(GSON.toJson(varsDto));
@@ -77,7 +77,7 @@ public class ProgramsServlet extends HttpServlet {
                             sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
                             return;
                         }
-                        dto = engine.getProgramDTO(name, degree);
+                        dto = engine.getProgramDTO(name, degree); // <- the main point of this block
                     }
                     try (PrintWriter out = resp.getWriter()) {
                         out.print(GSON.toJson(dto));

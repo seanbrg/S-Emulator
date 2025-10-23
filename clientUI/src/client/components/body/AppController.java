@@ -218,7 +218,7 @@ public class AppController {
                 }
                 List<String> funcNames;
                 try (Response r = HttpUtils.getSync(listUrl)) {
-                    if (!r.isSuccessful()) {
+                    if (!r.isSuccessful() || r.body() == null) {
                         System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
                         System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
                         throw new IOException("List fetch failed: " + r.code());
@@ -299,9 +299,7 @@ public class AppController {
                 // 4) Error handling (network or JSON)
                 .exceptionally(ex -> {
                     ex.printStackTrace();
-                    Platform.runLater(() -> {
-                        // alertLoadFailed() or your preferred UI error
-                    });
+                    Platform.runLater(this::alertLoadFailed);
                     return null;
                 });
     }
@@ -357,7 +355,23 @@ public class AppController {
 
         int degree = tabController.getCurrentDegree();
 
-        currentRawProgramInputs.setAll(engine.getInputs(programName, degree)); // or getAsync by program name if needed
+        String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
+        String getInputsUrl = WebConstants.INPUTS_URL +
+                "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
+                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
+
+        CompletableFuture<String> inputsFut = HttpUtils.getAsyncBody(getInputsUrl);
+        inputsFut.thenAccept(inputsJson -> {
+            List<VariableDTO> inputs = new Gson().fromJson(
+                    inputsJson,
+                    new TypeToken<List<VariableDTO>>() {}.getType());
+
+            Platform.runLater(() -> currentRawProgramInputs.setAll(inputs));
+            }).exceptionally(ex -> {
+                ex.printStackTrace();
+                Platform.runLater(this::alertLoadFailed);
+                return null;
+            });
     }
 
     public IntegerProperty runCyclesProperty() {
