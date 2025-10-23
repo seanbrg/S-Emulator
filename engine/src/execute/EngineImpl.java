@@ -307,6 +307,13 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public ProgramDTO[] getAllProgramDTOs() {
+        return pm.getAllPrograms().stream()
+                .map(ProgramDTO::new)
+                .toArray(ProgramDTO[]::new);
+    }
+
+    @Override
     public void debugStart(String programName, int degree, List<VariableDTO> inputs) {
         loadInputs(inputs);
         outputVar.setValue(0);

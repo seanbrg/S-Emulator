@@ -552,4 +552,11 @@ public class ProgramManager {
     public List<String> getFuncNamesList() {
         return new ArrayList<>(savedFunctions.keySet());
     }
+
+    public List<Program> getAllPrograms() {
+        return savedFunctions.values().stream()
+                .map(list -> list.stream().findFirst().orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+    }
 }

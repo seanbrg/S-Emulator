@@ -34,7 +34,6 @@ import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
@@ -194,11 +193,12 @@ public class AppController {
         return new Task<>() {
             @Override
             protected List<String> call() {
-                String httpUrl = WebConstants.UPLOAD_URL;
+                String postProgramHttpUrl = WebConstants.PROGRAMS_URL;
+                String getListHttpUrl = WebConstants.PROGRAMS_LIST_URL;
 
                 File file = new File(filePath);
 
-                HttpUtils.post(httpUrl,
+                HttpUtils.post(postProgramHttpUrl,
                     new RequestBody() {
                         @Nullable
                         @Override
@@ -232,6 +232,7 @@ public class AppController {
                     }
                 );
 
+                List<String> funcNames = http
                 return engine.getFuncNamesList();
             }
         };
