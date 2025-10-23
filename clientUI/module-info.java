@@ -6,6 +6,8 @@ module clientUI {
     requires annotations;
     requires okio;
 
+    requires gson;
+
     opens app.util to javafx.fxml;
     opens app.components.body to javafx.fxml;
     opens app.components.runHistory to javafx.fxml;

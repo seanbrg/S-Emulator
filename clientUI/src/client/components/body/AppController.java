@@ -1,4 +1,4 @@
-package client.components.body;
+/*package src.client.components.body;
 
 import client.components.expandWindow.ExpandWindowController;
 import client.components.instructionHistory.InstructionHistoryController;
@@ -10,6 +10,7 @@ import client.util.HttpUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;
@@ -452,7 +453,7 @@ public class AppController {
             try {
                 Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
                 dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-            } catch (Exception ignored) { /* icon optional */ }
+            } catch (Exception ignored) {  }
 
             alert.showAndWait();
         });
@@ -474,4 +475,4 @@ public class AppController {
     public RunMenuController getRunMenuController() {
         return runMenuController;
     }
-}
+}*/

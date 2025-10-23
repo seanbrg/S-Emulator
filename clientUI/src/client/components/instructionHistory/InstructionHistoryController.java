@@ -1,7 +1,6 @@
 package client.components.instructionHistory;
 
 import client.util.ColumnResizer;
-import client.components.body.AppController;
 import execute.dto.InstructionDTO;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -20,7 +19,7 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class InstructionHistoryController {
-    @FXML private AppController mainController;
+    @FXML private client.components.body.DashboardController mainController;
 
     @FXML private TableView<InstructionDTO> instructionHistory;
     @FXML private TableColumn<InstructionDTO, String> columnLabel;
@@ -163,7 +162,7 @@ public class InstructionHistoryController {
         ColumnResizer.lockToContent(instructionHistory, 2);
     }
 
-    public void setMainController(AppController mainController) {
+    public void setMainController(client.components.body.DashboardController mainController) {
         this.mainController =  mainController;
 
         this.mainController.currentTabControllerProperty().addListener((obs, oldTab, newTab) -> {

@@ -2,7 +2,6 @@ package client.components.runHistory;
 
 import client.components.runMenu.RunMenuController;
 import client.util.ColumnResizer;
-import client.components.body.AppController;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
 import javafx.beans.property.*;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class RunHistoryController {
     @FXML
-    private AppController mainController;
+    private client.components.body.DashboardController mainController;
 
     @FXML
     private TableView<HistoryDTO> runHistory;
@@ -237,7 +236,7 @@ public class RunHistoryController {
         ColumnResizer.lockToContent(runHistory, 2);
     }
 
-    public void setMainController(AppController mainController) {
+    public void setMainController(client.components.body.DashboardController mainController) {
         this.mainController = mainController;
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {

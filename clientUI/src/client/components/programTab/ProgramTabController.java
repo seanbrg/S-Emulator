@@ -1,7 +1,6 @@
 package client.components.programTab;
 
 import client.util.ColumnResizer;
-import client.components.body.AppController;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
 import execute.dto.VariableDTO;
@@ -17,7 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class ProgramTabController {
-    @FXML private AppController mainController;
+    @FXML private client.components.body.DashboardController mainController;
 
     @FXML private Tab programTab;
     @FXML private TableView<InstructionDTO> programTable;
@@ -213,13 +212,13 @@ public class ProgramTabController {
         ColumnResizer.lockToContent(programTable, 2);
     }
 
-    public void setMainController(AppController mainController) {
+    public void setMainController(client.components.body.DashboardController mainController) {
         this.mainController = mainController;
         enableRowHighlighting(mainController);
     }
 
-    public void enableRowHighlighting(AppController appController) {
-        var sharedHighlights = appController.getHighlightedRows();
+    public void enableRowHighlighting(client.components.body.DashboardController dashboardController) {
+        var sharedHighlights = dashboardController.getHighlightedRows();
 
         programTable.setRowFactory(tv -> {
             var row = new javafx.scene.control.TableRow<InstructionDTO>();

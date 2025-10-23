@@ -1,6 +1,5 @@
 package client.components.header;
 
-import client.components.body.AppController;
 import client.components.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -17,7 +16,7 @@ import java.util.List;
 import javafx.animation.*;
 
 public class headerController {
-    @FXML private AppController mainController;
+    @FXML private client.components.body.DashboardController mainController;
 
     @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
@@ -49,7 +48,7 @@ public class headerController {
 
     }
 
-    public void setMainController(AppController mainController) {
+    public void setMainController(client.components.body.DashboardController mainController) {
         this.mainController = mainController;
         javafx.application.Platform.runLater(this::enableDynamicViewMenus);
     }
