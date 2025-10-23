@@ -15,6 +15,6 @@ public class WebConstants {
     public final static String PROGRAMS_W_PATH = PROGRAMS_PATH + WILDCARD_PATH;
     public final static String PROGRAMS_LIST_PATH = "/list";
 
-    public final static String PROGRAMS_URL = SERVER_PATH + PROGRAMS_PATH + WILDCARD_PATH;
+    public final static String PROGRAMS_URL = SERVER_PATH + PROGRAMS_PATH;
     public static final String PROGRAMS_LIST_URL = PROGRAMS_URL + PROGRAMS_LIST_PATH;
 }

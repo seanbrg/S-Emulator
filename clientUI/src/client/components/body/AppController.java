@@ -214,11 +214,19 @@ public class AppController {
                 };
 
                 try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
-                    if (!r.isSuccessful()) throw new IOException("Upload failed: " + r.code());
+                    if (!r.isSuccessful()) {
+                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        throw new IOException("Upload failed: " + r.code());
+                    }
                 }
                 List<String> funcNames;
                 try (Response r = HttpUtils.getSync(listUrl)) {
-                    if (!r.isSuccessful()) throw new IOException("List fetch failed: " + r.code());
+                    if (!r.isSuccessful()) {
+                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        throw new IOException("List fetch failed: " + r.code());
+                    }
                     String json = r.body().string();
                     funcNames = new Gson().fromJson(json, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
                 }
