@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import okhttp3.*;
 import okio.BufferedSink;
 import okio.Okio;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -149,12 +150,31 @@ public class ExecutionStageController {
         int degree = tabController.getCurrentDegree();
 
         List<VariableDTO> inputs = currentActualProgramInputs.get();
-        HistoryDTO result = engine.runProgramAndRecord(programName, degree, inputs);
-        if (result == null) throw new RuntimeException("Run failed for program: " + programName);
+        String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
+        String runUrl = WebConstants.RUN_URL +
+                "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
+                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
+        RequestBody requestBody = RequestBody.create(
+                new Gson().toJson(inputs),
+                MediaType.parse("application/json")
+        );
 
-        programCycles.set(result.getCycles());
-        runMenuController.setOutputVariables(result.getOutputAndTemps());
-        runHistoryController.addRunHistory(result);
+        HttpUtils.postAsyncBody(runUrl, requestBody).thenAccept(json -> {
+            HistoryDTO result = new Gson().fromJson(json, HistoryDTO.class);
+            Platform.runLater(() -> {
+                if (result == null) {
+                    throw new RuntimeException("Run failed for program: " + programName);
+                }
+
+                programCycles.set(result.getCycles());
+                runMenuController.setOutputVariables(result.getOutputAndTemps());
+                runHistoryController.addRunHistory(result);
+            });
+        }).exceptionally(ex -> {
+            ex.printStackTrace();
+            Platform.runLater(this::alertLoadFailed);
+            return null;
+        });
     }
 
     public void setScene(Scene scene) {
@@ -211,7 +231,7 @@ public class ExecutionStageController {
                 try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
                     if (!r.isSuccessful()) {
                         System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST executionStage=" + (r.body() != null ? r.body().string() : "<no executionStage>"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
                         throw new IOException("Upload failed: " + r.code());
                     }
                 }
@@ -219,11 +239,11 @@ public class ExecutionStageController {
                 try (Response r = HttpUtils.getSync(listUrl)) {
                     if (!r.isSuccessful() || r.body() == null) {
                         System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST executionStage=" + (r.body() != null ? r.body().string() : "<no executionStage>"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
                         throw new IOException("List fetch failed: " + r.code());
                     }
                     String json = r.body().string();
-                    funcNames = new Gson().fromJson(json, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
+                    funcNames = new Gson().fromJson(json, new TypeToken<List<String>>(){}.getType());
                 }
                 return funcNames;
             }

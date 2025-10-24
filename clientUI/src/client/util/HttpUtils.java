@@ -88,6 +88,34 @@ public class HttpUtils {
         return fut;
     }
 
+    public static CompletableFuture<String> postAsyncBody(String url, RequestBody body) {
+        CompletableFuture<String> fut = new CompletableFuture<>();
+        HttpUtils.postAsync(url, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                fut.completeExceptionally(e);
+            }
+            @Override
+            public void onResponse(Call call, Response response) {
+                try (response) {
+                    if (!response.isSuccessful()) {
+                        String body = response.body() != null ? response.body().string() : "<no executionStage>";
+                        fut.completeExceptionally(new IOException("HTTP " + response.code() + " for " + url + " executionStage=" + body));
+                        return;
+                    }
+                    if (response.body() == null) {
+                        fut.completeExceptionally(new IOException("Empty executionStage for " + url));
+                        return;
+                    }
+                    fut.complete(response.body().string());
+                } catch (Exception ex) {
+                    fut.completeExceptionally(ex);
+                }
+            }
+        });
+        return fut;
+    }
+
     public static void shutdown() {
         System.out.println("Shutting down HTTP CLIENT");
         HTTP_CLIENT.dispatcher().executorService().shutdown();
