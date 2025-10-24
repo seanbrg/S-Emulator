@@ -375,7 +375,7 @@ public class ExecutionStageController {
 
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
-        return this.engine.getInstrParents(selectedInstr);
+        return execute.components.engineUtils.getInstrParents(selectedInstr);
     }
 
     public ListProperty<VariableDTO> currentRawProgramInputsProperty() {

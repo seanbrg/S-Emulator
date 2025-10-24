@@ -44,8 +44,6 @@ public interface Engine {
 
     List<InstructionDTO> getInstructionsList(String programName, int degree);
 
-    List<InstructionDTO> getInstrParents(InstructionDTO selectedInstr);
-
     void debugStart(String programName, int degree, List<VariableDTO> inputs);
     
     boolean debugStep(String programName, int degree);
