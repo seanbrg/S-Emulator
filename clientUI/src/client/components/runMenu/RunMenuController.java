@@ -79,6 +79,7 @@ public class RunMenuController {
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
+
         // fit once after first layout, then refit when items change
         Platform.runLater(this::lockVarWidth);
         inputsTable.getItems().addListener(
