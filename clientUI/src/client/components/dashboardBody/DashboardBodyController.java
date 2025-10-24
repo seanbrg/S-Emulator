@@ -1,7 +1,6 @@
 package client.components.dashboardBody;
 
 import client.components.login.LoginController;
-import client.util.HttpUtils;
 import emulator.utils.WebConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,7 +17,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import client.components.availableUsers.AvailableUsersController;
-
+import client.util.HttpUtils;
 import java.io.Closeable;
 import java.io.IOException;
 

@@ -43,8 +43,8 @@
                 </HBox>
                 <HBox prefHeight="100.0" prefWidth="200.0" alignment="CENTER" spacing="30">
                     <children>
-                        <Button onAction="#handleLogin" text="Login" prefWidth="100.0" />
-                        <Button onAction="#handleQuit" text="Quit" prefWidth="100.0" />
+                        <Button text="Login" prefWidth="100.0" />
+                        <Button text="Quit" prefWidth="100.0" />
                     </children>
                 </HBox>
             </children>

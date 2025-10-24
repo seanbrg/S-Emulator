@@ -7,8 +7,6 @@ import client.components.programTab.ProgramTabController;
 import client.components.runHistory.RunHistoryController;
 import client.components.runMenu.RunMenuController;
 import client.util.HttpUtils;
-
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.WebConstants;

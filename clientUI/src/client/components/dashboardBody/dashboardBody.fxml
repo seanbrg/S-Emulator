@@ -8,7 +8,7 @@
             prefHeight="600.0" prefWidth="800.0"
             xmlns="http://javafx.com/javafx/24.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="src.client.components.dashboardBody.DashboardBodyController">
+            fx:controller="client.components.dashboardBody.DashboardBodyController">
    <top>
       <Label fx:id="headerLabel" text="Welcome" BorderPane.alignment="CENTER"
              style="-fx-font-size: 20px; -fx-padding: 15px;" />
@@ -16,7 +16,7 @@
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <fx:include fx:id="availableUsersComponent" source="../availableUsers/AvailableUsers.fxml" />
+            <fx:include fx:id="availableUsersComponent" source="../availableUsers/availableUsers.fxml" />
          </children>
       </HBox>
    </center>
