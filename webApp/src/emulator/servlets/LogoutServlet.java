@@ -2,6 +2,7 @@ package emulator.servlets;
 
 import emulator.utils.ServletsUtils;
 import emulator.utils.SessionUtils;
+import emulator.utils.WebConstants;
 import users.UserManager;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -11,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
+@WebServlet(name = "LogoutServlet", urlPatterns = {WebConstants.LOGOUT_PATH})
 public class LogoutServlet extends HttpServlet {
 
     @Override
