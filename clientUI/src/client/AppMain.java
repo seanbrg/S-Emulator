@@ -1,6 +1,6 @@
-package src.client;
+package client;
 
-import src.client.util.Launcher;
+import client.util.Launcher;
 
 public class AppMain {
     public static void main(String[] args) {
