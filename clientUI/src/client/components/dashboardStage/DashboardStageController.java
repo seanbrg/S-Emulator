@@ -61,18 +61,12 @@ public class DashboardStageController implements Closeable {
     public void logout() {
         System.out.println("Logging out user: " + currentUsername.get());
 
-        HttpUtils.getAsync(WebConstants.LOGOUT_URL, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.err.println("Logout request failed: " + e.getMessage());
-                switchToLogin();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                response.close();
-                switchToLogin();
-            }
+        HttpUtils.getAsync(WebConstants.LOGOUT_URL).thenAccept(v -> {
+            Platform.runLater(this::switchToLogin);
+        }).exceptionally(ex -> {
+            System.err.println("Logout request failed: " + ex.getCause().getMessage());
+            Platform.runLater(this::switchToLogin);
+            return null;
         });
     }
 
