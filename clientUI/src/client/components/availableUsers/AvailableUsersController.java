@@ -1,97 +1,158 @@
 package client.components.availableUsers;
 
-import com.google.gson.Gson;
-
-
-
-import com.google.gson.reflect.TypeToken;
-import emulator.utils.WebConstants;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
-import client.components.dashboardStage.DashboardStageController;
-import client.util.HttpUtils;
-
+import okhttp3.*;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static client.util.Constants.REFRESH_RATE;
 
 public class AvailableUsersController implements Closeable {
 
-    @FXML
-    private ListView<String> usersListView;
+    // ---------------------- FXML ----------------------
+    @FXML private ListView<String> usersListView;
+    @FXML private Label usersHeaderLabel;
 
-    @FXML
-    private Button unselectUserButton;
+    // ---------------------- Properties ----------------------
+    private final BooleanProperty autoUpdate;
+    private final IntegerProperty totalUsers;
+    private HttpStatusUpdate httpStatusUpdate;
 
-    private DashboardStageController dashboardController;
+    // ---------------------- Timer ----------------------
     private Timer timer;
-    private TimerTask userListRefresher;
-    private final ObservableList<String> usersList = FXCollections.observableArrayList();
-    private final Gson gson = new Gson();
+    private TimerTask listRefresher;
+
+    public AvailableUsersController() {
+        autoUpdate = new SimpleBooleanProperty(true);
+        totalUsers = new SimpleIntegerProperty(0);
+    }
 
     @FXML
     public void initialize() {
-        if (usersListView != null) {
-            usersListView.setItems(usersList);
-        }
-
-        if (unselectUserButton != null) {
-            unselectUserButton.setOnAction(event -> handleUnselectUser());
-        }
+        usersHeaderLabel.textProperty().bind(Bindings.concat("Available Users: (", totalUsers.asString(), ")"));
     }
 
-    public void startUserListRefresher() {
-        userListRefresher = new TimerTask() {
-            @Override
-            public void run() {
-                refreshUsersList();
-            }
-        };
-        timer = new Timer(true);
-        timer.scheduleAtFixedRate(userListRefresher, 0, 2000); // Refresh every 2 seconds
+    public void setHttpStatusUpdate(HttpStatusUpdate httpStatusUpdate) {
+        this.httpStatusUpdate = httpStatusUpdate;
     }
 
-    private void refreshUsersList() {
-        HttpUtils.getAsync(WebConstants.USERS_URL).thenAccept(json -> {
-            List<String> users = gson.fromJson(json, new TypeToken<List<String>>() {}.getType());
+    public BooleanProperty autoUpdatesProperty() {
+        return autoUpdate;
+    }
 
-            Platform.runLater(() -> {
-                usersList.clear();
-                usersList.addAll(users);
-            });
-        }).exceptionally(ex -> {
-            System.err.println("Failed to fetch users list: " + ex.getMessage());
-            return null;
+    // ---------------------- Update Logic ----------------------
+    private void updateUsersList(List<String> usersNames) {
+        Platform.runLater(() -> {
+            ObservableList<String> items = usersListView.getItems();
+            items.clear();
+            items.addAll(usersNames);
+            totalUsers.set(usersNames.size());
         });
     }
 
-    private void handleUnselectUser() {
-        usersListView.getSelectionModel().clearSelection();
-    }
-
-    public void setDashboardController(DashboardStageController dashboardController) {
-        this.dashboardController = dashboardController;
+    public void startListRefresher() {
+        listRefresher = new UserListRefresher(
+                autoUpdate,
+                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
+                this::updateUsersList
+        );
+        timer = new Timer();
+        timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
     @Override
-    public void close() throws IOException {
-        if (userListRefresher != null) {
-            userListRefresher.cancel();
-        }
-        if (timer != null) {
+    public void close() {
+        usersListView.getItems().clear();
+        totalUsers.set(0);
+        if (listRefresher != null && timer != null) {
+            listRefresher.cancel();
             timer.cancel();
+        }
+    }
+
+    // ====================== Utilities ======================
+
+    @FunctionalInterface
+    public interface HttpStatusUpdate {
+        void updateHttpLine(String line);
+    }
+
+    public static class UserListRefresher extends TimerTask {
+        private final BooleanProperty autoUpdate;
+        private final Consumer<String> httpStatusConsumer;
+        private final Consumer<List<String>> usersListUpdater;
+
+        public UserListRefresher(BooleanProperty autoUpdate,
+                                 Consumer<String> httpStatusConsumer,
+                                 Consumer<List<String>> usersListUpdater) {
+            this.autoUpdate = autoUpdate;
+            this.httpStatusConsumer = httpStatusConsumer;
+            this.usersListUpdater = usersListUpdater;
+        }
+
+        @Override
+        public void run() {
+            if (autoUpdate.get()) {
+                httpStatusConsumer.accept("Updating available users...");
+                List<String> users = AvailableUsersFetcher.fetchUsers(); // fetch dummy list
+                usersListUpdater.accept(users);
+                httpStatusConsumer.accept("Available users updated.");
+            }
+        }
+    }
+
+    public static class AvailableUsersFetcher {
+
+        private static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(3, TimeUnit.SECONDS)
+                .build();
+
+        /**
+         * Fetch users from server (dummy data for now)
+         */
+        public static List<String> fetchUsers() {
+            // TODO: Replace with actual server request
+            return Arrays.asList("Alice", "Bob", "Charlie", "David");
+        }
+
+        /**
+         * Async fetch (example)
+         */
+        public static void fetchUsersAsync(String url, Consumer<List<String>> onResult) {
+            Request request = new Request.Builder().url(url).build();
+            HTTP_CLIENT.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    onResult.accept(Collections.emptyList());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String body = response.body().string();
+                        List<String> users = Arrays.asList(body.replace("[","").replace("]","")
+                                .replace("\"","").split(","));
+                        onResult.accept(users);
+                    } else {
+                        onResult.accept(Collections.emptyList());
+                    }
+                }
+            });
         }
     }
 }

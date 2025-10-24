@@ -15,8 +15,11 @@
               BorderPane.alignment="CENTER" />
    </bottom>
    <top>
-      <Label text="Available Users" BorderPane.alignment="CENTER"
+      <Label fx:id="usersHeaderLabel"
+             text="Available Users"
+             BorderPane.alignment="CENTER"
              style="-fx-font-size: 16px; -fx-padding: 10px;" />
+
    </top>
    <center>
       <ListView fx:id="usersListView" prefHeight="200.0" prefWidth="200.0"
