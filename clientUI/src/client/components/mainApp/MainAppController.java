@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -44,7 +45,11 @@ public class MainAppController {
             }
 
             Scene scene = new Scene(loginComponent);
+            String css = getClass().getResource("/resources/styles/style-dark.css").toExternalForm();
+            scene.getStylesheets().add(css);
+
             primaryStage.setScene(scene);
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/images/icon.png")));
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();

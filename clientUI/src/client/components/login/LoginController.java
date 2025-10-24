@@ -1,6 +1,8 @@
 package client.components.login;
 
 import client.components.mainApp.MainAppController;
+import client.util.HttpUtils;
+import emulator.utils.WebConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -8,6 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class LoginController {
 
@@ -31,8 +36,18 @@ public class LoginController {
             return;
         }
 
-        // Simulate a successful login
-        Platform.runLater(() -> mainAppController.switchToDashboard(userName));
+        String encodedName = URLEncoder.encode(userName, StandardCharsets.UTF_8);
+        String loginUrl = WebConstants.LOGIN_URL +
+                "?" + WebConstants.USERNAME + "=" + encodedName;
+
+        HttpUtils.getAsync(loginUrl).thenAccept(v -> {
+            // Login successful
+            Platform.runLater(() -> mainAppController.switchToDashboard(userName));
+        }).exceptionally(ex -> {
+            // Login failed
+            Platform.runLater(() -> errorMessageProperty.set("Login failed: " + ex.getCause().getMessage()));
+            return null;
+        });
     }
 
     @FXML

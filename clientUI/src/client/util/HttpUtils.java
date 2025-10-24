@@ -60,7 +60,8 @@ public class HttpUtils {
                 try (response) {
                     if (!response.isSuccessful()) {
                         String body = response.body() != null ? response.body().string() : "<no executionStage>";
-                        fut.completeExceptionally(new IOException("HTTP " + response.code() + " for " + url + " executionStage=" + body));
+                        System.err.println(body);
+                        fut.completeExceptionally(new IOException(body));
                         return;
                     }
                     if (response.body() == null) {
