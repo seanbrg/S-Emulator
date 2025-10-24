@@ -64,26 +64,16 @@ public class AvailableUsersController implements Closeable {
     }
 
     private void refreshUsersList() {
-        HttpUtils.getAsync(WebConstants.USERS_URL, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.err.println("Failed to fetch users list: " + e.getMessage());
-            }
+        HttpUtils.getAsync(WebConstants.USERS_URL).thenAccept(json -> {
+            List<String> users = gson.fromJson(json, new TypeToken<List<String>>() {}.getType());
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    Type listType = new TypeToken<List<String>>(){}.getType();
-                    List<String> users = gson.fromJson(responseBody, listType);
-
-                    Platform.runLater(() -> {
-                        usersList.clear();
-                        usersList.addAll(users);
-                    });
-                }
-                response.close();
-            }
+            Platform.runLater(() -> {
+                usersList.clear();
+                usersList.addAll(users);
+            });
+        }).exceptionally(ex -> {
+            System.err.println("Failed to fetch users list: " + ex.getMessage());
+            return null;
         });
     }
 

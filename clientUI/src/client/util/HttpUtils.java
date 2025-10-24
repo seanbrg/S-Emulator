@@ -19,18 +19,6 @@ public class HttpUtils {
         simpleCookieManager.setLogData(logConsumer);
     }
 
-    public static void removeCookiesOf(String domain) {
-        simpleCookieManager.removeCookiesOf(domain);
-    }
-
-    public static void getAsync(String url, Callback callback) {
-        runAsync(url, "GET", null, callback);
-    }
-
-    public static void postAsync(String url, RequestBody body, Callback callback) {
-        runAsync(url, "POST", body, callback);
-    }
-
     public static Response getSync(String url) throws IOException {
         Request req = new Request.Builder().url(url).get().build();
         return HTTP_CLIENT.newCall(req).execute(); // blocking
@@ -60,9 +48,9 @@ public class HttpUtils {
      * Wraps HttpUtils.getAsync in a CompletableFuture that yields the response executionStage as String.
      * Ensures the Response is closed and errors are propagated.
      */
-    public static CompletableFuture<String> getAsyncBody(String url) {
+    public static CompletableFuture<String> getAsync(String url) {
         CompletableFuture<String> fut = new CompletableFuture<>();
-        HttpUtils.getAsync(url, new Callback() {
+        HttpUtils.runAsync(url, "GET", null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 fut.completeExceptionally(e);
@@ -88,9 +76,9 @@ public class HttpUtils {
         return fut;
     }
 
-    public static CompletableFuture<String> postAsyncBody(String url, RequestBody body) {
+    public static CompletableFuture<String> postAsync(String url, RequestBody body) {
         CompletableFuture<String> fut = new CompletableFuture<>();
-        HttpUtils.postAsync(url, body, new Callback() {
+        HttpUtils.runAsync(url, "POST", body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 fut.completeExceptionally(e);

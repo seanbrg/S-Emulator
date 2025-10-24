@@ -34,7 +34,6 @@ import javafx.stage.Stage;
 import okhttp3.*;
 import okio.BufferedSink;
 import okio.Okio;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -159,7 +158,7 @@ public class ExecutionStageController {
                 MediaType.parse("application/json")
         );
 
-        HttpUtils.postAsyncBody(runUrl, requestBody).thenAccept(json -> {
+        HttpUtils.postAsync(runUrl, requestBody).thenAccept(json -> {
             HistoryDTO result = new Gson().fromJson(json, HistoryDTO.class);
             Platform.runLater(() -> {
                 if (result == null) {
@@ -170,10 +169,6 @@ public class ExecutionStageController {
                 runMenuController.setOutputVariables(result.getOutputAndTemps());
                 runHistoryController.addRunHistory(result);
             });
-        }).exceptionally(ex -> {
-            ex.printStackTrace();
-            Platform.runLater(this::alertLoadFailed);
-            return null;
         });
     }
 
@@ -275,8 +270,8 @@ public class ExecutionStageController {
         String pullVarsUrl = pullFuncUrl + "&" + WebConstants.PROGRAM_VARLIST + "=true";
 
         // 1) Async fetch both endpoints in parallel
-        CompletableFuture<String> funcJsonFut = HttpUtils.getAsyncBody(pullFuncUrl);
-        CompletableFuture<String> varsJsonFut = HttpUtils.getAsyncBody(pullVarsUrl);
+        CompletableFuture<String> funcJsonFut = HttpUtils.getAsync(pullFuncUrl);
+        CompletableFuture<String> varsJsonFut = HttpUtils.getAsync(pullVarsUrl);
 
         // 2) When both are ready, parse and construct the UI data (off UI thread)
         funcJsonFut.thenCombine(varsJsonFut, (funcJson, varsJson) -> {
@@ -312,15 +307,8 @@ public class ExecutionStageController {
                         this.tabControllerMap.put(programTab, tabController);
                     } catch (IOException io) {
                         io.printStackTrace();
-                        // show your alert/toast here if you have one
                     }
-                }))
-                // 4) Error handling (network or JSON)
-                .exceptionally(ex -> {
-                    ex.printStackTrace();
-                    Platform.runLater(this::alertLoadFailed);
-                    return null;
-                });
+                }));
     }
 
     public void expandProgram() {
@@ -336,7 +324,7 @@ public class ExecutionStageController {
             String maxDegreeUrl = WebConstants.MAXDEGREE_URL +
                     "?" + WebConstants.PROGRAM_NAME + "=" + encodedName;
 
-            CompletableFuture<String> maxDegreeFut = HttpUtils.getAsyncBody(maxDegreeUrl);
+            CompletableFuture<String> maxDegreeFut = HttpUtils.getAsync(maxDegreeUrl);
             maxDegreeFut.thenAccept(result -> Platform.runLater(() -> {
 
                 int maxDegree = new Gson().fromJson(result, Integer.class);
@@ -363,11 +351,7 @@ public class ExecutionStageController {
                     addProgramTab(funcName, chosenDegree);
                 }
 
-            })).exceptionally(ex -> {
-                ex.printStackTrace();
-                Platform.runLater(this::alertLoadFailed);
-                return null;
-            });
+            }));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -396,17 +380,13 @@ public class ExecutionStageController {
                 "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
                 "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
 
-        CompletableFuture<String> inputsFut = HttpUtils.getAsyncBody(getInputsUrl);
+        CompletableFuture<String> inputsFut = HttpUtils.getAsync(getInputsUrl);
         inputsFut.thenAccept(inputsJson -> {
             List<VariableDTO> inputs = new Gson().fromJson(
                     inputsJson,
                     new TypeToken<List<VariableDTO>>() {}.getType());
 
             Platform.runLater(() -> currentRawProgramInputs.setAll(inputs));
-            }).exceptionally(ex -> {
-                ex.printStackTrace();
-                Platform.runLater(this::alertLoadFailed);
-                return null;
             });
     }
 
