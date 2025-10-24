@@ -266,7 +266,7 @@ public class AppController {
 
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
-        return execute.components.engineUtils.getInstrParents(selectedInstr);
+        return EngineImpl.getInstrParents(selectedInstr);
     }
 
     public ListProperty<VariableDTO> currentRawProgramInputsProperty() {

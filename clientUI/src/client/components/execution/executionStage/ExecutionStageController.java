@@ -359,7 +359,7 @@ public class ExecutionStageController {
 
 
     public List<InstructionDTO> expandInstr(InstructionDTO selectedInstr) {
-        return execute.components.engineUtils.getInstrParents(selectedInstr);
+        return EngineImpl.getInstrParents(selectedInstr);
     }
 
     public ListProperty<VariableDTO> currentRawProgramInputsProperty() {
@@ -404,7 +404,16 @@ public class ExecutionStageController {
         int degree = tabController.getCurrentDegree();
         List<VariableDTO> inputs = currentActualProgramInputs.get();
         debugLine.set(0);
-        engine.debugStart(programName, degree, inputs);
+
+        String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
+        String debugStartUrl = WebConstants.DEBUG_START_URL +
+                "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
+                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
+        RequestBody requestBody = RequestBody.create(
+                new Gson().toJson(inputs),
+                MediaType.parse("application/json")
+        );
+        HttpUtils.postAsync(debugStartUrl, requestBody);
     }
 
 

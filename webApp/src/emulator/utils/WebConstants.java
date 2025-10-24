@@ -18,6 +18,7 @@ public class WebConstants {
     public final static String MAXDEGREE_PATH = "/maxdegree";
     public final static String RUN_PATH = "/run";
     public final static String DEBUG_PATH = "/debug";
+    public static final String DEBUG_START_PATH = "/start";
 
     // Programs paths
     public final static String PROGRAMS_PATH = "/programs";
@@ -25,6 +26,7 @@ public class WebConstants {
     public final static String PROGRAMS_W_PATH = PROGRAMS_PATH + WILDCARD_PATH;
     public final static String PROGRAMS_LIST_PATH = "/list";
     public final static String INPUTS_PATH = "/inputs";
+    public final static String DEBUG_W_PATH = DEBUG_PATH + WILDCARD_PATH;
 
     // Full URLs
     public final static String LOGIN_URL = SERVER_PATH + LOGIN_PATH;
@@ -36,4 +38,5 @@ public class WebConstants {
     public final static String MAXDEGREE_URL = PROGRAMS_URL + MAXDEGREE_PATH;
     public final static String RUN_URL = SERVER_PATH + RUN_PATH;
     public final static String DEBUG_URL = SERVER_PATH + DEBUG_PATH;
+    public final static String DEBUG_START_URL = DEBUG_URL + DEBUG_START_PATH;
 }
