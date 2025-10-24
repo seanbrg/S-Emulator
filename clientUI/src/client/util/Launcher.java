@@ -1,42 +1,31 @@
 package client.util;
 
-import client.components.login.LoginController;
+import client.components.mainApp.MainAppController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-
-import java.net.URL;
+import java.io.InputStream;
 
 public class Launcher extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader();
-        URL loginUrl = getClass().getResource("/client/components/login/login.fxml"); // login first
-        loader.setLocation(loginUrl);
-        assert loginUrl != null;
-        Parent root = loader.load(loginUrl.openStream());
-
-        Scene scene = new Scene(root);
-        String css = getClass().getResource("/resources/styles/style-dark.css").toExternalForm();
-        scene.getStylesheets().add(css);
-
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("S-Emulator");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/images/icon.png")));
-        primaryStage.setScene(scene);
-        primaryStage.show();
 
-        // Pass stage to LoginController
-        LoginController controller = loader.getController();
-        controller.setPrimaryStage(primaryStage);
+        try (InputStream iconStream = getClass().getResourceAsStream("/client/resources/images/icon.png")) {
+            if (iconStream != null) {
+                primaryStage.getIcons().add(new Image(iconStream));
+            }
+        } catch (Exception e) {
+            System.err.println("Icon not found or failed to load.");
+        }
+
+        MainAppController mainController = new MainAppController(primaryStage);
+        mainController.showLogin();
     }
 
     public static void main(String[] args) {
-        Thread.currentThread().setName("main");
         launch(args);
     }
 }

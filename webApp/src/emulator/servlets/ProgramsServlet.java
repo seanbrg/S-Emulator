@@ -55,6 +55,7 @@ public class ProgramsServlet extends HttpServlet {
                     catch (Exception e) { sendError(response, HttpServletResponse.SC_BAD_REQUEST, "'programVarList' must be true or false."); return; }
                 }
 
+
                 if (varList) {
                     // return variable list of specific program
                     List<VariableDTO> varsDto;
