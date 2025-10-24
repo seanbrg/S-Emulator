@@ -1,6 +1,6 @@
-package src.client.components.header;
+package client.components.header;
 
-import src.client.components.programTab.ProgramTabController;
+import client.components.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.List;
 
 import javafx.animation.*;
-import src.client.components.body.AppController;
+import client.components.body.AppController;
 
 public class headerController {
     @FXML private AppController mainController;

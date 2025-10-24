@@ -1,5 +1,6 @@
-package src.client.components.login;
+package client.components.login;
 
+import client.util.HttpUtils;
 import emulator.utils.WebConstants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,8 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import src.client.components.dashboardBody.DashboardBodyController;
-import emulator.utils.HttpClientUtil;
+import client.components.dashboardBody.DashboardBodyController;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class LoginController {
             errorMessageLabel.textProperty().bind(errorMessageProperty);
         }
 
-        HttpClientUtil.setCookieManagerLoggingFacility(line ->
+        HttpUtils.setCookieManagerLoggingFacility(line ->
                 Platform.runLater(() -> System.out.println("Cookie: " + line))
         );
     }
@@ -59,7 +59,7 @@ public class LoginController {
 
         System.out.println("Attempting login for: " + userName);
 
-        HttpClientUtil.runAsync(finalUrl, new Callback() {
+        HttpUtils.getAsync(finalUrl, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() ->

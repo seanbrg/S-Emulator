@@ -1,4 +1,4 @@
-package src.client.components.runMenu;
+package client.components.runMenu;
 
 import execute.dto.VariableDTO;
 import javafx.application.Platform;
@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import src.client.components.body.AppController;
+import client.components.body.AppController;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package src.client.components.instructionHistory;
+package client.components.instructionHistory;
 
 import client.util.ColumnResizer;
 import execute.dto.InstructionDTO;
@@ -15,7 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
-import src.client.components.body.AppController;
+import client.components.body.AppController;
 
 import java.util.List;
 

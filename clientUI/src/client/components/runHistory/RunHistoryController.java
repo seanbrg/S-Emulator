@@ -1,7 +1,7 @@
-package src.client.components.runHistory;
+package client.components.runHistory;
 
-import src.client.components.body.AppController;
-import src.client.components.runMenu.RunMenuController;
+import client.components.body.AppController;
+import client.components.runMenu.RunMenuController;
 import client.util.ColumnResizer;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
