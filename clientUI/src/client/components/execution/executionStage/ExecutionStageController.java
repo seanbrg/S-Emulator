@@ -1,11 +1,11 @@
-package client.components.executionStage;
+package client.components.execution.executionStage;
 
-import client.components.expandWindow.ExpandWindowController;
-import client.components.instructionHistory.InstructionHistoryController;
-import client.components.header.HeaderController;
-import client.components.programTab.ProgramTabController;
-import client.components.runHistory.RunHistoryController;
-import client.components.runMenu.RunMenuController;
+import client.components.execution.expandWindow.ExpandWindowController;
+import client.components.execution.instructionHistory.InstructionHistoryController;
+import client.components.execution.header.HeaderController;
+import client.components.execution.programTab.ProgramTabController;
+import client.components.execution.runHistory.RunHistoryController;
+import client.components.execution.runMenu.RunMenuController;
 import client.util.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -289,7 +289,7 @@ public class ExecutionStageController {
                         List<VariableDTO> varList = (List<VariableDTO>) result[1];
 
                         FXMLLoader fxmlLoader = new FXMLLoader();
-                        fxmlLoader.setLocation(getClass().getResource("/client/components/programTab/programTab.fxml"));
+                        fxmlLoader.setLocation(getClass().getResource("/client/components/execution/programTab/programTab.fxml"));
                         Tab programTab = fxmlLoader.load();
                         ProgramTabController tabController = fxmlLoader.getController();
 
@@ -314,7 +314,7 @@ public class ExecutionStageController {
     public void expandProgram() {
         try {
             FXMLLoader fx = new FXMLLoader(getClass().getResource(
-                    "/client/components/expandWindow/expandWindow.fxml"));
+                    "/client/components/execution/expandWindow/expandWindow.fxml"));
 
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();

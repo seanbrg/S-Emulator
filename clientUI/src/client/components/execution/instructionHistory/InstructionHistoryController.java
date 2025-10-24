@@ -1,4 +1,4 @@
-package client.components.instructionHistory;
+package client.components.execution.instructionHistory;
 
 import client.util.ColumnResizer;
 import execute.dto.InstructionDTO;
@@ -15,7 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
-import client.components.executionStage.ExecutionStageController;
+import client.components.execution.executionStage.ExecutionStageController;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@
             prefHeight="400.0" prefWidth="300.0"
             xmlns="http://javafx.com/javafx/24.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.components.availableUsers.AvailableUsersController">
+            fx:controller="client.components.dashboard.availableUsers.AvailableUsersController">
    <bottom>
       <Button fx:id="unselectUserButton" mnemonicParsing="false" text="Unselect User"
               BorderPane.alignment="CENTER" />

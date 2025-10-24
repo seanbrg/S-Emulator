@@ -1,6 +1,6 @@
-package client.components.header;
+package client.components.execution.header;
 
-import client.components.programTab.ProgramTabController;
+import client.components.execution.programTab.ProgramTabController;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.List;
 
 import javafx.animation.*;
-import client.components.executionStage.ExecutionStageController;
+import client.components.execution.executionStage.ExecutionStageController;
 
 public class HeaderController {
     @FXML private ExecutionStageController mainController;

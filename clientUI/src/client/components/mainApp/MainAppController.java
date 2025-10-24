@@ -1,6 +1,6 @@
 package client.components.mainApp;
 
-import client.components.dashboard.DashboardController;
+import client.components.dashboard.dashboardStage.DashboardStageController;
 
 import client.components.login.LoginController;
 import javafx.application.Platform;
@@ -23,7 +23,7 @@ public class MainAppController {
     private LoginController loginController;
 
     private Parent dashboardComponent;
-    private DashboardController dashboardController;
+    private DashboardStageController dashboardStageController;
 
     private String currentUserName;
 
@@ -57,8 +57,8 @@ public class MainAppController {
                 URL fxmlUrl = getClass().getResource(DASHBOARD_FXML);
                 FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
                 dashboardComponent = fxmlLoader.load();
-                dashboardController = fxmlLoader.getController();
-                dashboardController.setMainAppController(this);
+                dashboardStageController = fxmlLoader.getController();
+                dashboardStageController.setMainAppController(this);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class MainAppController {
         loadDashboard();
 
         Platform.runLater(() -> {
-            dashboardController.updateHeader("Welcome, " + currentUserName + "!");
+            dashboardStageController.updateHeader("Welcome, " + currentUserName + "!");
             primaryStage.getScene().setRoot(dashboardComponent);
         });
     }

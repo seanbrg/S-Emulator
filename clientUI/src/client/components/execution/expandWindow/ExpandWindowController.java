@@ -1,4 +1,4 @@
-package client.components.expandWindow;
+package client.components.execution.expandWindow;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;

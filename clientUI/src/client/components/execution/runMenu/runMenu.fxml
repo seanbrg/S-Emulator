@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.runMenu.RunMenuController">
+<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.runMenu.RunMenuController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <bottom>

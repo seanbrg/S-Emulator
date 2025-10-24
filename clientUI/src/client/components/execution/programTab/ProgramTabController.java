@@ -1,4 +1,4 @@
-package client.components.programTab;
+package client.components.execution.programTab;
 
 import client.util.ColumnResizer;
 import execute.dto.InstructionDTO;
@@ -14,7 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import client.components.executionStage.ExecutionStageController;
+import client.components.execution.executionStage.ExecutionStageController;
 
 public class ProgramTabController {
     @FXML private ExecutionStageController mainController;

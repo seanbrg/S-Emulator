@@ -1,4 +1,4 @@
-package client.components.availableUsers;
+package client.components.dashboard.availableUsers;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

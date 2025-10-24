@@ -1,10 +1,10 @@
-package client.components.dashboard;
+package client.components.dashboard.dashboardStage;
 
 import client.components.mainApp.MainAppController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class DashboardController {
+public class DashboardStageController {
 
     @FXML private Label headerLabel;
     private MainAppController mainAppController;
