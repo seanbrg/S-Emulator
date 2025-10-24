@@ -31,15 +31,15 @@ public class ProgramsServlet extends HttpServlet {
         if (engine == null) { sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized."); return; }
 
         final String path = request.getPathInfo(); // null, "/", or "/list"
-        final String name = request.getParameter(WebConstants.PROGRAM_NAME);
+        final String programName = request.getParameter(WebConstants.PROGRAM_NAME);
         final String degreeStr = request.getParameter(WebConstants.PROGRAM_DEGREE);
         final String varListStr = request.getParameter(WebConstants.PROGRAM_VARLIST);
 
         // 1) Exact /programs with query params -> specific program
         if (path == null || "/".equals(path)) {
-            if (name != null || degreeStr != null) {
+            if (programName != null || degreeStr != null) {
                 // Require both if either is present
-                if (name == null || degreeStr == null) {
+                if (programName == null || degreeStr == null) {
                     sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                             "Provide both 'programName' and 'programDegree', or neither to list all.");
                     return;
@@ -61,11 +61,11 @@ public class ProgramsServlet extends HttpServlet {
                     List<VariableDTO> varsDto;
                     try {
                         synchronized (engine) {
-                            if (!engine.isProgramExists(name, degree)) {
-                                sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program " + name + "not found.");
+                            if (!engine.isProgramExists(programName, degree)) {
+                                sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program " + programName + "not found.");
                                 return;
                             }
-                            varsDto = engine.getOutputs(name, degree); // <- the main point of this block
+                            varsDto = engine.getOutputs(programName, degree); // <- the main point of this block
                         }
                         PrintWriter out = response.getWriter();
                         out.print(GSON.toJson(varsDto));
@@ -79,11 +79,11 @@ public class ProgramsServlet extends HttpServlet {
                     // return program DTO
                     ProgramDTO dto;
                     synchronized (engine) {
-                        if (!engine.isProgramExists(name, degree)) {
+                        if (!engine.isProgramExists(programName, degree)) {
                             sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
                             return;
                         }
-                        dto = engine.getProgramDTO(name, degree); // <- the main point of this block
+                        dto = engine.getProgramDTO(programName, degree); // <- the main point of this block
                     }
                     try (PrintWriter out = response.getWriter()) {
                         out.print(GSON.toJson(dto));
@@ -109,17 +109,17 @@ public class ProgramsServlet extends HttpServlet {
 
         // 3) /programs/maxdegree -> max degree
         if (path.equals(WebConstants.MAXDEGREE_PATH)) {
-            if (name != null) {
+            if (programName != null) {
                 int maxDegree;
 
                 try {
                     PrintWriter out = response.getWriter();
                     synchronized (engine) {
-                        if (!engine.isProgramExists(name, 0)) {
+                        if (!engine.isProgramExists(programName, 0)) {
                             sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
                             return;
                         }
-                        maxDegree = engine.maxDegree(name);
+                        maxDegree = engine.maxDegree(programName);
                     }
                     out.print(GSON.toJson(maxDegree));
                     return;

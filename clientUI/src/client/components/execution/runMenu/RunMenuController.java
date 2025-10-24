@@ -304,17 +304,21 @@ public class RunMenuController {
         // Store previous values BEFORE executing the step
         storePreviousValues();
 
-        debugging.setValue(mainController.debugStep());
-        clearLog();
-        log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
-        if (!debugging.get()) {
-            clearLog();
-            log("=== Debug Finished ===");
-            mainController.finishDebugging();
-        }
+        mainController.debugStep().thenAccept(hasMore -> {
+            debugging.setValue(hasMore);
 
-        // Refresh the list to trigger highlighting
-        Platform.runLater(() -> resultsList.refresh());
+            clearLog();
+            log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
+            if (!debugging.get()) {
+                clearLog();
+                log("=== Debug Finished ===");
+                mainController.finishDebugging();
+            }
+
+            // Refresh the list to trigger highlighting
+            Platform.runLater(() -> resultsList.refresh());
+
+        });
     }
 
     private void storePreviousValues() {
@@ -406,6 +410,7 @@ public class RunMenuController {
     }
 
 
-
-
+    public List<VariableDTO> getOutputVariables() {
+        return outputVariables.get();
+    }
 }

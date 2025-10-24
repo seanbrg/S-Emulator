@@ -9,14 +9,15 @@ import client.components.execution.runMenu.RunMenuController;
 import client.util.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import emulator.servlets.DebugServlet;
 import emulator.utils.WebConstants;
-import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -41,9 +42,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -72,8 +71,8 @@ public class ExecutionStageController {
     private StringProperty highlightedLabel;
     private StringProperty highlightedVariable;
     private Scene scene;
-    private Engine engine;
-    private javafx.collections.ObservableSet<Integer> highlightedRows;
+    private ObservableSet<Integer> highlightedRows;
+    private static final Gson GSON = new Gson();
 
 
     @FXML
@@ -85,13 +84,12 @@ public class ExecutionStageController {
         this.currentVariables = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentLabels = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.switchingProgram = new ReadOnlyBooleanWrapper(false);
-        this.engine = new EngineImpl();
         this.programTabs.getTabs().clear();
         this.programCycles = new SimpleIntegerProperty(0);
         this.debugLine = new SimpleIntegerProperty(0);
         this.highlightedLabel = new SimpleStringProperty("");
         this.highlightedVariable = new SimpleStringProperty("");
-        this.highlightedRows = javafx.collections.FXCollections.observableSet(new java.util.HashSet<>());
+        this.highlightedRows = FXCollections.observableSet(new HashSet<>());
 
         runMenuController.setMainController(this);
         headerController.setMainController(this);
@@ -154,12 +152,12 @@ public class ExecutionStageController {
                 "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
                 "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
         RequestBody requestBody = RequestBody.create(
-                new Gson().toJson(inputs),
+                GSON.toJson(inputs),
                 MediaType.parse("application/json")
         );
 
         HttpUtils.postAsync(runUrl, requestBody).thenAccept(json -> {
-            HistoryDTO result = new Gson().fromJson(json, HistoryDTO.class);
+            HistoryDTO result = GSON.fromJson(json, HistoryDTO.class);
             Platform.runLater(() -> {
                 if (result == null) {
                     throw new RuntimeException("Run failed for program: " + programName);
@@ -238,7 +236,7 @@ public class ExecutionStageController {
                         throw new IOException("List fetch failed: " + r.code());
                     }
                     String json = r.body().string();
-                    funcNames = new Gson().fromJson(json, new TypeToken<List<String>>(){}.getType());
+                    funcNames = GSON.fromJson(json, new TypeToken<List<String>>(){}.getType());
                 }
                 return funcNames;
             }
@@ -275,9 +273,8 @@ public class ExecutionStageController {
 
         // 2) When both are ready, parse and construct the UI data (off UI thread)
         funcJsonFut.thenCombine(varsJsonFut, (funcJson, varsJson) -> {
-                    Gson gson = new Gson();
-                    ProgramDTO programDTO = gson.fromJson(funcJson, ProgramDTO.class);
-                    List<VariableDTO> varList = gson.fromJson(varsJson, new TypeToken<List<VariableDTO>>() {}.getType());
+                    ProgramDTO programDTO = GSON.fromJson(funcJson, ProgramDTO.class);
+                    List<VariableDTO> varList = GSON.fromJson(varsJson, new TypeToken<List<VariableDTO>>() {}.getType());
 
                     return new Object[] { programDTO, varList };
                 })
@@ -327,7 +324,7 @@ public class ExecutionStageController {
             CompletableFuture<String> maxDegreeFut = HttpUtils.getAsync(maxDegreeUrl);
             maxDegreeFut.thenAccept(result -> Platform.runLater(() -> {
 
-                int maxDegree = new Gson().fromJson(result, Integer.class);
+                int maxDegree = GSON.fromJson(result, Integer.class);
 
                 int currentDegree = currentTabController.get().getCurrentDegree();
                 int realMaxDegree = maxDegree - currentDegree;
@@ -382,7 +379,7 @@ public class ExecutionStageController {
 
         CompletableFuture<String> inputsFut = HttpUtils.getAsync(getInputsUrl);
         inputsFut.thenAccept(inputsJson -> {
-            List<VariableDTO> inputs = new Gson().fromJson(
+            List<VariableDTO> inputs = GSON.fromJson(
                     inputsJson,
                     new TypeToken<List<VariableDTO>>() {}.getType());
 
@@ -406,54 +403,66 @@ public class ExecutionStageController {
         debugLine.set(0);
 
         String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
-        String debugStartUrl = WebConstants.DEBUG_START_URL +
+        String debugStartUrl = WebConstants.DEBUG_URL +
                 "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
                 "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
         RequestBody requestBody = RequestBody.create(
-                new Gson().toJson(inputs),
+                GSON.toJson(inputs),
                 MediaType.parse("application/json")
         );
-        HttpUtils.postAsync(debugStartUrl, requestBody);
+        HttpUtils.postAsync(debugStartUrl, requestBody).thenAccept(v -> { debugLine.set(0); });
     }
 
 
 
-    public Boolean debugStep() {
+    public CompletableFuture<Boolean> debugStep() {
         ProgramTabController tabController = currentTabController.get();
-        if (tabController == null) return false;
-
-        String programName = tabController.getProgramName();
-        if (programName == null || programName.isEmpty()) return false;
-
-        int degree = tabController.getCurrentDegree();
-        debugLine.set(engine.getDebugLine());
-        replaceHighlights(List.of(debugLine.get()));
-        Boolean notDone = engine.debugStep(programName, degree);
-
-        // Get ALL variables (outputs, inputs, temps) for debugging display
-        List<List<VariableDTO>> varsByType = engine.getVarByType();
-        List<VariableDTO> allVariables = new java.util.ArrayList<>();
-        for (List<VariableDTO> varList : varsByType) {
-            allVariables.addAll(varList);
+        if (tabController == null) {
+            return CompletableFuture.completedFuture(false);
         }
-        runMenuController.setOutputVariables(allVariables);
 
-        if (!notDone) {clearHighlights();}
-        return notDone;
+        List<VariableDTO> outputs = runMenuController.getOutputVariables();
+        RequestBody requestBody = RequestBody.create(
+                GSON.toJson(outputs),
+                MediaType.parse("application/json"));
+
+        // Assume postAsync returns CompletableFuture<String> with the response body
+        return HttpUtils.postAsync(WebConstants.DEBUG_NEXT_URL, requestBody)
+                .thenApply(json -> {
+                    DebugServlet.DebugInfo info =  GSON.fromJson(json, DebugServlet.DebugInfo.class);
+
+                    int debugLineRes = info.getDebugLine();
+                    boolean hasMore = info.isHasMore();
+                    List<VariableDTO> updatedOutputs = info.getVariables();
+
+                    // update UI on FX thread
+                    Platform.runLater(() -> {
+                        debugLine.set(debugLineRes);
+                        replaceHighlights(List.of(debugLineRes));
+                        runMenuController.setOutputVariables(updatedOutputs);
+                        if (!hasMore) clearHighlights();
+                    });
+
+                    return hasMore;   // ✅ this value becomes the future’s result
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> System.err.println(ex.getMessage()));
+                    return false;
+                });
     }
 
 
-    public javafx.collections.ObservableSet<Integer> highlightedRowsProperty() {
+    public ObservableSet<Integer> highlightedRowsProperty() {
         return highlightedRows;
     }
-    public javafx.collections.ObservableSet<Integer> getHighlightedRows() {
+    public ObservableSet<Integer> getHighlightedRows() {
         return highlightedRows;
     }
 
     // Convenience methods for callers (any controller/service can use these):
     public void highlightRow(int line) { highlightedRows.add(line); }
     public void unhighlightRow(int line) { highlightedRows.remove(line); }
-    public void replaceHighlights(java.util.Collection<Integer> lines) {
+    public void replaceHighlights(Collection<Integer> lines) {
         highlightedRows.clear();
         highlightedRows.addAll(lines);
     }
@@ -484,16 +493,16 @@ public class ExecutionStageController {
     }
 
     public void finishDebugging() {
-        String programName = currentTabController.get().getProgramName();
-        int degree = currentTabController.get().getCurrentDegree();
-        List<VariableDTO> inputs = currentActualProgramInputs.get();
+        HttpUtils.getAsync(WebConstants.DEBUG_URL).thenAccept(json -> {
+            HistoryDTO result = GSON.fromJson(json, HistoryDTO.class);
+            if (result == null) throw new RuntimeException("Run failed for program: " + currentTabController.get().getProgramName());
 
-        HistoryDTO result = engine.recordCurrentState(programName, degree, inputs);
-        if (result == null) throw new RuntimeException("Run failed for program: " + programName);
-
-        programCycles.set(result.getCycles());
-        runMenuController.setOutputVariables(result.getOutputAndTemps());
-        runHistoryController.addRunHistory(result);
+            Platform.runLater(() -> {
+                programCycles.set(result.getCycles());
+                runMenuController.setOutputVariables(result.getOutputAndTemps());
+                runHistoryController.addRunHistory(result);
+            });
+        });
     }
 
     public RunMenuController getRunMenuController() {
