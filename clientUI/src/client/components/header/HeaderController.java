@@ -14,10 +14,10 @@ import java.io.File;
 import java.util.List;
 
 import javafx.animation.*;
-import client.components.executionStage.executionStageController;
+import client.components.executionStage.ExecutionStageController;
 
-public class headerController {
-    @FXML private executionStageController mainController;
+public class HeaderController {
+    @FXML private ExecutionStageController mainController;
 
     @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
@@ -49,7 +49,7 @@ public class headerController {
 
     }
 
-    public void setMainController(executionStageController mainController) {
+    public void setMainController(ExecutionStageController mainController) {
         this.mainController = mainController;
         javafx.application.Platform.runLater(this::enableDynamicViewMenus);
     }

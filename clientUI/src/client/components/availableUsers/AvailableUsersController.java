@@ -16,7 +16,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import client.components.dashboardStage.dashboardStageController;
+import client.components.dashboardStage.DashboardStageController;
 import client.util.HttpUtils;
 
 
@@ -35,7 +35,7 @@ public class AvailableUsersController implements Closeable {
     @FXML
     private Button unselectUserButton;
 
-    private dashboardStageController dashboardController;
+    private DashboardStageController dashboardController;
     private Timer timer;
     private TimerTask userListRefresher;
     private final ObservableList<String> usersList = FXCollections.observableArrayList();
@@ -91,7 +91,7 @@ public class AvailableUsersController implements Closeable {
         usersListView.getSelectionModel().clearSelection();
     }
 
-    public void setDashboardController(dashboardStageController dashboardController) {
+    public void setDashboardController(DashboardStageController dashboardController) {
         this.dashboardController = dashboardController;
     }
 

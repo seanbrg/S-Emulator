@@ -32,7 +32,11 @@ public class ZeroVariable extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(v)); }
 
     @Override
-    public List<Variable> getVars() { return new ArrayList<>(List.of(v)); }
+    public List<Variable> getVars() {
+        List<Variable> lst = new ArrayList<>();
+        lst.add(v);
+        return lst;
+    }
 
     @Override
     public Variable getPrimaryVar() { return v; }

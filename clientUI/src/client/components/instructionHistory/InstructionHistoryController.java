@@ -15,12 +15,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
-import client.components.executionStage.executionStageController;
+import client.components.executionStage.ExecutionStageController;
 
 import java.util.List;
 
 public class InstructionHistoryController {
-    @FXML private executionStageController mainController;
+    @FXML private ExecutionStageController mainController;
 
     @FXML private TableView<InstructionDTO> instructionHistory;
     @FXML private TableColumn<InstructionDTO, String> columnLabel;
@@ -163,7 +163,7 @@ public class InstructionHistoryController {
         ColumnResizer.lockToContent(instructionHistory, 2);
     }
 
-    public void setMainController(executionStageController mainController) {
+    public void setMainController(ExecutionStageController mainController) {
         this.mainController =  mainController;
 
         this.mainController.currentTabControllerProperty().addListener((obs, oldTab, newTab) -> {

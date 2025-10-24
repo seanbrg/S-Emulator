@@ -44,6 +44,7 @@ public class ProgramsServlet extends HttpServlet {
                             "Provide both 'programName' and 'programDegree', or neither to list all.");
                     return;
                 }
+
                 final int degree;
                 try { degree = Integer.parseInt(degreeStr); }
                 catch (NumberFormatException e) { sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "'programDegree' must be an integer."); return; }
@@ -57,15 +58,19 @@ public class ProgramsServlet extends HttpServlet {
                 if (varList) {
                     // return variable list of specific program
                     List<VariableDTO> varsDto;
-                    synchronized (engine) {
-                        if (!engine.isProgramExists(name, degree)) {
-                            sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
-                            return;
+                    try {
+                        synchronized (engine) {
+                            if (!engine.isProgramExists(name, degree)) {
+                                sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program " + name + "not found.");
+                                return;
+                            }
+                            varsDto = engine.getOutputs(name, degree); // <- the main point of this block
                         }
-                        varsDto = engine.getOutputs(name, degree); // <- the main point of this block
-                    }
-                    try (PrintWriter out = resp.getWriter()) {
+                        PrintWriter out = resp.getWriter();
                         out.print(GSON.toJson(varsDto));
+                    } catch (Exception e) {
+                        sendError(resp, HttpServletResponse.SC_BAD_REQUEST,
+                                "Error getting variable list: " + e.getMessage());
                     }
                     return;
                 }
@@ -101,7 +106,35 @@ public class ProgramsServlet extends HttpServlet {
             return;
         }
 
-        // 3) Anything else -> bad format
+        // 3) /programs/maxdegree -> max degree
+        if (path.equals(WebConstants.MAXDEGREE_PATH)) {
+            if (name != null) {
+                int maxDegree;
+
+                try {
+                    PrintWriter out = resp.getWriter();
+                    synchronized (engine) {
+                        if (!engine.isProgramExists(name, 0)) {
+                            sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
+                            return;
+                        }
+                        maxDegree = engine.maxDegree(name);
+                    }
+                    out.print(GSON.toJson(maxDegree));
+                    return;
+                } catch (Exception e) {
+                    sendError(resp, HttpServletResponse.SC_BAD_REQUEST,
+                            "Error getting max degree: " + e.getMessage());
+                    return;
+                }
+            } else {
+                sendError(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        "Provide 'programName' to get its max degree.");
+                return;
+            }
+        }
+
+        // 4) Anything else -> bad format
         sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL. " +
                 "Use /semulator/programs, /semulator/programs?programName=&programDegree=, or /semulator/programs/list.");
     }

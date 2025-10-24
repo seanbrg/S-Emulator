@@ -2,7 +2,7 @@ package client.components.executionStage;
 
 import client.components.expandWindow.ExpandWindowController;
 import client.components.instructionHistory.InstructionHistoryController;
-import client.components.header.headerController;
+import client.components.header.HeaderController;
 import client.components.programTab.ProgramTabController;
 import client.components.runHistory.RunHistoryController;
 import client.components.runMenu.RunMenuController;
@@ -47,9 +47,9 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public class executionStageController {
+public class ExecutionStageController {
     @FXML private HBox header;
-    @FXML private headerController headerController;
+    @FXML private HeaderController headerController;
     @FXML private TabPane programTabs;
     @FXML private BorderPane runHistory;
     @FXML private RunHistoryController runHistoryController;
@@ -311,26 +311,43 @@ public class executionStageController {
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();
             String funcName = currentTabController.get().getProgramName();
-            int maxDegree = engine.maxDegree(funcName);
-            c.setMaxExpansion(maxDegree);
 
-            // show modally (main window disabled) and wait
-            Stage s = new Stage();
-            s.initOwner(scene.getWindow());
-            s.initModality(Modality.APPLICATION_MODAL);
-            s.setTitle("Choose Expansion Degree");
-            Scene dialogScene = new Scene(root);
-            dialogScene.getStylesheets().addAll(scene.getStylesheets()); // inherit theme
-            s.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-            s.setScene(dialogScene);
-            s.setResizable(false);
-            s.showAndWait();
+            String encodedName = URLEncoder.encode(funcName, StandardCharsets.UTF_8);
+            String maxDegreeUrl = WebConstants.MAXDEGREE_URL +
+                    "?" + WebConstants.PROGRAM_NAME + "=" + encodedName;
 
-            // read the result (0 == cancelled)
-            int chosenDegree = c.getResult();
-            if (chosenDegree > 0) {
-                addProgramTab(funcName, chosenDegree);
-            }
+            CompletableFuture<String> maxDegreeFut = HttpUtils.getAsyncBody(maxDegreeUrl);
+            maxDegreeFut.thenAccept(result -> Platform.runLater(() -> {
+
+                int maxDegree = new Gson().fromJson(result, Integer.class);
+
+                int currentDegree = currentTabController.get().getCurrentDegree();
+                int realMaxDegree = maxDegree - currentDegree;
+                c.setMaxExpansion(realMaxDegree);
+
+                // show modally (main window disabled) and wait
+                Stage s = new Stage();
+                s.initOwner(scene.getWindow());
+                s.initModality(Modality.APPLICATION_MODAL);
+                s.setTitle("Choose Expansion Degree");
+                Scene dialogScene = new Scene(root);
+                dialogScene.getStylesheets().addAll(scene.getStylesheets()); // inherit theme
+                s.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
+                s.setScene(dialogScene);
+                s.setResizable(false);
+                s.showAndWait();
+
+                // read the result (0 == cancelled)
+                int chosenDegree = c.getResult();
+                if (chosenDegree > 0) {
+                    addProgramTab(funcName, chosenDegree);
+                }
+
+            })).exceptionally(ex -> {
+                ex.printStackTrace();
+                Platform.runLater(this::alertLoadFailed);
+                return null;
+            });
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -8,7 +8,7 @@
             prefHeight="600.0" prefWidth="800.0"
             xmlns="http://javafx.com/javafx/24.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.components.dashboardStage.dashboardStageController">
+            fx:controller="client.components.dashboardStage.DashboardStageController">
    <top>
       <Label fx:id="headerLabel" text="Welcome" BorderPane.alignment="CENTER"
              style="-fx-font-size: 20px; -fx-padding: 15px;" />

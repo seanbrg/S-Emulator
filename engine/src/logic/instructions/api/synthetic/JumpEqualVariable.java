@@ -37,7 +37,12 @@ public class JumpEqualVariable extends AbstractInstruction {
     public List<VariableDTO> getVarsDTO() { return List.of(new VariableDTO(x),  new VariableDTO(y)); }
 
     @Override
-    public List<Variable> getVars() { return new ArrayList<>(List.of(x, y)); }
+    public List<Variable> getVars() {
+        List<Variable> lst = new ArrayList<>();
+        lst.add(x);
+        lst.add(y);
+        return lst;
+    }
 
     @Override
     public Variable getPrimaryVar() { return x; }

@@ -21,7 +21,7 @@ import client.util.HttpUtils;
 import java.io.Closeable;
 import java.io.IOException;
 
-public class dashboardStageController implements Closeable {
+public class DashboardStageController implements Closeable {
 
     @FXML
     private Label headerLabel;

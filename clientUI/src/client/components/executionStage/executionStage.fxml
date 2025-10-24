@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.executionStage.DashboardController">
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.executionStage.ExecutionStageController">
    <content>
       <BorderPane minHeight="-Infinity" minWidth="520.0" prefHeight="650.0" prefWidth="1000.0">
          <top>

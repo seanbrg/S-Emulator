@@ -15,7 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import client.components.dashboardStage.dashboardStageController;
+import client.components.dashboardStage.DashboardStageController;
 import client.util.HttpUtils;
 
 import java.io.IOException;
@@ -112,7 +112,7 @@ public class LoginController {
         Parent root = loader.load();
 
         // Initialize dashboard controller
-        dashboardStageController controller = loader.getController();
+        DashboardStageController controller = loader.getController();
         controller.setUsername(username);
         controller.setPrimaryStage(primaryStage);
 
