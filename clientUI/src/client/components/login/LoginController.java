@@ -52,7 +52,7 @@ public class LoginController {
         }
 
         // Build the login URL
-        String finalUrl = HttpUrl
+        String loginUrl = HttpUrl
                 .parse(WebConstants.LOGIN_URL)
                 .newBuilder()
                 .addQueryParameter(WebConstants.USERNAME, userName.trim())
@@ -62,36 +62,20 @@ public class LoginController {
         System.out.println("Attempting login for: " + userName);
 
         // Send async HTTP GET
-        HttpUtils.getAsync(finalUrl, new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() ->
-                        errorMessageProperty.set("Connection failed: " + e.getMessage())
-                );
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                String responseBody = response.body().string();
-
-                if (response.code() == 200) {
-                    // Login succeeded — switch to dashboard
-                    Platform.runLater(() -> {
-                        try {
-                            switchToDashboard(userName.trim());
-                        } catch (IOException e) {
-                            errorMessageProperty.set("Failed to load dashboard: " + e.getMessage());
-                        }
-                    });
-                } else {
-                    // Show error message from server
-                    Platform.runLater(() ->
-                            errorMessageProperty.set("Login failed: " + responseBody)
-                    );
+        HttpUtils.getAsync(loginUrl).thenAccept(v -> {
+            System.out.println("Login successful for: " + userName);
+            Platform.runLater(() -> {
+                try {
+                    switchToDashboard(userName.trim());
+                } catch (IOException e) {
+                    errorMessageProperty.set("Failed to load dashboard: " + e.getMessage());
                 }
-
-                response.close();
-            }
+            });
+        }).exceptionally(ex -> {
+            String errorMsg = "Login failed: " + ex.getCause().getMessage();
+            System.out.println(errorMsg);
+            Platform.runLater(() -> errorMessageProperty.set(errorMsg));
+            return null;
         });
     }
 
