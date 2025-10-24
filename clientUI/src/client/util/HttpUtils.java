@@ -1,4 +1,4 @@
-package src.util;
+package client.util;
 
 import okhttp3.*;
 

@@ -1,7 +1,5 @@
 package client.components.body;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import client.components.expandWindow.ExpandWindowController;
 import client.components.instructionHistory.InstructionHistoryController;
 import client.components.header.headerController;
@@ -11,7 +9,8 @@ import client.components.runMenu.RunMenuController;
 import client.util.HttpUtils;
 
 
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;

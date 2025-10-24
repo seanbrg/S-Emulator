@@ -20,9 +20,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 10.1.48" level="application_server_libraries" />
-    <orderEntry type="library" name="google-gson-2" level="project" />
-    <orderEntry type="library" name="javafx-sdk-21.0" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="okHttp" level="project" />
     <orderEntry type="module" module-name="engine" />
+    <orderEntry type="library" name="javafx" level="project" />
   </component>
 </module>

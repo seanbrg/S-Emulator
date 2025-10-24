@@ -16,8 +16,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import src.client.components.dashboardBody.DashboardBodyController;
-import emulator.utils.HttpClientUtil;
+import client.components.dashboardBody.DashboardBodyController;
+import client.util.HttpUtils;
 
 
 import java.io.Closeable;
@@ -64,7 +64,7 @@ public class AvailableUsersController implements Closeable {
     }
 
     private void refreshUsersList() {
-        HttpClientUtil.runAsync(WebConstants.USERS_URL, new Callback() {
+        HttpUtils.getAsync(WebConstants.USERS_URL, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 System.err.println("Failed to fetch users list: " + e.getMessage());
