@@ -76,7 +76,7 @@ public class InputServlet extends HttpServlet {
             return;
         }
         if (request.getContentLengthLong() == 0) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Empty request executionStage.");
             return;
         }
 

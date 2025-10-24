@@ -1,4 +1,4 @@
-package client.components.dashboardBody;
+package client.components.dashboardStage;
 
 import client.components.login.LoginController;
 import emulator.utils.WebConstants;
@@ -21,7 +21,7 @@ import client.util.HttpUtils;
 import java.io.Closeable;
 import java.io.IOException;
 
-public class DashboardBodyController implements Closeable {
+public class dashboardStageController implements Closeable {
 
     @FXML
     private Label headerLabel;

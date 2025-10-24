@@ -1,4 +1,4 @@
-package client.components.body;
+package client.components.executionStage;
 
 import client.components.expandWindow.ExpandWindowController;
 import client.components.instructionHistory.InstructionHistoryController;
@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public class AppController {
+public class executionStageController {
     @FXML private HBox header;
     @FXML private headerController headerController;
     @FXML private TabPane programTabs;
@@ -211,7 +211,7 @@ public class AppController {
                 try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
                     if (!r.isSuccessful()) {
                         System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        System.out.println("[DEBUG] POST executionStage=" + (r.body() != null ? r.body().string() : "<no executionStage>"));
                         throw new IOException("Upload failed: " + r.code());
                     }
                 }
@@ -219,7 +219,7 @@ public class AppController {
                 try (Response r = HttpUtils.getSync(listUrl)) {
                     if (!r.isSuccessful() || r.body() == null) {
                         System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        System.out.println("[DEBUG] POST executionStage=" + (r.body() != null ? r.body().string() : "<no executionStage>"));
                         throw new IOException("List fetch failed: " + r.code());
                     }
                     String json = r.body().string();

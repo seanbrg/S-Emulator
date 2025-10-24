@@ -14,10 +14,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import client.components.body.AppController;
+import client.components.executionStage.executionStageController;
 
 public class ProgramTabController {
-    @FXML private AppController mainController;
+    @FXML private executionStageController mainController;
 
     @FXML private Tab programTab;
     @FXML private TableView<InstructionDTO> programTable;
@@ -213,12 +213,12 @@ public class ProgramTabController {
         ColumnResizer.lockToContent(programTable, 2);
     }
 
-    public void setMainController(AppController mainController) {
+    public void setMainController(executionStageController mainController) {
         this.mainController = mainController;
         enableRowHighlighting(mainController);
     }
 
-    public void enableRowHighlighting(AppController dashboardController) {
+    public void enableRowHighlighting(executionStageController dashboardController) {
         var sharedHighlights = dashboardController.getHighlightedRows();
 
         programTable.setRowFactory(tv -> {

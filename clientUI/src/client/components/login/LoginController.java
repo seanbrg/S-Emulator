@@ -15,7 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import client.components.dashboardBody.DashboardBodyController;
+import client.components.dashboardStage.dashboardStageController;
 import client.util.HttpUtils;
 
 import java.io.IOException;
@@ -108,11 +108,11 @@ public class LoginController {
     private void switchToDashboard(String username) throws IOException {
         // Load dashboard FXML
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/client/components/dashboardBody/DashboardBody.fxml"));
+        loader.setLocation(getClass().getResource("/client/components/dashboardStage/DashboardBody.fxml"));
         Parent root = loader.load();
 
         // Initialize dashboard controller
-        DashboardBodyController controller = loader.getController();
+        dashboardStageController controller = loader.getController();
         controller.setUsername(username);
         controller.setPrimaryStage(primaryStage);
 

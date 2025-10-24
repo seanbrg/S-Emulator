@@ -44,11 +44,11 @@ public class HttpUtils {
     private static void runAsync(String url, String method, RequestBody body, Callback callback) {
         Request.Builder builder = new Request.Builder().url(url);
 
-        // Default to GET if no body or method
+        // Default to GET if no executionStage or method
         if (method == null || method.isEmpty()) {
             builder.get();
         } else {
-            // OkHttp automatically checks if body is null when required
+            // OkHttp automatically checks if executionStage is null when required
             builder.method(method.toUpperCase(), body);
         }
 
@@ -57,7 +57,7 @@ public class HttpUtils {
     }
 
     /**
-     * Wraps HttpUtils.getAsync in a CompletableFuture that yields the response body as String.
+     * Wraps HttpUtils.getAsync in a CompletableFuture that yields the response executionStage as String.
      * Ensures the Response is closed and errors are propagated.
      */
     public static CompletableFuture<String> getAsyncBody(String url) {
@@ -71,12 +71,12 @@ public class HttpUtils {
             public void onResponse(Call call, Response response) {
                 try (response) {
                     if (!response.isSuccessful()) {
-                        String body = response.body() != null ? response.body().string() : "<no body>";
-                        fut.completeExceptionally(new IOException("HTTP " + response.code() + " for " + url + " body=" + body));
+                        String body = response.body() != null ? response.body().string() : "<no executionStage>";
+                        fut.completeExceptionally(new IOException("HTTP " + response.code() + " for " + url + " executionStage=" + body));
                         return;
                     }
                     if (response.body() == null) {
-                        fut.completeExceptionally(new IOException("Empty body for " + url));
+                        fut.completeExceptionally(new IOException("Empty executionStage for " + url));
                         return;
                     }
                     fut.complete(response.body().string());

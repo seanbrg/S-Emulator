@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import client.components.body.AppController;
+import client.components.executionStage.executionStageController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ public class RunMenuController {
     @FXML public Tooltip tooltipDebugStep;
     @FXML public Tooltip tooltipDebugStop;
     @FXML public Tooltip tooltipRun;
-    @FXML private AppController mainController;
+    @FXML private executionStageController mainController;
 
     @FXML private Button buttonRun;
     @FXML private Button buttonDebug;
@@ -173,7 +173,7 @@ public class RunMenuController {
 
     private void handleExpand() { mainController.expandProgram(); }
 
-    public void setMainController(AppController dashboardController) {
+    public void setMainController(executionStageController dashboardController) {
         mainController = dashboardController;
 
         inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
