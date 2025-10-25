@@ -21,7 +21,8 @@ import logic.variables.VariableType;
 import java.util.*;
 
 public class ProgramManager {
-    private Map<String, List<Program>> savedFunctions;
+    private Map<String, List<Program>> functionsExpansions;
+    private Map<String, List<Program>> savedPrograms;
     private Map<String, Program> quotableFunctions;
     private Map<String, Integer> maxDegrees;
 
@@ -34,7 +35,8 @@ public class ProgramManager {
 
     public ProgramManager(Map<String, Variable> tempVarsMap) {
         this.labelGenerator = new  LabelGenerator();
-        this.savedFunctions = new HashMap<>();
+        this.functionsExpansions = new HashMap<>();
+        this.savedPrograms = new HashMap<>();
         this.quotableFunctions = new HashMap<>();
         this.maxDegrees = new HashMap<>();
         this.tempVarsMap = tempVarsMap;
@@ -55,18 +57,21 @@ public class ProgramManager {
     }
 
     public String getFirstProgramName() {
-        return savedFunctions.keySet().iterator().next();
+        return savedPrograms.keySet().iterator().next();
     }
 
     public void loadNew(List<Program> programs) {
+        savedPrograms.put(programs.getFirst().getName(), programs);
         for (Program func : programs) {
-            savedFunctions.put(func.getName(), new ArrayList<>(List.of(func)));
+            functionsExpansions.put(func.getName(), new ArrayList<>(List.of(func)));
             maxDegrees.put(func.getName(), func.maxDegree());
         }
     }
 
     public void clear() {
-        savedFunctions.clear();
+        savedPrograms.clear();
+        quotableFunctions.clear();
+        functionsExpansions.clear();
         maxDegrees.clear();
         labelGenerator.clear();
         currentTemps = tempVarsMap.values()
@@ -234,47 +239,57 @@ public class ProgramManager {
     }
 
     public boolean isEmpty() {
-        return savedFunctions.isEmpty();
+        return savedPrograms.isEmpty();
     }
 
     public int maxDegree(String func) {
         return maxDegrees.get(func);
     }
 
-    public Program getProgram(String func, int degree) {
-        if (savedFunctions.isEmpty() || !savedFunctions.containsKey(func)) {
+    public Program getFunction(String func, int degree) {
+        if (functionsExpansions.isEmpty() || !functionsExpansions.containsKey(func)) {
             System.err.println("Function " + func + " not found!");
             return null;
         }
         else {
             assert 0 <= degree && degree <= maxDegrees.get(func);
-            if (degree >= savedFunctions.get(func).size()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            return savedFunctions.get(func).get(degree);
+            return functionsExpansions.get(func).get(degree);
+        }
+    }
+
+    public List<Program> getProgramAndFunctions(String func) {
+        if (savedPrograms.isEmpty() || !savedPrograms.containsKey(func)) {
+            System.err.println("Function " + func + " not found!");
+            return null;
+        }
+        else {
+            return savedPrograms.get(func);
         }
     }
 
     public int getProgramCycles(String func, int degree) {
-        if (savedFunctions.isEmpty()) {
+        if (functionsExpansions.isEmpty()) {
             return 0;
         }
         else {
             assert 0 <= degree && degree <= maxDegrees.get(func);
-            if (degree >= savedFunctions.get(func).size()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            return savedFunctions.get(func).get(degree).cycles();
+            return functionsExpansions.get(func).get(degree).cycles();
         }
     }
 
     public void printProgram(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
-        if (!savedFunctions.isEmpty()) {
-            if (degree >= savedFunctions.get(func).size()) {
+        if (!functionsExpansions.isEmpty()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            savedFunctions.get(func).get(degree)
+            functionsExpansions.get(func).get(degree)
                     .getInstructions()
                     .forEach(instr -> { System.out.println(instr.getRepresentation()); } );
         }
@@ -283,23 +298,23 @@ public class ProgramManager {
     public void runProgram(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
 
-        if (!savedFunctions.isEmpty()) {
-            if (degree >= savedFunctions.get(func).size()) {
+        if (!functionsExpansions.isEmpty()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            savedFunctions.get(func).get(degree).run();
+            functionsExpansions.get(func).get(degree).run();
         }
     }
 
     private void expand(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
-        while (degree + 1 > savedFunctions.get(func).size()) {
+        while (degree + 1 > functionsExpansions.get(func).size()) {
             this.expandOnce(func);
         }
     }
 
     private void expandOnce(String func) {
-        Program currentProgram = savedFunctions.get(func).getLast();
+        Program currentProgram = functionsExpansions.get(func).getLast();
         List<Instruction> currentInstructions = currentProgram.getInstructions();
         List<Instruction> newInstructions = new ArrayList<>();
 
@@ -330,7 +345,7 @@ public class ProgramManager {
                     .findFirst().ifPresent(labeledInstr -> newLabels.put(label, labeledInstr));
         }
 
-        savedFunctions.get(func).add(new SProgram(currentProgram.getName(), newLabels, newInstructions, null));
+        functionsExpansions.get(func).add(new SProgram(currentProgram.getName(), newLabels, newInstructions, null));
     }
 
     private List<Instruction> expandInstruction(Instruction instr, int lineNum) {
@@ -497,11 +512,11 @@ public class ProgramManager {
     public void debugStart(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
 
-        if (!savedFunctions.isEmpty()) {
-            if (degree >= savedFunctions.get(func).size()) {
+        if (!functionsExpansions.isEmpty()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            programInDebug = savedFunctions.get(func).get(degree);
+            programInDebug = functionsExpansions.get(func).get(degree);
             debugLine = 1;
         }
     }
@@ -538,21 +553,21 @@ public class ProgramManager {
     public List<Label> getLabels(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
 
-        if (!savedFunctions.isEmpty()) {
-            if (degree >= savedFunctions.get(func).size()) {
+        if (!functionsExpansions.isEmpty()) {
+            if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-             return savedFunctions.get(func).get(degree).getLabels().keySet().stream().toList();
+             return functionsExpansions.get(func).get(degree).getLabels().keySet().stream().toList();
         }
         else return null;
     }
 
     public List<String> getFuncNamesList() {
-        return new ArrayList<>(savedFunctions.keySet());
+        return new ArrayList<>(functionsExpansions.keySet());
     }
 
     public List<Program> getAllPrograms() {
-        return savedFunctions.values().stream()
+        return savedPrograms.values().stream()
                 .map(list -> list.stream().findFirst().orElse(null))
                 .filter(Objects::nonNull)
                 .toList();

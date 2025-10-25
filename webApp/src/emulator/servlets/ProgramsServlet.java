@@ -93,18 +93,47 @@ public class ProgramsServlet extends HttpServlet {
             }
 
             // No query params -> list all
-            ProgramDTO[] all;
-            synchronized (engine) { all = engine.getAllProgramDTOs().toArray(new ProgramDTO[0]); }
-            try (PrintWriter out = response.getWriter()) { out.print(GSON.toJson(all)); }
+            List<ProgramDTO> allPrograms;
+            synchronized (engine) { allPrograms = engine.getAllProgramDTOs(); }
+            try (PrintWriter out = response.getWriter()) { out.print(GSON.toJson(allPrograms)); }
             return;
         }
 
         // 2) /programs/list -> names list
         if (path.equals(WebConstants.PROGRAMS_LIST_PATH)) { // expect "/list"
-            String[] names;
-            synchronized (engine) { names = engine.getAllProgramNames().toArray(new String[0]); }
+            List<String> names;
+            synchronized (engine) { names = engine.getAllProgramNames(); }
             try (PrintWriter out = response.getWriter()) { out.print(GSON.toJson(names)); }
             return;
+        }
+
+        // 3) /programs/func -> specific function
+        if (path.equals(WebConstants.PROGRAMS_FUNC_PATH)) {
+            if (programName != null) {
+                ProgramDTO function;
+
+                try {
+                    synchronized (engine) {
+                        if (!engine.isProgramExists(programName, 0)) {
+                            sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
+                            return;
+                        }
+                        function = engine.getProgramDTO(programName, 0);
+                    }
+                    PrintWriter out = response.getWriter();
+                    out.print(GSON.toJson(function));
+                    return;
+                } catch (Exception e) {
+                    sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                            "Error getting program function: " + e.getMessage());
+                    return;
+                }
+            } else {
+                sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Provide 'programName' to get its function.");
+                return;
+            }
+
         }
 
         // 3) /programs/maxdegree -> max degree

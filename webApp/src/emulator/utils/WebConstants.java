@@ -27,6 +27,7 @@ public class WebConstants {
     private final static String WILDCARD_PATH = "/*";
     public final static String PROGRAMS_W_PATH = PROGRAMS_PATH + WILDCARD_PATH;
     public final static String PROGRAMS_LIST_PATH = "/list";
+    public static final String PROGRAMS_FUNC_PATH = "/func";
     public final static String INPUTS_PATH = "/inputs";
     public final static String DEBUG_W_PATH = DEBUG_PATH + WILDCARD_PATH;
 
@@ -36,6 +37,7 @@ public class WebConstants {
     public final static String USERS_URL = SERVER_PATH + USERS_PATH;
     public final static String PROGRAMS_URL = SERVER_PATH + PROGRAMS_PATH;
     public final static String PROGRAMS_LIST_URL = PROGRAMS_URL + PROGRAMS_LIST_PATH;
+    public final static String PROGRAMS_FUNC_URL = PROGRAMS_URL + PROGRAMS_FUNC_PATH;
     public final static String INPUTS_URL = SERVER_PATH + INPUTS_PATH;
     public final static String MAXDEGREE_URL = PROGRAMS_URL + MAXDEGREE_PATH;
     public final static String RUN_URL = SERVER_PATH + RUN_PATH;

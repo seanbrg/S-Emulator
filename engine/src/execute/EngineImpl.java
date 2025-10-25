@@ -48,7 +48,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public boolean validateProgram(String program, int degree) {
-        return pm.getProgram(program, degree).checkLabels();
+        return pm.getFunction(program, degree).checkLabels();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class EngineImpl implements Engine {
     @Override
     public List<VariableDTO> getOutputs(String func, int degree) {
         List<VariableDTO> result = new ArrayList<>();
-        Set<String> varStr = pm.getProgram(func, degree).getVariables()
+        Set<String> varStr = pm.getFunction(func, degree).getVariables()
                 .stream().map(Variable::getName).collect(Collectors.toSet());
         List<List<VariableDTO>> varsByType = this.getVarByType();
 
@@ -99,7 +99,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public List<VariableDTO> getInputs(String func, int degree) {
-        Program function = pm.getProgram(func, degree);
+        Program function = pm.getFunction(func, degree);
 
         Set<Variable> innerFunctionVars = function.getVariables();
         List<VariableDTO> result = new ArrayList<>();
@@ -115,7 +115,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public int getCycles(String program, int degree) {
-        return pm.getProgram(program, degree).cycles();
+        return pm.getFunction(program, degree).cycles();
     }
 
     @Override
@@ -189,7 +189,7 @@ public class EngineImpl implements Engine {
     @Override
     public List<InstructionDTO> getInstructionsList(String program, int degree) {
         if (pm.isEmpty()) return Collections.emptyList();
-        else return pm.getProgram(program, degree).getInstructions().stream()
+        else return pm.getFunction(program, degree).getInstructions().stream()
                 .map(InstructionDTO::new)
                 .toList();
     }
@@ -231,7 +231,7 @@ public class EngineImpl implements Engine {
         loadInputs(inputs);
 
         // Capture actual input variable values after loading
-        List<VariableDTO> currentInputs = pm.getProgram(program, degree).getVariables().stream()
+        List<VariableDTO> currentInputs = pm.getFunction(program, degree).getVariables().stream()
                 .filter(v -> v.getType() == VariableType.INPUT)
                 .map(v -> new VariableDTO(v.getName(), v.getValue()))
                 .toList();
@@ -254,7 +254,7 @@ public class EngineImpl implements Engine {
         runCounter++;
 
         // Wrap program in DTO
-        ProgramDTO programDTO = new ProgramDTO(pm.getProgram(program, degree));
+        ProgramDTO programDTO = new ProgramDTO(pm.getFunction(program, degree));
 
         // Create history entry with actual input/output values
         HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles, programDTO, currentInputs, outputs);
@@ -280,7 +280,7 @@ public class EngineImpl implements Engine {
         int maxDegree = pm.maxDegree(programName);
 
         HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles,
-                new ProgramDTO(pm.getProgram(programName, degree)),
+                new ProgramDTO(pm.getFunction(programName, degree)),
                 inputs,
                 getOutputs(programName, degree));
 
@@ -290,12 +290,12 @@ public class EngineImpl implements Engine {
 
     @Override
     public ProgramDTO getProgramDTO(String programName, int degree) {
-        return new ProgramDTO(pm.getProgram(programName, degree));
+        return new ProgramDTO(pm.getFunction(programName, degree));
     }
 
     @Override
     public boolean isProgramExists(String programName, int degree) {
-        return pm.getProgram(programName, degree) != null;
+        return pm.getFunction(programName, degree) != null;
     }
 
     @Override
