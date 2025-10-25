@@ -20,7 +20,7 @@ public interface Engine {
 
     boolean isLoaded();
 
-    String getMainProgramName();
+    String getFirstProgramName();
 
     void resetVars();
 

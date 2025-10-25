@@ -16,12 +16,14 @@ public class SProgram implements Program {
     private Set<Variable> vars;
     private Map<Integer, Variable> inputVars;
     private Variable outputVar;
+    int architectureVersion;
 
     public SProgram(String name, Map<Label, Instruction> labels, String userStr) {
         this.userStr = userStr == null ? name : userStr;
         this.name = name;
         this.instructions = new ArrayList<>();
         this.labels = labels; // labels must map each label to its instruction
+        calculateArch();
     }
 
     public SProgram(String name, Map<Label, Instruction> labels, List<Instruction> instructions, String userStr) {
@@ -35,6 +37,7 @@ public class SProgram implements Program {
         }
 
         findVariables();
+        calculateArch();
     }
 
     public SProgram(String name, String userStr) {
@@ -42,8 +45,14 @@ public class SProgram implements Program {
         this.name = name;
         this.instructions = new ArrayList<>();
         this.labels = new HashMap<>();
+        calculateArch();
     }
 
+    private void calculateArch() {
+        this.architectureVersion = instructions.stream()
+                .mapToInt(Instruction::getArch)
+                .max().orElse(1);
+    }
 
     @Override
     public void run() {
@@ -187,6 +196,11 @@ public class SProgram implements Program {
         }
 
         outputVar = vars.stream().filter(var -> var.getType().equals(VariableType.OUTPUT)).findFirst().orElse(null);
+    }
+
+    @Override
+    public int getArchVersion() {
+        return 1;
     }
 
 }

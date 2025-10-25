@@ -42,4 +42,6 @@ public interface Instruction {
     Variable getPrimaryVar();
 
     Variable getSecondaryVar();
+
+    int getArch();
 }

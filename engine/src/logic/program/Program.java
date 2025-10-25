@@ -38,4 +38,6 @@ public interface Program {
     void setInputs(Map<Integer, Variable> inputVars);
 
     void findVariables();
+
+    int getArchVersion();
 }

@@ -39,7 +39,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public String getMainProgramName() { return pm.getMainProgramName(); }
+    public String getFirstProgramName() { return pm.getFirstProgramName(); }
 
     @Override
     public void resetVars() {
@@ -140,6 +140,9 @@ public class EngineImpl implements Engine {
     @Override
     public boolean loadFromStream(InputStream inputStream) {
         Map<String, Variable> vars = new HashMap<>();
+        vars.putAll(this.inputVarsMap);
+        vars.putAll(this.tempVarsMap);
+        if (outputVar != null) vars.put(outputVar.getName(), outputVar);
         XmlLoader loader = new XmlLoader();
         List<Program> programs = loader.parseStream(inputStream, vars, printMode);
 

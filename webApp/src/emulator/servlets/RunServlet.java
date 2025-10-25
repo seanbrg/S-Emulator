@@ -81,6 +81,8 @@ public class RunServlet extends HttpServlet {
                             return;
                         }
                         HistoryDTO resultDto = engine.runProgramAndRecord(programName, degree, inputsDto);
+                        System.out.println("Executed program '" + programName + "' degree " + degree + " successfully." +
+                                "Inputs: " + inputsDto + " Result: " + resultDto.getOutput().getVarString());
                         String jsonResponse = GSON.toJson(resultDto);
                         PrintWriter out = response.getWriter();
                         out.println(jsonResponse);

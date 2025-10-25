@@ -24,7 +24,6 @@ public class ProgramManager {
     private Map<String, List<Program>> savedFunctions;
     private Map<String, Program> quotableFunctions;
     private Map<String, Integer> maxDegrees;
-    private String mainName;
 
     private Program programInDebug;
     private int debugLine;
@@ -55,13 +54,11 @@ public class ProgramManager {
         return function.getOutput().getValue();
     }
 
-    public String getMainProgramName() {
-        return mainName;
+    public String getFirstProgramName() {
+        return savedFunctions.keySet().iterator().next();
     }
 
     public void loadNew(List<Program> programs) {
-        this.clear();
-        mainName = programs.getFirst().getName();
         for (Program func : programs) {
             savedFunctions.put(func.getName(), new ArrayList<>(List.of(func)));
             maxDegrees.put(func.getName(), func.maxDegree());
@@ -85,11 +82,12 @@ public class ProgramManager {
         Map<Variable, Variable> newVarsMap = new HashMap<>();
         Map<Label, Label> newLblsMap = new HashMap<>();
 
-        quotableFunctions.clear();
         for (Program program : programs) {
-            String name = program.getName();
-            String userStr = program.getUserStr();
-            quotableFunctions.put(program.getName(), new SProgram(name, userStr));
+            if (!quotableFunctions.containsKey(program.getName())) {
+                String name = program.getName();
+                String userStr = program.getUserStr();
+                quotableFunctions.put(program.getName(), new SProgram(name, userStr));
+            }
         }
 
         for (int i = 1; i < programs.size(); i++) {
@@ -487,7 +485,7 @@ public class ProgramManager {
 
         for (Instruction instr : funcInstrList) {
             result.add(copyInstr(instr, instr.getSelfLabel(), instr.getTargetLabel(),
-                            instr.getPrimaryVar(), instr.getSecondaryVar(), lineNum, quo,null, null));
+                            instr.getPrimaryVar(), instr.getSecondaryVar(), lineNum++, quo,null, null));
         }
 
         Variable output = func.getOutput();
@@ -559,4 +557,6 @@ public class ProgramManager {
                 .filter(Objects::nonNull)
                 .toList();
     }
+
+
 }

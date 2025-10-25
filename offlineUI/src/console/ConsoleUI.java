@@ -31,7 +31,7 @@ public class ConsoleUI {
 
             switch (choice) {
                 case "1" -> loadXml();
-                case "2" -> engine.printProgram(engine.getMainProgramName(), 0);
+                case "2" -> engine.printProgram(engine.getFirstProgramName(), 0);
                 case "3" -> expandProgram();
                 case "4" -> runProgram();
                 case "5" -> engine.printHistory();
@@ -54,7 +54,7 @@ public class ConsoleUI {
 
     private void expandProgram() {
         if (engine.isLoaded()) {
-            int degree = engine.maxDegree(engine.getMainProgramName());
+            int degree = engine.maxDegree(engine.getFirstProgramName());
             System.out.printf("Program maximum degree is: %d.%n", degree);
             System.out.print("Please choose expansion degree (0.." + degree + "): ");
 
@@ -69,7 +69,7 @@ public class ConsoleUI {
             if (chosen < 0 || chosen > degree) {
                 System.out.println("Invalid degree, please try again.");
             } else {
-                engine.printProgram(engine.getMainProgramName(), chosen);
+                engine.printProgram(engine.getFirstProgramName(), chosen);
             }
         }
         else System.out.println("Invalid choice: no program loaded.");
@@ -78,7 +78,7 @@ public class ConsoleUI {
 
     private void runProgram() {
         if (engine.isLoaded()) {
-            int maxDegree = engine.maxDegree(engine.getMainProgramName());
+            int maxDegree = engine.maxDegree(engine.getFirstProgramName());
             System.out.printf("Current Program maximum degree is: %d.%n", maxDegree);
             System.out.printf("Please choose Program degree from 0 to %d:%n", maxDegree);
 
@@ -91,7 +91,7 @@ public class ConsoleUI {
             }
 
             if (0 <= degree && degree <= maxDegree) {
-                List<VariableDTO> requiredInputVars = engine.getInputs(engine.getMainProgramName(), degree);
+                List<VariableDTO> requiredInputVars = engine.getInputs(engine.getFirstProgramName(), degree);
                 System.out.println("The current program's input variables are:");
                 requiredInputVars.forEach(s -> System.out.print(s.getName() + " "));
                 System.out.println('\n' + "Please enter inputs separated by commas:");
@@ -143,9 +143,9 @@ public class ConsoleUI {
                 }*/
 
                 engine.loadInputs(inputVars);
-                HistoryDTO result = engine.runProgramAndRecord(engine.getMainProgramName(), degree, inputVars);
+                HistoryDTO result = engine.runProgramAndRecord(engine.getFirstProgramName(), degree, inputVars);
                 System.out.println("Program ran successfully:");
-                engine.printProgram(engine.getMainProgramName(), degree);
+                engine.printProgram(engine.getFirstProgramName(), degree);
 
                 System.out.printf("Output: y = %d%n", result.getOutputAndTemps().getFirst().getValue());
                 System.out.println("Variables:");
@@ -157,7 +157,7 @@ public class ConsoleUI {
 
                 engine.resetVars();
 
-                System.out.printf("Cycles: %d \n", engine.getCycles(engine.getMainProgramName(), degree));
+                System.out.printf("Cycles: %d \n", engine.getCycles(engine.getFirstProgramName(), degree));
             } else {
                 System.out.println("Invalid choice, please try again.");
             }

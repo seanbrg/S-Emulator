@@ -78,4 +78,7 @@ public abstract class AbstractInstruction implements Instruction {
 
     @Override
     public int getNum() { return num; }
+
+    @Override
+    public int getArch() { return data.getArch(); }
 }
