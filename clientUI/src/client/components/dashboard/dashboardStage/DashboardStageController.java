@@ -1,15 +1,24 @@
 package client.components.dashboard.dashboardStage;
 
+import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.components.mainApp.MainAppController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 public class DashboardStageController {
 
     @FXML private Label headerLabel;
+    @FXML private BorderPane availableUsers;
+    @FXML private AvailableUsersController availableUsersController;
     private MainAppController mainAppController;
 
-    public void setMainAppController(MainAppController controller) {
+    @FXML
+    public void initialize() {
+    }
+
+        public void setMainAppController(MainAppController controller) {
         this.mainAppController = controller;
     }
 
@@ -20,6 +29,11 @@ public class DashboardStageController {
     @FXML
     private void handleLogout() {
         mainAppController.switchToLogin();
+    }
+
+    public void setActive(String userName) {
+        updateHeader("Welcome, " + userName + "!");
+        availableUsersController.startListRefresher();
     }
 }
 

@@ -77,8 +77,8 @@ public class MainAppController {
         loadDashboard();
 
         Platform.runLater(() -> {
-            dashboardStageController.updateHeader("Welcome, " + currentUserName + "!");
             primaryStage.getScene().setRoot(dashboardComponent);
+            dashboardStageController.setActive(userName);
         });
     }
 

@@ -1,5 +1,10 @@
 package client.components.dashboard.availableUsers;
 
+import client.util.HttpUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import emulator.utils.WebConstants;
+import execute.dto.VariableDTO;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -16,6 +21,7 @@ import okhttp3.*;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
@@ -97,6 +103,7 @@ public class AvailableUsersController implements Closeable {
         private final BooleanProperty autoUpdate;
         private final Consumer<String> httpStatusConsumer;
         private final Consumer<List<String>> usersListUpdater;
+        private static final Gson GSON = new Gson();
 
         public UserListRefresher(BooleanProperty autoUpdate,
                                  Consumer<String> httpStatusConsumer,
@@ -110,51 +117,25 @@ public class AvailableUsersController implements Closeable {
         public void run() {
             if (autoUpdate.get()) {
                 httpStatusConsumer.accept("Updating available users...");
-                List<String> users = AvailableUsersFetcher.fetchUsers(); // fetch dummy list
-                usersListUpdater.accept(users);
-                httpStatusConsumer.accept("Available users updated.");
-            }
-        }
-    }
 
-    public static class AvailableUsersFetcher {
+                HttpUtils.getAsync(WebConstants.USERS_URL).thenAccept(json -> {
+                    // Parse JSON array of strings
+                    try {
+                        Type listType = new TypeToken<List<String>>() {}.getType();
+                        List<String> usersList = GSON.fromJson(json, listType);
 
-        private static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(3, TimeUnit.SECONDS)
-                .build();
+                        usersListUpdater.accept(usersList);
+                        httpStatusConsumer.accept("Available users updated.");
 
-        /**
-         * Fetch users from server (dummy data for now)
-         */
-        public static List<String> fetchUsers() {
-            // TODO: Replace with actual server request
-            return Arrays.asList("Alice", "Bob", "Charlie", "David");
-        }
-
-        /**
-         * Async fetch (example)
-         */
-        public static void fetchUsersAsync(String url, Consumer<List<String>> onResult) {
-            Request request = new Request.Builder().url(url).build();
-            HTTP_CLIENT.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    onResult.accept(Collections.emptyList());
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful() && response.body() != null) {
-                        String body = response.body().string();
-                        List<String> users = Arrays.asList(body.replace("[","").replace("]","")
-                                .replace("\"","").split(","));
-                        onResult.accept(users);
-                    } else {
-                        onResult.accept(Collections.emptyList());
+                    } catch (Exception e) {
+                        httpStatusConsumer.accept("Failed to parse users list: " + e.getMessage());
+                        return;
                     }
-                }
-            });
+                }).exceptionally(ex -> {
+                    httpStatusConsumer.accept("Failed to update users: " + ex.getCause().getMessage());
+                    return null;
+                });
+            }
         }
     }
 }

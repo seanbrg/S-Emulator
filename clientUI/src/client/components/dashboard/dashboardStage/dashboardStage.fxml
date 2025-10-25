@@ -16,7 +16,7 @@
     <center>
         <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <fx:include fx:id="availableUsersComponent" source="../availableUsers/availableUsers.fxml" />
+                <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml" />
             </children>
         </HBox>
     </center>

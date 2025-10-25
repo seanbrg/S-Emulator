@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 public class Constants {
     public static final String LOGIN_FXML = "/client/components/login/login.fxml";
     public static final String DASHBOARD_FXML = "/client/components/dashboard/dashboardStage/dashboardStage.fxml";
-    public static final int REFRESH_RATE = 2000; // milliseconds
+    public static final int REFRESH_RATE = 500; // milliseconds
     public static final Gson GSON_INSTANCE = new Gson();
 
     // Replace with your actual server URL and port
