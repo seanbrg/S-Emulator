@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="runMenu" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.runMenu.RunMenuController">
+<BorderPane fx:id="runMenu" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" BorderPane.alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="client.components.execution.runMenu.RunMenuController">
    <center>
       <BorderPane maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <bottom>
-            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="76.0" prefRowCount="8" prefWidth="349.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
+            <TextArea fx:id="console" editable="false" focusTraversable="false" maxHeight="Infinity" maxWidth="1.7976931348623157E308" prefHeight="88.0" prefRowCount="8" prefWidth="349.0" styleClass="console" wrapText="false" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
@@ -28,9 +28,9 @@
          <center>
             <HBox BorderPane.alignment="CENTER">
                <children>
-                  <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="181.0">
+                  <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="454.0" prefWidth="182.0">
                      <bottom>
-                        <TableView fx:id="inputsTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="240.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="inputsTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="410.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
@@ -54,7 +54,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </BorderPane>
-                  <BorderPane maxHeight="-Infinity" maxWidth="-Infinity">
+                  <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="462.0" prefWidth="166.0">
                      <top>
                         <Label text="Result Variables" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
@@ -63,7 +63,7 @@
                         </Label>
                      </top>
                      <bottom>
-                        <ListView fx:id="resultsList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="240.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                        <ListView fx:id="resultsList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="-Infinity" prefHeight="389.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets bottom="20.0" right="15.0" />
                            </BorderPane.margin>
@@ -74,7 +74,7 @@
             </HBox>
          </center>
          <top>
-            <HBox prefHeight="22.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+            <HBox prefHeight="48.0" prefWidth="349.0" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="buttonNewRun" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="New Run">
                      <HBox.margin>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="600.0" prefWidth="800.0"
-            xmlns="http://javafx.com/javafx/24.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.components.dashboard.dashboardStage.DashboardStageController">
-    <top>
-        <Label fx:id="headerLabel" text="Welcome" BorderPane.alignment="CENTER"
-               style="-fx-font-size: 20px; -fx-padding: 15px;" />
-    </top>
-    <center>
-        <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <children>
-                <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml" />
-            </children>
-        </HBox>
-    </center>
-</BorderPane>
+
+<ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.dashboardStage.DashboardStageController">
+   <content>
+      <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0">
+          <top>
+              <fx:include fx:id="header" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../../header/header.fxml" />
+          </top>
+          <center>
+              <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <children>
+                      <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml" />
+                  </children>
+              </HBox>
+          </center>
+      </BorderPane>
+   </content>
+</ScrollPane>

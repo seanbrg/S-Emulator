@@ -2,7 +2,7 @@ package client.components.execution.executionStage;
 
 import client.components.execution.expandWindow.ExpandWindowController;
 import client.components.execution.instructionHistory.InstructionHistoryController;
-import client.components.execution.header.HeaderController;
+import client.components.header.HeaderController;
 import client.components.execution.programTab.ProgramTabController;
 import client.components.execution.runHistory.RunHistoryController;
 import client.components.execution.runMenu.RunMenuController;

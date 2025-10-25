@@ -1,4 +1,4 @@
-package client.components.execution.header;
+package client.components.header;
 
 import client.components.execution.programTab.ProgramTabController;
 import javafx.fxml.FXML;

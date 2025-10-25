@@ -6,41 +6,27 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.executionStage.ExecutionStageController">
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.executionStage.ExecutionStageController">
    <content>
-      <BorderPane minHeight="-Infinity" minWidth="520.0" prefHeight="650.0" prefWidth="1000.0">
+      <BorderPane minHeight="-Infinity" minWidth="1000.0" prefHeight="650.0" prefWidth="1000.0">
          <top>
-            <fx:include fx:id="header" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../header/header.fxml" />
+            <fx:include fx:id="header" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../../header/header.fxml" />
          </top>
+         <right>
+            <fx:include fx:id="runMenu" maxHeight="Infinity" maxWidth="Infinity" source="../runMenu/runMenu.fxml" />
+         </right>
          <center>
-            <SplitPane dividerPositions="0.5961538461538461" maxHeight="Infinity" maxWidth="Infinity" pickOnBounds="false" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <SplitPane dividerPositions="0.6623" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
               <items>
-                  <SplitPane dividerPositions="0.6623" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-                    <items>
-                        <TabPane fx:id="programTabs" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" />
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <fx:include fx:id="instructionHistory" maxHeight="Infinity" maxWidth="Infinity" source="../instructionHistory/instructionHistory.fxml" />
-                           </center>
-                           <top>
-                              <Label text="Expanded Instruction History" BorderPane.alignment="CENTER" />
-                           </top>
-                        </BorderPane>
-                    </items>
-                  </SplitPane>
-                  <SplitPane dividerPositions="0.6623" maxHeight="Infinity" maxWidth="Infinity" orientation="VERTICAL">
-                    <items>
-                        <fx:include fx:id="runMenu" maxHeight="Infinity" maxWidth="Infinity" source="../runMenu/runMenu.fxml" />
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <fx:include fx:id="runHistory" maxHeight="Infinity" maxWidth="Infinity" source="../runHistory/runHistory.fxml" />
-                           </center>
-                           <top>
-                              <Label text="Previous Runs Statistics" BorderPane.alignment="CENTER" />
-                           </top>
-                        </BorderPane>
-                    </items>
-                  </SplitPane>
+                  <TabPane fx:id="programTabs" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" />
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <fx:include fx:id="instructionHistory" maxHeight="Infinity" maxWidth="Infinity" source="../instructionHistory/instructionHistory.fxml" />
+                     </center>
+                     <top>
+                        <Label text="Expanded Instruction History" BorderPane.alignment="CENTER" />
+                     </top>
+                  </BorderPane>
               </items>
             </SplitPane>
          </center>
