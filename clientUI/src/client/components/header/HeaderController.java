@@ -17,16 +17,25 @@ import javafx.animation.*;
 import client.components.execution.executionStage.ExecutionStageController;
 
 public class HeaderController {
-    @FXML private ExecutionStageController mainController;
+    @FXML
+    private ExecutionStageController mainController;
 
-    @FXML private MenuItem menuItemLoad;
-    @FXML private MenuItem menuItemExpand;
-    @FXML private MenuItem menuItemThemeLight;
-    @FXML private MenuItem menuItemThemeDark;
-    @FXML private ProgressBar progressBar;
-    @FXML public Menu menuViewLabels;
-    @FXML public Menu menuViewVariables;
-    @FXML public MenuItem menuViewClear;
+    @FXML
+    private MenuItem menuItemLoad;
+    @FXML
+    private MenuItem menuItemExpand;
+    @FXML
+    private MenuItem menuItemThemeLight;
+    @FXML
+    private MenuItem menuItemThemeDark;
+    @FXML
+    private ProgressBar progressBar;
+    @FXML
+    public Menu menuViewLabels;
+    @FXML
+    public Menu menuViewVariables;
+    @FXML
+    public MenuItem menuViewClear;
 
     private Scene scene;
     private ToggleGroup labelsGroup;
@@ -52,7 +61,9 @@ public class HeaderController {
         javafx.application.Platform.runLater(this::enableDynamicViewMenus);
     }
 
-    public void setScene(Scene scene) { this.scene = scene; }
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
 
     @FXML
     private void handleLoad() {
@@ -91,8 +102,7 @@ public class HeaderController {
             stall.setOnFinished(__ -> {
                 if (ok) {
                     mainController.newProgram(funcNames);
-                }
-                else {
+                } else {
                     mainController.alertLoadFailed();
                 }
                 progressBar.setVisible(false);
@@ -143,9 +153,10 @@ public class HeaderController {
 
         // Collect distinct labels/vars from current table
         var labels = new java.util.LinkedHashSet<String>();
-        var vars   = new java.util.LinkedHashSet<String>();
+        var vars = new java.util.LinkedHashSet<String>();
         items.forEach(dto -> {
-            if (dto.getSelfLabel() != null && !dto.getSelfLabel().getLabel().isBlank()) labels.add(dto.getSelfLabel().getLabel());
+            if (dto.getSelfLabel() != null && !dto.getSelfLabel().getLabel().isBlank())
+                labels.add(dto.getSelfLabel().getLabel());
             if (dto.getVariables() != null) dto.getVariables().forEach(v -> {
                 if (v != null && v.getName() != null && !v.getName().isBlank()) vars.add(v.getName());
             });
@@ -162,7 +173,9 @@ public class HeaderController {
     private List<MenuItem> buildMenu(java.util.Set<String> entries, java.util.function.Consumer<String> onPick) {
         var list = new java.util.ArrayList<MenuItem>();
         var clear = new RadioMenuItem("None");
-        var group = new ToggleGroup(); clear.setToggleGroup(group); clear.setSelected(true);
+        var group = new ToggleGroup();
+        clear.setToggleGroup(group);
+        clear.setSelected(true);
         clear.setOnAction(e -> mainController.clearHighlights());
         list.add(clear);
         for (String s : entries) {
@@ -209,3 +222,5 @@ public class HeaderController {
         mainController.expandProgram();
     }
 }
+
+

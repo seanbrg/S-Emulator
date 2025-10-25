@@ -665,7 +665,7 @@
     -fx-opacity: 0.55;
 }
 
-/* highlight for full row */
+/* highlight for full row
 .table-row-cell:highlighted {
     -fx-background-color: -fx-accent, -tertiary-system-background ;
     -fx-background-insets: 0, 0 0 1 0;
@@ -673,10 +673,10 @@
     -fx-opacity: 1.0;
 }
 
-/* optional: make text bold/contrasty when highlighted */
+
 .table-row-cell:highlighted .text {
     -fx-font-weight: bold;
-}
+}*/
 
 /* ===== Dark Dialog (matches muted gray theme) ===== */
 .dialog-pane {

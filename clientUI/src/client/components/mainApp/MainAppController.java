@@ -79,6 +79,7 @@ public class MainAppController {
         Platform.runLater(() -> {
             primaryStage.getScene().setRoot(dashboardComponent);
             dashboardStageController.setActive(userName);
+
             primaryStage.sizeToScene();
         });
     }

@@ -1,11 +1,12 @@
 package client.components.dashboard.dashboardHeader;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import okhttp3.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -15,63 +16,131 @@ public class DashboardHeaderController {
     private Button loadFileButton;
 
     @FXML
+    private Button chargeCreditsButton;
+
+    @FXML
     private Label filePath;
 
-    // Adjust this to match your servlet base URL
+    @FXML
+    private Label userNameLable;
+
+    @FXML
+    private Label availableCreditsLable;
+
+    @FXML
+    private TextField creditsTextField;
+
     private static final String PROGRAMS_SERVLET_URL = "http://localhost:8080/semulator/programs";
+
+
+    private int availableCredits = 50;
 
     @FXML
     public void initialize() {
         loadFileButton.setOnAction(event -> onLoadFileClicked());
+        chargeCreditsButton.setOnAction(event -> onChargeCreditsClicked());
+        updateCreditLabel();
+    }
+
+    private void onChargeCreditsClicked() {
+        String text = creditsTextField.getText().trim();
+        if (text.isEmpty()) {
+            showAlert("Missing Input", "Please enter how many credits to add.");
+            return;
+        }
+
+        try {
+            int amount = Integer.parseInt(text);
+            if (amount <= 0) {
+                showAlert("Invalid Amount", "Please enter a positive number.");
+                return;
+            }
+
+            availableCredits += amount;
+            updateCreditLabel();
+            creditsTextField.clear();
+            showAlert("Credits Added", "Successfully added " + amount + " credits!");
+
+        } catch (NumberFormatException e) {
+            showAlert("Invalid Input", "Please enter a valid number.");
+        }
     }
 
     private void onLoadFileClicked() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Program File");
-
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("XML Files", "*.xml")
         );
 
-        Stage stage = (Stage) loadFileButton.getScene().getWindow(); //Finds the current window
-        File selectedFile = fileChooser.showOpenDialog(stage); //Opens the file chooser dialog
+        Stage stage = (Stage) loadFileButton.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
 
         if (selectedFile != null) {
-            filePath.setText(selectedFile.getAbsolutePath());//Displays its full path in the label
-            uploadProgramFile(selectedFile);
+            filePath.setText(selectedFile.getAbsolutePath());
+            activateProgram(selectedFile);
         } else {
             filePath.setText("No file selected");
         }
     }
 
-    private void uploadProgramFile(File file) {
+    private void activateProgram(File programFile) {
+        int programCost = 10;
+
+
+
+        uploadProgramFile(programFile, programCost);
+    }
+
+    private void uploadProgramFile(File file, int programCost) {
         OkHttpClient client = new OkHttpClient();
 
-        //Wraps the file’s contents into a RequestBody object so OkHttp can send it in a POST request
-        //"application/octet-stream" means “raw binary data”.
         RequestBody requestBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
-
-        //Builds an HTTP POST request to your servlet, attaching the file data as the body.
         Request request = new Request.Builder()
                 .url(PROGRAMS_SERVLET_URL)
                 .post(requestBody)
                 .build();
 
-        //Sends the request asynchronously
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("Upload failed: " + e.getMessage());
+                Platform.runLater(() -> showAlert("Upload Failed", "Upload failed: " + e.getMessage()));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    System.out.println("File uploaded successfully!");
+                    Platform.runLater(() -> {
+                        deductCredits(programCost);
+                        showAlert("Program Activated", "Program successfully activated! -" + programCost + " credits.");
+                    });
                 } else {
-                    System.out.println("Upload failed. Server responded with code: " + response.code());
+                    Platform.runLater(() -> showAlert("Upload Failed", "Server responded with code: " + response.code()));
                 }
             }
         });
     }
+
+    private void deductCredits(int amount) {
+        availableCredits -= amount;
+        if (availableCredits < 0) availableCredits = 0;
+        updateCreditLabel();
+    }
+
+    private void updateCreditLabel() {
+        Platform.runLater(() -> availableCreditsLable.setText(String.valueOf(availableCredits)));
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    public void setUserName(String userName) {
+        Platform.runLater(() -> userNameLable.setText(userName));
+    }
+
 }
