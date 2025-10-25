@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-
 
 <ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.dashboardStage.DashboardStageController">
    <content>
@@ -14,7 +14,12 @@
           <center>
               <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                   <children>
-                      <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml" />
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                    <items>
+                            <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml" />
+                        <fx:include source="../../execution/runHistory/runHistory.fxml" />
+                    </items>
+                  </SplitPane>
                   </children>
               </HBox>
           </center>

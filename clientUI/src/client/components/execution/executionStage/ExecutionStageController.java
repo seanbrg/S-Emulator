@@ -50,8 +50,6 @@ public class ExecutionStageController {
     @FXML private HBox header;
     @FXML private HeaderController headerController;
     @FXML private TabPane programTabs;
-    @FXML private BorderPane runHistory;
-    @FXML private RunHistoryController runHistoryController;
     @FXML private TableView instructionHistory;
     @FXML private InstructionHistoryController instructionHistoryController;
     @FXML private BorderPane runMenu;
@@ -93,7 +91,6 @@ public class ExecutionStageController {
 
         runMenuController.setMainController(this);
         headerController.setMainController(this);
-        runHistoryController.setMainController(this);
         instructionHistoryController.setMainController(this);
 
         // whenever selection changes, update the currentTabController
@@ -165,7 +162,6 @@ public class ExecutionStageController {
 
                 programCycles.set(result.getCycles());
                 runMenuController.setOutputVariables(result.getOutputAndTemps());
-                runHistoryController.addRunHistory(result);
             });
         });
     }
@@ -500,7 +496,6 @@ public class ExecutionStageController {
             Platform.runLater(() -> {
                 programCycles.set(result.getCycles());
                 runMenuController.setOutputVariables(result.getOutputAndTemps());
-                runHistoryController.addRunHistory(result);
             });
         });
     }

@@ -19,7 +19,6 @@ import client.components.execution.executionStage.ExecutionStageController;
 public class HeaderController {
     @FXML private ExecutionStageController mainController;
 
-    @FXML public Label loadLabel;
     @FXML private MenuItem menuItemLoad;
     @FXML private MenuItem menuItemExpand;
     @FXML private MenuItem menuItemThemeLight;
@@ -43,7 +42,6 @@ public class HeaderController {
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
 
-        loadLabel.setText("No file loaded.");  // initial state
         progressBar.setProgress(0);
         progressBar.setVisible(false);
 
@@ -62,8 +60,6 @@ public class HeaderController {
         if (file == null) return;
 
         final String newPath = file.getPath();
-        final String oldPath = loadLabel.getText();
-        loadLabel.setText("Loading file...");
         progressBar.setProgress(0);
         progressBar.setVisible(true);
 
@@ -74,13 +70,13 @@ public class HeaderController {
         Task<List<String>> task = mainController.createLoadTask(newPath);
 
         // when task leaves RUNNING, finish the bar and then open/notify
-        task.setOnSucceeded(e -> finish(true, task.getValue(), newPath, spinner));
-        task.setOnFailed(e -> finish(false, null, oldPath, spinner));
+        task.setOnSucceeded(e -> finish(true, task.getValue(), spinner));
+        task.setOnFailed(e -> finish(false, null, spinner));
 
         new Thread(task, "load-xml").start();
     }
 
-    private void finish(boolean ok, List<String> funcNames, String path, Timeline spinner) {
+    private void finish(boolean ok, List<String> funcNames, Timeline spinner) {
         spinner.stop();
         var toFull = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -93,7 +89,6 @@ public class HeaderController {
             // stall 0.2s after reaching 100%
             var stall = new PauseTransition(Duration.seconds(0.2));
             stall.setOnFinished(__ -> {
-                loadLabel.setText(path);
                 if (ok) {
                     mainController.newProgram(funcNames);
                 }
