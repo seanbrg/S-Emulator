@@ -219,7 +219,7 @@
     -fx-padding: 4 8 0 8;
 }
 
-/* Hide the default header background; each theme sets colors below */
+/* Hide the default executionHeader background; each theme sets colors below */
 .tab-pane > .tab-header-area > .headers-region {
     -fx-background-insets: 0;
     -fx-background-radius: 8 8 0 0;
@@ -351,7 +351,7 @@
     -surface-border: derive(-system-background, -20%);
 }
 
-/* === Use the same surface for MenuBar, header HBox (.surface), and Tab header strip === */
+/* === Use the same surface for MenuBar, executionHeader HBox (.surface), and Tab executionHeader strip === */
 .menu-bar,
 .surface,
 .tab-pane:top > .tab-header-area {
@@ -400,7 +400,7 @@
     -fx-border-width: 0;
 }
 
-/* Collapse header row & filler without -fx-size */
+/* Collapse executionHeader row & filler without -fx-size */
 .table-view .column-header,
 .table-view .filler {
     -fx-padding: 0;
@@ -447,7 +447,7 @@
 }
 
 /* Header for the var column: center, no left line.
-   If you want a baseline under the header, set border-width to 0 0 1 0 instead. */
+   If you want a baseline under the executionHeader, set border-width to 0 0 1 0 instead. */
 .table-view .column-header.var-col {
     -fx-alignment: CENTER;
     -fx-border-width: 0;

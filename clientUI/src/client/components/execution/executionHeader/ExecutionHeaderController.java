@@ -1,4 +1,4 @@
-package client.components.header;
+package client.components.execution.executionHeader;
 
 import client.components.execution.programTab.ProgramTabController;
 import javafx.fxml.FXML;
@@ -16,12 +16,10 @@ import java.util.List;
 import javafx.animation.*;
 import client.components.execution.executionStage.ExecutionStageController;
 
-public class HeaderController {
+public class ExecutionHeaderController {
     @FXML
     private ExecutionStageController mainController;
 
-    @FXML
-    private MenuItem menuItemLoad;
     @FXML
     private MenuItem menuItemExpand;
     @FXML
@@ -46,7 +44,6 @@ public class HeaderController {
         this.labelsGroup = new ToggleGroup();
         this.varsGroup = new ToggleGroup();
 
-        menuItemLoad.setOnAction(event -> handleLoad());
         menuItemExpand.setOnAction(event -> handleExpand());
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
@@ -63,74 +60,6 @@ public class HeaderController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-    }
-
-    @FXML
-    private void handleLoad() {
-        File file = chooseXmlFile();
-        if (file == null) return;
-
-        final String newPath = file.getPath();
-        progressBar.setProgress(0);
-        progressBar.setVisible(true);
-
-        // start continuous progress
-        Timeline spinner = startContinuousProgress();
-
-        // background load (no UI work inside)
-        Task<List<String>> task = mainController.createLoadTask(newPath);
-
-        // when task leaves RUNNING, finish the bar and then open/notify
-        task.setOnSucceeded(e -> finish(true, task.getValue(), spinner));
-        task.setOnFailed(e -> finish(false, null, spinner));
-
-        new Thread(task, "load-xml").start();
-    }
-
-    private void finish(boolean ok, List<String> funcNames, Timeline spinner) {
-        spinner.stop();
-        var toFull = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(progressBar.progressProperty(), Math.min(progressBar.getProgress(), 0.995))),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(progressBar.progressProperty(), 1.0))
-        );
-
-        toFull.setOnFinished(ev -> {
-            // stall 0.2s after reaching 100%
-            var stall = new PauseTransition(Duration.seconds(0.2));
-            stall.setOnFinished(__ -> {
-                if (ok) {
-                    mainController.newProgram(funcNames);
-                } else {
-                    mainController.alertLoadFailed();
-                }
-                progressBar.setVisible(false);
-            });
-            stall.play();
-        });
-
-        toFull.play();
-    }
-
-    private Timeline startContinuousProgress() {
-        Timeline t = new Timeline(
-                new KeyFrame(Duration.millis(40), e -> {
-                    double p = progressBar.getProgress();
-                    progressBar.setProgress(p >= 0.995 ? 0.995 : p + 0.003); // smooth, continuous
-                })
-        );
-        t.setCycleCount(Animation.INDEFINITE);
-        t.play();
-        return t;
-    }
-
-    private File chooseXmlFile() {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Select Program File");
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML Files", "*.xml"));
-        return fc.showOpenDialog(scene.getWindow());
     }
 
     private void enableDynamicViewMenus() {

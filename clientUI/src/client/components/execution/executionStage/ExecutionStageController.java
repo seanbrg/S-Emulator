@@ -2,9 +2,8 @@ package client.components.execution.executionStage;
 
 import client.components.execution.expandWindow.ExpandWindowController;
 import client.components.execution.instructionHistory.InstructionHistoryController;
-import client.components.header.HeaderController;
+import client.components.execution.executionHeader.ExecutionHeaderController;
 import client.components.execution.programTab.ProgramTabController;
-import client.components.execution.runHistory.RunHistoryController;
 import client.components.execution.runMenu.RunMenuController;
 import client.util.HttpUtils;
 import com.google.gson.Gson;
@@ -29,15 +28,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.concurrent.Task;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import okhttp3.*;
-import okio.BufferedSink;
-import okio.Okio;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -47,8 +41,8 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class ExecutionStageController {
-    @FXML private HBox header;
-    @FXML private HeaderController headerController;
+    @FXML private HBox executionHeader;
+    @FXML private ExecutionHeaderController executionHeaderController;
     @FXML private TabPane programTabs;
     @FXML private TableView instructionHistory;
     @FXML private InstructionHistoryController instructionHistoryController;
@@ -90,7 +84,7 @@ public class ExecutionStageController {
         this.highlightedRows = FXCollections.observableSet(new HashSet<>());
 
         runMenuController.setMainController(this);
-        headerController.setMainController(this);
+        executionHeaderController.setMainController(this);
         instructionHistoryController.setMainController(this);
 
         // whenever selection changes, update the currentTabController
@@ -168,7 +162,7 @@ public class ExecutionStageController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        this.headerController.setScene(scene);
+        this.executionHeaderController.setScene(scene);
     }
 
     public ObjectProperty<ProgramTabController> currentTabControllerProperty() {
@@ -196,50 +190,7 @@ public class ExecutionStageController {
         }
     }
 
-    public Task<List<String>> createLoadTask(String filePath) {
-        return new Task<>() {
-            @Override
-            protected List<String> call() throws IOException {
-                String uploadUrl = WebConstants.PROGRAMS_URL;
-                String listUrl = WebConstants.PROGRAMS_LIST_URL;
-
-                File file = new File(filePath);
-                RequestBody requestBody = new RequestBody() {
-                    @Override
-                    public MediaType contentType() {
-                        return MediaType.parse("application/xml");
-                    }
-                    @Override
-                    public void writeTo(BufferedSink sink) throws IOException {
-                        try (FileInputStream in = new FileInputStream(file)) {
-                            sink.writeAll(Okio.source(in));
-                        }
-                    }
-                };
-
-                try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
-                    if (!r.isSuccessful()) {
-                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
-                        throw new IOException("Upload failed: " + r.code());
-                    }
-                }
-                List<String> funcNames;
-                try (Response r = HttpUtils.getSync(listUrl)) {
-                    if (!r.isSuccessful() || r.body() == null) {
-                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
-                        throw new IOException("List fetch failed: " + r.code());
-                    }
-                    String json = r.body().string();
-                    funcNames = GSON.fromJson(json, new TypeToken<List<String>>(){}.getType());
-                }
-                return funcNames;
-            }
-        };
-    }
-
-    public void newProgram(List<String> funcNames) {
+    public void loadProgram(List<String> funcNames) {
         switchingProgram.set(!switchingProgram.get());
         programTabs.getTabs().clear();
         for (String func : funcNames) {

@@ -2,6 +2,7 @@ package client.components.mainApp;
 
 import client.components.dashboard.dashboardStage.DashboardStageController;
 
+import client.components.execution.executionStage.ExecutionStageController;
 import client.components.login.LoginController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +26,8 @@ public class MainAppController {
 
     private Parent dashboardComponent;
     private DashboardStageController dashboardStageController;
+    private ExecutionStageController executionStageController;
+    private Scene scene;
 
     private String currentUserName;
 
@@ -44,7 +47,7 @@ public class MainAppController {
                 loginController.setMainAppController(this);
             }
 
-            Scene scene = new Scene(loginComponent);
+            this.scene = new Scene(loginComponent);
             String css = getClass().getResource("/resources/styles/style-dark.css").toExternalForm();
             scene.getStylesheets().add(css);
 
@@ -64,6 +67,9 @@ public class MainAppController {
                 dashboardComponent = fxmlLoader.load();
                 dashboardStageController = fxmlLoader.getController();
                 dashboardStageController.setMainAppController(this);
+                Platform.runLater(() -> {
+                    dashboardStageController.setScene(scene);
+                });
             }
         } catch (IOException e) {
             e.printStackTrace();

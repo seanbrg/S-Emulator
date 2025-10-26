@@ -4,9 +4,29 @@ import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.components.dashboard.dashboardHeader.DashboardHeaderController;
 import client.components.mainApp.MainAppController;
+import client.util.HttpUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import emulator.utils.WebConstants;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 
 public class DashboardStageController {
 
@@ -20,16 +40,25 @@ public class DashboardStageController {
     @FXML private AvailableProgramsController availableProgramsController;
 
     private MainAppController mainAppController;
+    private static final Gson GSON = new Gson();
+    private Scene scene;
 
     @FXML
     public void initialize() {
         // Set up callback to refresh programs table when a new program is uploaded
         if (headerController != null && availableProgramsController != null) {
+            headerController.setDashboardController(this);
+            //headerController.setScene(scene);
             headerController.setOnProgramUploadedCallback(() -> {
                 // Force immediate refresh of programs table
                 availableProgramsController.startListRefresher();
             });
         }
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+        this.headerController.setScene(scene);
     }
 
     public void setMainAppController(MainAppController controller) {
@@ -57,10 +86,77 @@ public class DashboardStageController {
             availableProgramsController.startListRefresher();
         }
 
-        // Show username in header
+        // Show username in executionHeader
         // not working
         if (headerController != null) {
             headerController.setUserName(userName);
         }
+    }
+
+    public Task<List<String>> createLoadTask(String filePath) {
+        return new Task<>() {
+            @Override
+            protected List<String> call() throws IOException {
+                String uploadUrl = WebConstants.PROGRAMS_URL;
+                String listUrl = WebConstants.PROGRAMS_LIST_URL;
+
+                File file = new File(filePath);
+                RequestBody requestBody = new RequestBody() {
+                    @Override
+                    public MediaType contentType() {
+                        return MediaType.parse("application/xml");
+                    }
+                    @Override
+                    public void writeTo(BufferedSink sink) throws IOException {
+                        try (FileInputStream in = new FileInputStream(file)) {
+                            sink.writeAll(Okio.source(in));
+                        }
+                    }
+                };
+
+                try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
+                    if (!r.isSuccessful()) {
+                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        throw new IOException("Upload failed: " + r.code());
+                    }
+                }
+                List<String> funcNames;
+                try (Response r = HttpUtils.getSync(listUrl)) {
+                    if (!r.isSuccessful() || r.body() == null) {
+                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
+                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+                        throw new IOException("List fetch failed: " + r.code());
+                    }
+                    String json = r.body().string();
+                    funcNames = GSON.fromJson(json, new TypeToken<List<String>>(){}.getType());
+                }
+                return funcNames;
+            }
+        };
+    }
+
+    public void alertLoadFailed() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Load Failed");
+            alert.setHeaderText("Failed to load program file!");
+            alert.setContentText("Please check the file format and try again.");
+
+            // Use main window as owner if available
+            if (scene != null && scene.getWindow() != null) {
+                alert.initOwner(scene.getWindow());
+                // Inherit current theme
+                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+            }
+
+            // Use app icon on the dialog window (if available)
+            try {
+                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
+            } catch (Exception ignored) {  }
+
+            alert.showAndWait();
+        });
     }
 }

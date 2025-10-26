@@ -1,9 +1,11 @@
 package client.components.dashboard.availablePrograms;
 
+import client.components.dashboard.availableUsers.AvailableUsersController;
+import client.util.HttpUtils;
+import emulator.utils.WebConstants;
 import execute.dto.ProgramMetadataDTO;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,9 +20,15 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+
+import static client.util.Constants.REFRESH_RATE;
 
 public class AvailableProgramsController {
 
@@ -33,9 +41,14 @@ public class AvailableProgramsController {
     @FXML private TableColumn<ProgramTableData, String> columnAverageCreditCost;
     @FXML private Button executuProgramButton;
 
-    private static final String PROGRAMS_METADATA_URL = "http://localhost:8080/semulator/programs/metadata";
     private static final Gson GSON = new Gson();
     private final OkHttpClient client = new OkHttpClient();
+    private Timer timer;
+    private TimerTask listRefresher;
+    private BooleanProperty autoUpdate;
+    private IntegerProperty totalPrograms;
+    private AvailableUsersController.HttpStatusUpdate httpStatusUpdate;
+
 
     private ObservableList<ProgramTableData> programsList = FXCollections.observableArrayList();
     private ScheduledExecutorService scheduler;
@@ -44,11 +57,11 @@ public class AvailableProgramsController {
     public void initialize() {
         setupTableColumns();
         availableProgramsTable.setItems(programsList);
+        autoUpdate = new SimpleBooleanProperty(true);
+        totalPrograms = new SimpleIntegerProperty(0);
+
 
         executuProgramButton.setOnAction(event -> onExecuteProgramClicked());
-
-        // Initial load
-        loadPrograms();
     }
 
     private void setupTableColumns() {
@@ -58,50 +71,6 @@ public class AvailableProgramsController {
         columnMaxDegree.setCellValueFactory(data -> data.getValue().maxDegreeProperty().asObject());
         columnNumberOfRuns.setCellValueFactory(data -> data.getValue().numberOfRunsProperty().asObject());
         columnAverageCreditCost.setCellValueFactory(data -> data.getValue().averageCreditCostProperty());
-    }
-
-    public void startListRefresher() {
-        if (scheduler == null || scheduler.isShutdown()) {
-            scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(this::loadPrograms, 0, 2, TimeUnit.SECONDS);
-        }
-    }
-
-    public void stopListRefresher() {
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.shutdown();
-        }
-    }
-
-    private void loadPrograms() {
-        Request request = new Request.Builder()
-                .url(PROGRAMS_METADATA_URL)
-                .get()
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Platform.runLater(() ->
-                        System.err.println("Failed to load programs: " + e.getMessage())
-                );
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String json = response.body().string();
-                    Type listType = new TypeToken<List<ProgramMetadataDTO>>(){}.getType();
-                    List<ProgramMetadataDTO> programs = GSON.fromJson(json, listType);
-
-                    Platform.runLater(() -> updateProgramsTable(programs));
-                } else {
-                    Platform.runLater(() ->
-                            System.err.println("Server error: " + response.code())
-                    );
-                }
-            }
-        });
     }
 
     private void updateProgramsTable(List<ProgramMetadataDTO> programs) {
@@ -117,6 +86,22 @@ public class AvailableProgramsController {
                     dto.getAverageCost()
             );
             programsList.add(tableData);
+        }
+    }
+
+    public void startListRefresher() {
+        listRefresher = new ProgramTableData.ProgramsListRefresher(
+                autoUpdate,
+                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
+                this::updateProgramsTable // <- doesnt compile
+        );
+        timer = new Timer();
+        timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    public void stopListRefresher() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
         }
     }
 
@@ -172,6 +157,47 @@ public class AvailableProgramsController {
 
         public String getAverageCreditCost() { return averageCreditCost.get(); }
         public SimpleStringProperty averageCreditCostProperty() { return averageCreditCost; }
+
+        public static class ProgramsListRefresher extends TimerTask {
+            private final BooleanProperty autoUpdate;
+            private final Consumer<String> httpStatusConsumer;
+            private final Consumer<List<ProgramMetadataDTO>> programsListUpdater;
+            private static final Gson GSON = new Gson();
+
+            public ProgramsListRefresher(BooleanProperty autoUpdate,
+                                     Consumer<String> httpStatusConsumer,
+                                     Consumer<List<ProgramMetadataDTO>> programsListUpdater) {
+                this.autoUpdate = autoUpdate;
+                this.httpStatusConsumer = httpStatusConsumer;
+                this.programsListUpdater = programsListUpdater;
+            }
+
+            @Override
+            public void run() {
+                if (autoUpdate.get()) {
+                    httpStatusConsumer.accept("Updating programs...");
+
+                    HttpUtils.getAsync(WebConstants.USERS_URL).thenAccept(json -> {
+                        // Parse JSON array of programMetadataDTO
+                        try {
+                            Type listType = new TypeToken<List<ProgramMetadataDTO>>() {}.getType();
+                            List<ProgramMetadataDTO> programs = GSON.fromJson(json, listType);
+
+                            programsListUpdater.accept(programs);
+                            httpStatusConsumer.accept("Programs updated.");
+
+                        } catch (Exception e) {
+                            httpStatusConsumer.accept("Failed to parse programs list: " + e.getMessage());
+                            return;
+                        }
+                    }).exceptionally(ex -> {
+                        httpStatusConsumer.accept("Failed to update programs: " + ex.getCause().getMessage());
+                        return null;
+                    });
+                }
+            }
+        }
+
     }
 
 
