@@ -40,18 +40,6 @@ public class ProgramsServlet extends HttpServlet {
         final String degreeStr = request.getParameter(WebConstants.PROGRAM_DEGREE);
         final String varListStr = request.getParameter(WebConstants.PROGRAM_VARLIST);
 
-        // list all programs with metadata
-        if ("/metadata".equals(path)) {
-            List<ProgramMetadataDTO> metadata;
-            synchronized (engine) {
-                metadata = engine.getAllProgramMetadata();
-            }
-            try (PrintWriter out = response.getWriter()) {
-                out.print(GSON.toJson(metadata));
-            }
-            return;
-        }
-
         // Exact with query params pecific program
         if (path == null || "/".equals(path)) {
             if (programName != null || degreeStr != null) {
@@ -123,8 +111,20 @@ public class ProgramsServlet extends HttpServlet {
             return;
         }
 
+        // list all programs with metadata
+        if (WebConstants.PROGRAMS_METADATA_PATH.equals(path)) {  // /metadata
+            List<ProgramMetadataDTO> metadata;
+            synchronized (engine) {
+                metadata = engine.getAllProgramMetadata();
+            }
+            try (PrintWriter out = response.getWriter()) {
+                out.print(GSON.toJson(metadata));
+            }
+            return;
+        }
 
-        if ("/list".equals(path)) {
+
+        if (WebConstants.PROGRAMS_LIST_PATH.equals(path)) { // /list
             List<String> names;
             synchronized (engine) { names = engine.getAllProgramNames(); }
             try (PrintWriter out = response.getWriter()) {
@@ -134,7 +134,7 @@ public class ProgramsServlet extends HttpServlet {
         }
 
 
-        if ("/func".equals(path)) {
+        if (WebConstants.PROGRAMS_FUNC_PATH.equals(path)) { // /func
             if (programName != null) {
                 ProgramDTO function;
 
@@ -161,8 +161,7 @@ public class ProgramsServlet extends HttpServlet {
             }
         }
 
-        //max degree
-        if ("/maxdegree".equals(path)) {
+        if (WebConstants.MAXDEGREE_PATH.equals(path)) {
             if (programName != null) {
                 int maxDegree;
 

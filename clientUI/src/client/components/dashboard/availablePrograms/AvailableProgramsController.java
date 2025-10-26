@@ -74,26 +74,28 @@ public class AvailableProgramsController {
     }
 
     private void updateProgramsTable(List<ProgramMetadataDTO> programs) {
-        programsList.clear();
+        Platform.runLater(() -> {
+            programsList.clear();
 
-        for (ProgramMetadataDTO dto : programs) {
-            ProgramTableData tableData = new ProgramTableData(
-                    dto.getName(),
-                    dto.getUploadedBy() != null ? dto.getUploadedBy() : "Unknown",
-                    dto.getNumberOfInstructions(),
-                    dto.getMaxDegree(),
-                    dto.getRunCount(),
-                    dto.getAverageCost()
-            );
-            programsList.add(tableData);
-        }
+            for (ProgramMetadataDTO dto : programs) {
+                ProgramTableData tableData = new ProgramTableData(
+                        dto.getName(),
+                        dto.getUploadedBy() != null ? dto.getUploadedBy() : "Unknown",
+                        dto.getNumberOfInstructions(),
+                        dto.getMaxDegree(),
+                        dto.getRunCount(),
+                        dto.getAverageCost()
+                );
+                programsList.add(tableData);
+            }
+        });
     }
 
     public void startListRefresher() {
-        listRefresher = new ProgramTableData.ProgramsListRefresher(
+        listRefresher = new ProgramsListRefresher(
                 autoUpdate,
                 httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
-                this::updateProgramsTable // <- doesnt compile
+                this::updateProgramsTable
         );
         timer = new Timer();
         timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
@@ -157,49 +159,47 @@ public class AvailableProgramsController {
 
         public String getAverageCreditCost() { return averageCreditCost.get(); }
         public SimpleStringProperty averageCreditCostProperty() { return averageCreditCost; }
-
-        public static class ProgramsListRefresher extends TimerTask {
-            private final BooleanProperty autoUpdate;
-            private final Consumer<String> httpStatusConsumer;
-            private final Consumer<List<ProgramMetadataDTO>> programsListUpdater;
-            private static final Gson GSON = new Gson();
-
-            public ProgramsListRefresher(BooleanProperty autoUpdate,
-                                     Consumer<String> httpStatusConsumer,
-                                     Consumer<List<ProgramMetadataDTO>> programsListUpdater) {
-                this.autoUpdate = autoUpdate;
-                this.httpStatusConsumer = httpStatusConsumer;
-                this.programsListUpdater = programsListUpdater;
-            }
-
-            @Override
-            public void run() {
-                if (autoUpdate.get()) {
-                    httpStatusConsumer.accept("Updating programs...");
-
-                    HttpUtils.getAsync(WebConstants.USERS_URL).thenAccept(json -> {
-                        // Parse JSON array of programMetadataDTO
-                        try {
-                            Type listType = new TypeToken<List<ProgramMetadataDTO>>() {}.getType();
-                            List<ProgramMetadataDTO> programs = GSON.fromJson(json, listType);
-
-                            programsListUpdater.accept(programs);
-                            httpStatusConsumer.accept("Programs updated.");
-
-                        } catch (Exception e) {
-                            httpStatusConsumer.accept("Failed to parse programs list: " + e.getMessage());
-                            return;
-                        }
-                    }).exceptionally(ex -> {
-                        httpStatusConsumer.accept("Failed to update programs: " + ex.getCause().getMessage());
-                        return null;
-                    });
-                }
-            }
-        }
-
     }
 
+    public static class ProgramsListRefresher extends TimerTask {
+        private final BooleanProperty autoUpdate;
+        private final Consumer<String> httpStatusConsumer;
+        private final Consumer<List<ProgramMetadataDTO>> programsListUpdater;
+        private static final Gson GSON = new Gson();
+
+        public ProgramsListRefresher(BooleanProperty autoUpdate,
+                                     Consumer<String> httpStatusConsumer,
+                                     Consumer<List<ProgramMetadataDTO>> programsListUpdater) {
+            this.autoUpdate = autoUpdate;
+            this.httpStatusConsumer = httpStatusConsumer;
+            this.programsListUpdater = programsListUpdater;
+        }
+
+        @Override
+        public void run() {
+            if (autoUpdate.get()) {
+                httpStatusConsumer.accept("Updating programs...");
+
+                HttpUtils.getAsync(WebConstants.PROGRAMS_METADATA_URL).thenAccept(json -> {
+                    // Parse JSON array of programMetadataDTO
+                    try {
+                        Type listType = new TypeToken<List<ProgramMetadataDTO>>() {}.getType();
+                        List<ProgramMetadataDTO> programs = GSON.fromJson(json, listType);
+
+                        programsListUpdater.accept(programs);
+                        httpStatusConsumer.accept("Programs updated.");
+
+                    } catch (Exception e) {
+                        httpStatusConsumer.accept("Failed to parse programs list: " + e.getMessage());
+                        return;
+                    }
+                }).exceptionally(ex -> {
+                    httpStatusConsumer.accept("Failed to update programs: " + ex.getCause().getMessage());
+                    return null;
+                });
+            }
+        }
+    }
 
 
 }

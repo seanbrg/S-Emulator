@@ -52,7 +52,7 @@ public class DashboardStageController {
             //headerController.setScene(scene);
             headerController.setOnProgramUploadedCallback(() -> {
                 // Force immediate refresh of programs table
-                availableProgramsController.startListRefresher();
+                //availableProgramsController.startListRefresher();
             });
         }
     }
