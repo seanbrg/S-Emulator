@@ -32,8 +32,10 @@ public class DashboardHeaderController {
 
     private static final String PROGRAMS_SERVLET_URL = "http://localhost:8080/semulator/programs";
 
-
     private int availableCredits = 50;
+
+    // Callback for notifying when a program is uploaded
+    private Runnable onProgramUploadedCallback;
 
     @FXML
     public void initialize() {
@@ -86,9 +88,6 @@ public class DashboardHeaderController {
 
     private void activateProgram(File programFile) {
         int programCost = 10;
-
-
-
         uploadProgramFile(programFile, programCost);
     }
 
@@ -111,20 +110,25 @@ public class DashboardHeaderController {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     Platform.runLater(() -> {
-                        deductCredits(programCost);
-                        showAlert("Program Activated", "Program successfully activated! -" + programCost + " credits.");
+
+
+
+
+                        if (onProgramUploadedCallback != null) {
+                            onProgramUploadedCallback.run();
+                        }
                     });
                 } else {
-                    Platform.runLater(() -> showAlert("Upload Failed", "Server responded with code: " + response.code()));
+                    String errorMessage = response.body() != null ? response.body().string() : "Unknown error";
+                    Platform.runLater(() -> showAlert("Upload Failed",
+                            "Server responded with code: " + response.code() + "\n" + errorMessage));
                 }
             }
         });
     }
 
     private void deductCredits(int amount) {
-        availableCredits -= amount;
-        if (availableCredits < 0) availableCredits = 0;
-        updateCreditLabel();
+        //to do
     }
 
     private void updateCreditLabel() {
@@ -143,4 +147,8 @@ public class DashboardHeaderController {
         Platform.runLater(() -> userNameLable.setText(userName));
     }
 
+
+    public void setOnProgramUploadedCallback(Runnable callback) {
+        this.onProgramUploadedCallback = callback;
+    }
 }

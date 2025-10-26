@@ -1,7 +1,6 @@
 package emulator.servlets;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.ContextUtils;
 import emulator.utils.WebConstants;
@@ -21,7 +20,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static emulator.utils.ServletsUtils.sendError;
-
 
 @WebServlet(name = "RunServlet", urlPatterns = {WebConstants.RUN_PATH})
 public class RunServlet extends HttpServlet {
@@ -49,6 +47,7 @@ public class RunServlet extends HttpServlet {
                         "Provide both 'programName' and 'programDegree', or neither to list all.");
                 return;
             }
+
             final int degree;
             try {
                 degree = Integer.parseInt(degreeStr);
@@ -63,12 +62,14 @@ public class RunServlet extends HttpServlet {
                     sendError(response, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Content-Type must be json.");
                     return;
                 }
+
                 try (InputStream in = request.getInputStream();
                      InputStreamReader reader = new InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)) {
 
-                    Type listType = new TypeToken<List<VariableDTO>>() {}.getType();
-
+                    Type listType = new TypeToken<List<VariableDTO>>() {
+                    }.getType();
                     List<VariableDTO> inputsDto = GSON.fromJson(reader, listType);
+
                     if (inputsDto == null) {
                         sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON: expected an array of variables.");
                         return;
@@ -80,9 +81,21 @@ public class RunServlet extends HttpServlet {
                                     "Program '" + programName + "' with degree " + degree + " not found.");
                             return;
                         }
+
+                        // Execute the program
                         HistoryDTO resultDto = engine.runProgramAndRecord(programName, degree, inputsDto);
-                        System.out.println("Executed program '" + programName + "' degree " + degree + " successfully." +
-                                "Inputs: " + inputsDto + " Result: " + resultDto.getOutput().getVarString());
+
+                        // Calculate cost (you can adjust this formula based on your requirements)
+                        // Example: cost = number of steps * degree * some multiplier
+                        double executionCost = calculateExecutionCost(resultDto, degree);
+
+                        // Record the execution statistics
+                        engine.recordProgramRun(programName, executionCost);
+
+                        System.out.println("Executed program '" + programName + "' degree " + degree + " successfully. " +
+                                "Inputs: " + inputsDto + " Result: " + resultDto.getOutput().getVarString() +
+                                " Cost: " + executionCost);
+
                         String jsonResponse = GSON.toJson(resultDto);
                         PrintWriter out = response.getWriter();
                         out.println(jsonResponse);
@@ -98,5 +111,26 @@ public class RunServlet extends HttpServlet {
                         "An error occurred while processing the request: " + e.getMessage());
             }
         }
+    }
+
+    /**
+     * Calculate the cost of executing a program
+     * You can adjust this formula based on your requirements
+     */
+    private double calculateExecutionCost(HistoryDTO historyDto, int degree) {
+        // Example cost calculation:
+        // Base cost per execution + cost per step + multiplier for degree
+        final double BASE_COST = 1.0;
+        final double COST_PER_STEP = 0.5;
+        final double DEGREE_MULTIPLIER = 1.5;
+
+        // Get number of steps from history (if available in your HistoryDTO)
+        // Adjust this based on your actual HistoryDTO structure
+        int numberOfSteps = 1; // Default to 1 if not available
+
+        // Calculate cost
+        double cost = BASE_COST + (numberOfSteps * COST_PER_STEP) + (degree * DEGREE_MULTIPLIER);
+
+        return cost;
     }
 }

@@ -5,11 +5,13 @@ import emulator.utils.ContextUtils;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.dto.ProgramDTO;
+import execute.dto.ProgramMetadataDTO;
 import execute.dto.VariableDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,14 +30,29 @@ public class ProgramsServlet extends HttpServlet {
         response.setContentType("application/json");
 
         Engine engine = ContextUtils.getEngine(getServletContext());
-        if (engine == null) { sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized."); return; }
+        if (engine == null) {
+            sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized.");
+            return;
+        }
 
-        final String path = request.getPathInfo(); // null, "/", or "/list"
+        final String path = request.getPathInfo(); // null, "/", "/list", "/metadata", etc.
         final String programName = request.getParameter(WebConstants.PROGRAM_NAME);
         final String degreeStr = request.getParameter(WebConstants.PROGRAM_DEGREE);
         final String varListStr = request.getParameter(WebConstants.PROGRAM_VARLIST);
 
-        // 1) Exact /programs with query params -> specific program
+        // list all programs with metadata
+        if ("/metadata".equals(path)) {
+            List<ProgramMetadataDTO> metadata;
+            synchronized (engine) {
+                metadata = engine.getAllProgramMetadata();
+            }
+            try (PrintWriter out = response.getWriter()) {
+                out.print(GSON.toJson(metadata));
+            }
+            return;
+        }
+
+        // Exact with query params pecific program
         if (path == null || "/".equals(path)) {
             if (programName != null || degreeStr != null) {
                 // Require both if either is present
@@ -47,14 +64,19 @@ public class ProgramsServlet extends HttpServlet {
 
                 final int degree;
                 try { degree = Integer.parseInt(degreeStr); }
-                catch (NumberFormatException e) { sendError(response, HttpServletResponse.SC_BAD_REQUEST, "'programDegree' must be an integer."); return; }
+                catch (NumberFormatException e) {
+                    sendError(response, HttpServletResponse.SC_BAD_REQUEST, "'programDegree' must be an integer.");
+                    return;
+                }
 
                 boolean varList = false;
                 if (varListStr != null) {
                     try { varList = Boolean.parseBoolean(varListStr); }
-                    catch (Exception e) { sendError(response, HttpServletResponse.SC_BAD_REQUEST, "'programVarList' must be true or false."); return; }
+                    catch (Exception e) {
+                        sendError(response, HttpServletResponse.SC_BAD_REQUEST, "'programVarList' must be true or false.");
+                        return;
+                    }
                 }
-
 
                 if (varList) {
                     // return variable list of specific program
@@ -62,10 +84,10 @@ public class ProgramsServlet extends HttpServlet {
                     try {
                         synchronized (engine) {
                             if (!engine.isProgramExists(programName, degree)) {
-                                sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program " + programName + "not found.");
+                                sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program " + programName + " not found.");
                                 return;
                             }
-                            varsDto = engine.getOutputs(programName, degree); // <- the main point of this block
+                            varsDto = engine.getOutputs(programName, degree);
                         }
                         PrintWriter out = response.getWriter();
                         out.print(GSON.toJson(varsDto));
@@ -83,7 +105,7 @@ public class ProgramsServlet extends HttpServlet {
                             sendError(response, HttpServletResponse.SC_NOT_FOUND, "Program not found.");
                             return;
                         }
-                        dto = engine.getProgramDTO(programName, degree); // <- the main point of this block
+                        dto = engine.getProgramDTO(programName, degree);
                     }
                     try (PrintWriter out = response.getWriter()) {
                         out.print(GSON.toJson(dto));
@@ -92,23 +114,27 @@ public class ProgramsServlet extends HttpServlet {
                 }
             }
 
-            // No query params -> list all
+
             List<ProgramDTO> allPrograms;
             synchronized (engine) { allPrograms = engine.getAllProgramDTOs(); }
-            try (PrintWriter out = response.getWriter()) { out.print(GSON.toJson(allPrograms)); }
+            try (PrintWriter out = response.getWriter()) {
+                out.print(GSON.toJson(allPrograms));
+            }
             return;
         }
 
-        // 2) /programs/list -> names list
-        if (path.equals(WebConstants.PROGRAMS_LIST_PATH)) { // expect "/list"
+
+        if ("/list".equals(path)) {
             List<String> names;
             synchronized (engine) { names = engine.getAllProgramNames(); }
-            try (PrintWriter out = response.getWriter()) { out.print(GSON.toJson(names)); }
+            try (PrintWriter out = response.getWriter()) {
+                out.print(GSON.toJson(names));
+            }
             return;
         }
 
-        // 3) /programs/func -> specific function
-        if (path.equals(WebConstants.PROGRAMS_FUNC_PATH)) {
+
+        if ("/func".equals(path)) {
             if (programName != null) {
                 ProgramDTO function;
 
@@ -133,11 +159,10 @@ public class ProgramsServlet extends HttpServlet {
                         "Provide 'programName' to get its function.");
                 return;
             }
-
         }
 
-        // 3) /programs/maxdegree -> max degree
-        if (path.equals(WebConstants.MAXDEGREE_PATH)) {
+        //max degree
+        if ("/maxdegree".equals(path)) {
             if (programName != null) {
                 int maxDegree;
 
@@ -164,15 +189,13 @@ public class ProgramsServlet extends HttpServlet {
             }
         }
 
-        // 4) Anything else -> bad format
-        sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL. " +
-                "Use /semulator/programs, /semulator/programs?programName=&programDegree=, or /semulator/programs/list.");
-    }
 
+        sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL. " +
+                "Use /semulator/programs, /semulator/programs?programName=&programDegree=, /semulator/programs/list, or /semulator/programs/metadata.");
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try (InputStream in = request.getInputStream()) {
             Engine engine = ContextUtils.getEngine(getServletContext());
 
@@ -182,8 +205,12 @@ public class ProgramsServlet extends HttpServlet {
                 return;
             }
 
+            // Get username from session
+            HttpSession session = request.getSession(false);
+            String userName = session != null ? (String) session.getAttribute("username") : "Unknown";
+
             synchronized (engine) {
-                engine.loadFromStream(in);
+                engine.loadFromStream(in, userName);
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {

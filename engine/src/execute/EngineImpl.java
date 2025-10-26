@@ -365,4 +365,107 @@ public class EngineImpl implements Engine {
         return result;
     }
 
+
+    private Map<String, ProgramRunStats> programStats = new HashMap<>();
+    private Map<String, String> programOwners = new HashMap<>();
+
+// ============= 3. ADD THIS INNER CLASS =============
+// Add this inside your EngineImpl class
+    /**
+     * Inner class to track program execution statistics
+     */
+    private static class ProgramRunStats {
+        private int runCount = 0;
+        private double totalCost = 0.0;
+
+        public void recordRun(double cost) {
+            runCount++;
+            totalCost += cost;
+        }
+
+        public int getRunCount() {
+            return runCount;
+        }
+
+        public double getAverageCost() {
+            return runCount > 0 ? totalCost / runCount : 0.0;
+        }
+    }
+
+
+    @Override
+    public void loadFromStream(InputStream in, String userName) throws Exception {
+
+        Set<String> programsBefore = new HashSet<>(getAllProgramNames());
+
+
+        loadFromStream(in);
+
+
+        Set<String> programsAfter = new HashSet<>(getAllProgramNames());
+        programsAfter.removeAll(programsBefore);
+
+
+        for (String newProgram : programsAfter) {
+            programOwners.put(newProgram, userName);
+        }
+    }
+
+
+    @Override
+    public List<ProgramMetadataDTO> getAllProgramMetadata() {
+        List<ProgramMetadataDTO> metadataList = new ArrayList<>();
+
+        for (String programName : getAllProgramNames()) {
+            try {
+                // Check if program exists at degree 0
+                if (!isProgramExists(programName, 0)) {
+                    continue;
+                }
+
+
+                ProgramDTO programDto = getProgramDTO(programName, 0);
+                if (programDto == null) continue;
+
+                // Get statistics
+                ProgramRunStats stats = programStats.getOrDefault(
+                        programName,
+                        new ProgramRunStats()
+                );
+
+                String owner = programOwners.getOrDefault(programName, "Unknown");
+
+                // Create metadata DTO
+                ProgramMetadataDTO metadata = new ProgramMetadataDTO(
+                        programName,
+                        owner,
+                        programDto.getInstructions().size(), // number of instructions
+                        programDto.getMaxDegree(),
+                        stats.getRunCount(),
+                        stats.getAverageCost()
+                );
+
+                metadataList.add(metadata);
+
+            } catch (Exception e) {
+                System.err.println("Error getting metadata for program: " +
+                        programName + " - " + e.getMessage());
+            }
+        }
+
+        return metadataList;
+    }
+
+
+    @Override
+    public void recordProgramRun(String programName, double cost) {
+        ProgramRunStats stats = programStats.computeIfAbsent(
+                programName,
+                k -> new ProgramRunStats()
+        );
+        stats.recordRun(cost);
+    }
+
+
+
 }

@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * DTO for transferring program structure (instructions, labels) to the client.
+ * This is used when the client needs the actual program code.
+ *
+ * For program metadata (name, owner, statistics), use ProgramMetadataDTO instead.
+ */
 public class ProgramDTO {
     private String programName;
     private List<InstructionDTO> instructions;
@@ -18,6 +24,10 @@ public class ProgramDTO {
         this.labels = labels; // labels must map each label to its instruction
     }
 
+    /**
+     * Constructor that creates DTO from Program object
+     * This is the constructor your existing code uses
+     */
     public ProgramDTO(Program program) {
         this.programName = program.getName();
         this.instructions = program.getInstructions().stream()
@@ -35,5 +45,4 @@ public class ProgramDTO {
     public List<InstructionDTO> getInstructions() { return this.instructions; }
     public Map<String, InstructionDTO> getLabels() { return this.labels; }
     public int getMaxDegree() { return this.maxDegree; }
-
 }

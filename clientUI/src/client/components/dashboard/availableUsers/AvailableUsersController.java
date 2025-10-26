@@ -92,7 +92,7 @@ public class AvailableUsersController implements Closeable {
         }
     }
 
-    // ====================== Utilities ======================
+
 
     @FunctionalInterface
     public interface HttpStatusUpdate {
@@ -112,6 +112,8 @@ public class AvailableUsersController implements Closeable {
             this.httpStatusConsumer = httpStatusConsumer;
             this.usersListUpdater = usersListUpdater;
         }
+
+
 
         @Override
         public void run() {
