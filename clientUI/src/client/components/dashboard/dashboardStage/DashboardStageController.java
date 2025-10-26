@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -30,7 +31,7 @@ import java.util.List;
 
 public class DashboardStageController {
 
-    @FXML private HBox header;
+    @FXML private VBox header;
     @FXML private DashboardHeaderController headerController;
 
     @FXML private BorderPane availableUsers;

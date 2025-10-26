@@ -8,20 +8,21 @@
    <content>
       <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0">
          <top>
-            <fx:include prefHeight="200.0" source="../dashboardHeader/dashboardHeader.fxml" />
+            <!-- Changed fx:id from "headerController" to "header" -->
+            <fx:include fx:id="header" prefHeight="200.0" source="../dashboardHeader/dashboardHeader.fxml" />
          </top>
          <center>
             <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <items>
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                      <items>
-                            <fx:include fx:id="availableUsers" prefHeight="300.0" source="../availableUsers/availableUsers.fxml" />
+                        <fx:include fx:id="availableUsers" prefHeight="300.0" source="../availableUsers/availableUsers.fxml" />
                         <fx:include source="../../execution/runHistory/runHistory.fxml" />
                      </items>
                   </SplitPane>
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="806.0" prefWidth="524.0">
                      <items>
-                         <fx:include fx:id="availablePrograms" prefHeight="300.0" source="../availablePrograms/availablePrograms.fxml" />
+                        <fx:include fx:id="availablePrograms" prefHeight="300.0" source="../availablePrograms/availablePrograms.fxml" />
                         <fx:include source="../availableFunctions/availableFunctions.fxml" />
                      </items>
                   </SplitPane>

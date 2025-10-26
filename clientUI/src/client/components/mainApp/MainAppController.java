@@ -84,11 +84,12 @@ public class MainAppController {
 
         Platform.runLater(() -> {
             primaryStage.getScene().setRoot(dashboardComponent);
+            dashboardStageController.setScene(primaryStage.getScene());
             dashboardStageController.setActive(userName);
-
             primaryStage.sizeToScene();
         });
     }
+
 
     public void switchToLogin() {
         Platform.runLater(() -> {

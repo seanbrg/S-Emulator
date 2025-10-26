@@ -24,6 +24,7 @@ public class LoginController {
 
     @FXML
     public void initialize() {
+
         errorMessageLabel.textProperty().bind(errorMessageProperty);
     }
 

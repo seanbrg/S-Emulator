@@ -81,8 +81,9 @@ public class DashboardHeaderController {
     private void handleLoad() {
         File file = chooseXmlFile();
         if (file == null) return;
-
         final String newPath = file.getPath();
+
+
         progressBar.setProgress(0);
         progressBar.setVisible(true);
 
@@ -97,6 +98,9 @@ public class DashboardHeaderController {
         task.setOnFailed(e -> finish(false, null, spinner));
 
         new Thread(task, "load-xml").start();
+
+        Platform.runLater(() -> filePath.setText(newPath));
+
     }
 
     private File chooseXmlFile() {
