@@ -56,8 +56,6 @@ public class AvailableProgramsController {
             availableProgramsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
                 if (newSelection != null) {
                     selectedProgramNameProperty.set(newSelection.getName());
-                } else {
-                    selectedProgramNameProperty.set("");
                 }
             });
         });

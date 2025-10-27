@@ -66,12 +66,9 @@ public class DashboardStageController {
 
         }
 
-        availableProgramsController.selectedProgramNameProperty().addListener((obs, oldName, newName) -> {
-            // Notify available programs controller of the selection change
-            if (availableFunctionsController != null) {
-                availableFunctionsController.setSelectedProgramName(newName);
-            }
-        });
+        availableFunctionsController.selectedProgramNameProperty()
+                .bind(availableProgramsController.selectedProgramNameProperty());
+
     }
 
     public void setScene(Scene scene) {

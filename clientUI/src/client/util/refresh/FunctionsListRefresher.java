@@ -10,6 +10,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.function.Consumer;
@@ -36,7 +38,9 @@ public class FunctionsListRefresher extends TimerTask {
         if (autoUpdate.get()) {
             httpStatusConsumer.accept("Updating functions...");
 
-            String functionsUrl = WebConstants.PROGRAMS_FUNC_METADATA_URL + "?program=" + programFilterProperty.get();
+            String programName = URLEncoder.encode(programFilterProperty.getValue(), StandardCharsets.UTF_8);
+            String functionsUrl = programName.isEmpty() ? WebConstants.PROGRAMS_FUNC_METADATA_URL :
+                    WebConstants.PROGRAMS_FUNC_METADATA_URL + "?" + WebConstants.PROGRAM_NAME + "=" + programName;
 
             HttpUtils.getAsync(functionsUrl).thenAccept(json -> {
                 // Parse JSON array of FunctionMetadataDTO
@@ -56,9 +60,5 @@ public class FunctionsListRefresher extends TimerTask {
                 return null;
             });
         }
-    }
-
-    public void setProgramFilterProperty(String programFilterProperty) {
-        this.programFilterProperty.set(programFilterProperty);
     }
 }

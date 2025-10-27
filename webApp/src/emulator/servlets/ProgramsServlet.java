@@ -187,7 +187,7 @@ public class ProgramsServlet extends HttpServlet {
             }
         }
 
-        if (WebConstants.MAXDEGREE_PATH.equals(path)) {
+        if (WebConstants.MAXDEGREE_PATH.equals(path)) { // /maxdegree
             if (programName != null) {
                 int maxDegree;
 

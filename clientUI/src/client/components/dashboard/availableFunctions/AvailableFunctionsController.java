@@ -100,10 +100,7 @@ public class AvailableFunctionsController {
 
     }
 
-    public void setSelectedProgramName(String newName) {
-        selectedProgramNameProperty.setValue(newName);
-        listRefresher.setProgramFilterProperty(newName);
-    }
+    public StringProperty selectedProgramNameProperty() { return selectedProgramNameProperty; }
 
     // table data binding
     public static class FunctionTableData {
