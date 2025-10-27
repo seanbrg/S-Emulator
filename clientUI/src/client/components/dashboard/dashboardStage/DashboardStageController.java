@@ -65,6 +65,13 @@ public class DashboardStageController {
             availableUsersController.setHttpStatusUpdate(this::updateHttpStatus);
 
         }
+
+        availableProgramsController.selectedProgramNameProperty().addListener((obs, oldName, newName) -> {
+            // Notify available programs controller of the selection change
+            if (availableFunctionsController != null) {
+                availableFunctionsController.setSelectedProgramName(newName);
+            }
+        });
     }
 
     public void setScene(Scene scene) {

@@ -2,6 +2,7 @@ package client.components.dashboard.availablePrograms;
 
 import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.util.refresh.ProgramsListRefresher;
+import execute.dto.InstructionDTO;
 import execute.dto.ProgramMetadataDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -35,6 +36,7 @@ public class AvailableProgramsController {
     private TimerTask listRefresher;
     private BooleanProperty autoUpdate;
     private IntegerProperty totalPrograms;
+    private StringProperty selectedProgramNameProperty;
     private AvailableUsersController.HttpStatusUpdate httpStatusUpdate;
 
 
@@ -47,9 +49,18 @@ public class AvailableProgramsController {
         availableProgramsTable.setItems(programsList);
         autoUpdate = new SimpleBooleanProperty(true);
         totalPrograms = new SimpleIntegerProperty(0);
-
-
+        selectedProgramNameProperty = new SimpleStringProperty("");
         executeProgramButton.setOnAction(event -> onExecuteProgramClicked());
+
+        Platform.runLater(() -> {
+            availableProgramsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    selectedProgramNameProperty.set(newSelection.getName());
+                } else {
+                    selectedProgramNameProperty.set("");
+                }
+            });
+        });
     }
 
     private void setupTableColumns() {
@@ -93,6 +104,10 @@ public class AvailableProgramsController {
         if (scheduler != null && !scheduler.isShutdown()) {
             scheduler.shutdown();
         }
+    }
+
+    public StringProperty selectedProgramNameProperty() {
+        return selectedProgramNameProperty;
     }
 
     private void onExecuteProgramClicked() {

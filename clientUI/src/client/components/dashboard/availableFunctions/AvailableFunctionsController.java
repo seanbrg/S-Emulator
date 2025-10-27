@@ -1,11 +1,7 @@
 package client.components.dashboard.availableFunctions;
 
-import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.util.refresh.FunctionsListRefresher;
-import client.util.refresh.ProgramsListRefresher;
-import com.google.gson.Gson;
 import execute.dto.FunctionMetadataDTO;
-import execute.dto.ProgramMetadataDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -33,9 +29,10 @@ public class AvailableFunctionsController {
     @FXML public TableColumn<FunctionTableData, Integer> columnMaxDegree;
 
     private Timer timer;
-    private TimerTask listRefresher;
+    private FunctionsListRefresher listRefresher;
     private BooleanProperty autoUpdate;
     private IntegerProperty totalFunctions;
+    StringProperty selectedProgramNameProperty;
     private ObservableList<FunctionTableData> functionsList = FXCollections.observableArrayList();
     private ScheduledExecutorService scheduler;
 
@@ -46,7 +43,7 @@ public class AvailableFunctionsController {
         availableFunctionsTable.setItems(functionsList);
         autoUpdate = new SimpleBooleanProperty(true);
         totalFunctions = new SimpleIntegerProperty(0);
-
+        selectedProgramNameProperty = new SimpleStringProperty("");
 
         executeFunctionButton.setOnAction(event -> onExecuteFunctionClicked());
     }
@@ -77,13 +74,18 @@ public class AvailableFunctionsController {
     }
 
     public void startListRefresher() {
-        listRefresher = new FunctionsListRefresher(
-                autoUpdate,
-                s->{}, // no status update
-                this::updateFunctionsTable
-        );
-        timer = new Timer();
-        timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
+        Platform.runLater(() -> {
+            if (selectedProgramNameProperty != null) {
+                listRefresher = new FunctionsListRefresher(
+                        selectedProgramNameProperty,
+                        autoUpdate,
+                        s->{}, // no status update
+                        this::updateFunctionsTable
+                );
+                timer = new Timer();
+                timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
+            }
+        });
     }
 
     public void stopListRefresher() {
@@ -96,6 +98,11 @@ public class AvailableFunctionsController {
         FunctionTableData selected = availableFunctionsTable.getSelectionModel().getSelectedItem();
         //TODO: implement execute button for functions
 
+    }
+
+    public void setSelectedProgramName(String newName) {
+        selectedProgramNameProperty.setValue(newName);
+        listRefresher.setProgramFilterProperty(newName);
     }
 
     // table data binding

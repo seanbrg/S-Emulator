@@ -140,7 +140,7 @@ public class ProgramsServlet extends HttpServlet {
             List<FunctionMetadataDTO> metadata;
             synchronized (engine) {
                     synchronized (programOwners) {
-                        metadata = getAllFunctionMetadata(programOwners, engine);
+                        metadata = getAllFunctionMetadata(programOwners, engine, programName);
                     }
             }
             try (PrintWriter out = response.getWriter()) {
@@ -253,10 +253,13 @@ public class ProgramsServlet extends HttpServlet {
     }
 
     public List<FunctionMetadataDTO> getAllFunctionMetadata(Map<String, String> programOwners,
-                                                            Engine engine) {
+                                                            Engine engine, String parentProgramName) {
         List<FunctionMetadataDTO> metadataList = new ArrayList<>();
 
         for (String programName : engine.getAllProgramNames()) {
+            if (parentProgramName != null && !parentProgramName.isEmpty() && !parentProgramName.equals(programName)) {
+                continue; // skip non-matching programs if a parent name is specified
+            }
             List<ProgramDTO> funcNames = engine.getProgramAndFunctionsDTO(programName);
             for (ProgramDTO func : funcNames) {
                 String owner = programOwners.getOrDefault(programName, "Unknown");
