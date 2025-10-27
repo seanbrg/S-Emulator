@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="client.components.dashboard.userHistory.UserHistoryController">
+   <children>
+      <TableView fx:id="runsTable" layoutX="20" layoutY="20" prefWidth="880" prefHeight="400">
+         <columns>
+            <TableColumn fx:id="runNumberColumn" text="Run Number" prefWidth="100" />
+            <TableColumn fx:id="runTypeColumn" text="Run Type" prefWidth="130" />
+            <TableColumn fx:id="programNameColumn" text="Program / Function" prefWidth="180" />
+            <TableColumn fx:id="architectureTypeColumn" text="Architecture Type" prefWidth="140" />
+            <TableColumn fx:id="runLevelColumn" text="Run Level" prefWidth="100" />
+            <TableColumn fx:id="finalYValueColumn" text="Y (End Value)" prefWidth="130" />
+            <TableColumn fx:id="cyclesCountColumn" text="Cycles" prefWidth="100" />
+         </columns>
+      </TableView>
+   </children>
+</AnchorPane>
+

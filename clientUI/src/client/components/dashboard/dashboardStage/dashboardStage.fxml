@@ -22,7 +22,8 @@
                <SplitPane orientation="VERTICAL" dividerPositions="0.5">
                   <items>
                      <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml"/>
-                     <fx:include source="../../execution/runHistory/runHistory.fxml"/>
+                     <fx:include fx:id="userHistory" source="../userHistory/userHistory.fxml"/>
+
                   </items>
                </SplitPane>
 
