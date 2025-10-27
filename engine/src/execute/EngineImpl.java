@@ -129,10 +129,10 @@ public class EngineImpl implements Engine {
             pm.refactorQuoteFunctions(programs);
             pm.loadNew(programs);
             this.history.clear();
-            if (printMode) System.out.println("Program '" + programs.getLast().getName() + "' loaded successfully!");
+
             return true;
         } else {
-            if (printMode) System.out.println("Program not loaded. Keeping previous program.");
+
             return false;
         }
     }

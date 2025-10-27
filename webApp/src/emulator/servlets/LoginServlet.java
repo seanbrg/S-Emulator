@@ -3,13 +3,13 @@ package emulator.servlets;
 import emulator.utils.ServletsUtils;
 import emulator.utils.SessionUtils;
 import emulator.utils.WebConstants;
-import users.UserManager;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import users.UserManagerDashboard;
 
 import java.io.IOException;
 
@@ -33,13 +33,18 @@ public class LoginServlet extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
         String usernameFromSession = SessionUtils.getUsername(request);
-        UserManager userManager = ServletsUtils.getUserManager(getServletContext());
+        UserManagerDashboard userManager = ServletsUtils.getUserManager(getServletContext());
+
+
 
         if (usernameFromSession == null) {
             // User is not logged in yet
             String usernameFromParameter = request.getParameter(WebConstants.USERNAME);
 
+
+
             if (usernameFromParameter == null || usernameFromParameter.isEmpty()) {
+
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("Username cannot be empty");
             } else {
@@ -47,24 +52,38 @@ public class LoginServlet extends HttpServlet {
                 usernameFromParameter = usernameFromParameter.trim();
 
                 synchronized (this) {
-                    if (userManager.isUserExists(usernameFromParameter)) {
+                    // FIXED: Changed from isUserExists to userExists
+                    if (userManager.userExists(usernameFromParameter)) {
+
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getWriter().println("Username " + usernameFromParameter +
                                 " already exists. Please enter a different username.");
                     } else {
                         // Add the new user to the users list
-                        userManager.addUser(usernameFromParameter);
+                        boolean added = userManager.addUser(usernameFromParameter);
 
-                        // Set the username in a session
-                        request.getSession(true).setAttribute(WebConstants.USERNAME, usernameFromParameter);
+                        if (added) {
+                            // Set initial credits for new user
+                            userManager.setCurrentCredits(usernameFromParameter, 50);
 
-                        System.out.println("User logged in successfully: " + usernameFromParameter);
-                        response.setStatus(HttpServletResponse.SC_OK);
+
+
+                            // Set the username in a session
+                            request.getSession(true).setAttribute(WebConstants.USERNAME, usernameFromParameter);
+
+
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        } else {
+                            System.err.println("[LoginServlet] ERROR: Failed to add user");
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            response.getWriter().println("Failed to create user");
+                        }
                     }
                 }
             }
         } else {
             // User is already logged in
+
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }

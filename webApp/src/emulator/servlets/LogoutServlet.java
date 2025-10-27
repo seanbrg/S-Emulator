@@ -3,12 +3,12 @@ package emulator.servlets;
 import emulator.utils.ServletsUtils;
 import emulator.utils.SessionUtils;
 import emulator.utils.WebConstants;
-import users.UserManager;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import users.UserManagerDashboard;
 
 import java.io.IOException;
 
@@ -20,10 +20,10 @@ public class LogoutServlet extends HttpServlet {
             throws IOException {
 
         String usernameFromSession = SessionUtils.getUsername(request);
-        UserManager userManager = ServletsUtils.getUserManager(getServletContext());
+        UserManagerDashboard userManager = ServletsUtils.getUserManager(getServletContext());
 
         if (usernameFromSession != null) {
-            System.out.println("Clearing session for " + usernameFromSession);
+
             userManager.removeUser(usernameFromSession);
             SessionUtils.clearSession(request);
             response.setStatus(HttpServletResponse.SC_OK);

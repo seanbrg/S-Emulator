@@ -4,31 +4,39 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.dashboardStage.DashboardStageController">
+<ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.components.dashboard.dashboardStage.DashboardStageController"
+            >
+
    <content>
-      <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0">
+      <BorderPane>
+
          <top>
-            <!-- Changed fx:id from "headerController" to "header" -->
-            <fx:include fx:id="header" prefHeight="200.0" source="../dashboardHeader/dashboardHeader.fxml" />
+            <fx:include fx:id="header" source="../dashboardHeader/dashboardHeader.fxml"/>
          </top>
+
          <center>
-            <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <items>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-                     <items>
-                        <fx:include fx:id="availableUsers" prefHeight="300.0" source="../availableUsers/availableUsers.fxml" />
-                        <fx:include source="../../execution/runHistory/runHistory.fxml" />
-                     </items>
-                  </SplitPane>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="806.0" prefWidth="524.0">
-                     <items>
-                        <fx:include fx:id="availablePrograms" prefHeight="300.0" source="../availablePrograms/availablePrograms.fxml" />
-                        <fx:include source="../availableFunctions/availableFunctions.fxml" />
-                     </items>
-                  </SplitPane>
-               </items>
+            <SplitPane dividerPositions="0.5">
+
+               <!-- Left Side: Users + RunHistory -->
+               <SplitPane orientation="VERTICAL" dividerPositions="0.5">
+                  <items>
+                     <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml"/>
+                     <fx:include source="../../execution/runHistory/runHistory.fxml"/>
+                  </items>
+               </SplitPane>
+
+               <!-- Right Side: Programs + Functions -->
+               <SplitPane orientation="VERTICAL" dividerPositions="0.5">
+                  <items>
+                     <fx:include fx:id="availablePrograms" source="../availablePrograms/availablePrograms.fxml"/>
+                     <fx:include fx:id="availableFunctions" source="../availableFunctions/availableFunctions.fxml"/>
+                  </items>
+               </SplitPane>
+
             </SplitPane>
          </center>
+
       </BorderPane>
    </content>
 </ScrollPane>

@@ -414,36 +414,34 @@
 
 /* === TableView Dark Theme === */
 
-/* Hide the executionHeader row entirely */
+/* === TableView Dark Theme === */
+
+/* Show the header row */
 .table-view .column-header-background {
-    visibility: hidden;
-    -fx-max-height: 0;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
+    visibility: visible;
+    -fx-background-color: derive(-system-background, -15%);
+    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-width: 0 0 1 0;
 }
 
-/* Hide TableView headers without using -fx-size */
-.table-view .column-header-background {
-    visibility: hidden;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
-    -fx-max-height: 0;
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
+/* Header cells */
+.table-view .column-header {
+    -fx-background-color: derive(-system-background, -15%);
+    -fx-border-color: derive(-system-background, +10%);
+    -fx-border-width: 0 1 0 0;
+    -fx-text-fill: -label-color;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
 }
 
-/* Collapse executionHeader row & filler without -fx-size */
-.table-view .column-header,
-.table-view .filler {
-    -fx-padding: 0;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
-    -fx-max-height: 0;
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
+/* Header text */
+.table-view .column-header .label {
+    -fx-text-fill: -label-color;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
 }
 
-/* Base background of the table */
+/* Base table background */
 .table-view {
     -fx-background-color: derive(-system-background, -8%);
     -fx-control-inner-background: derive(-system-background, -8%);
@@ -457,7 +455,7 @@
     -fx-text-fill: white;
 }
 
-/* Alternate row coloring (slightly darker) */
+/* Alternate row */
 .table-row-cell:odd {
     -fx-background-color: derive(-system-background, -12%);
 }
@@ -473,24 +471,18 @@
     -fx-text-fill: white;
 }
 
-/* Empty placeholder text ("No content in table") */
+/* Empty placeholder */
 .table-view .placeholder .label {
     -fx-text-fill: rgba(255,255,255,0.6);
 }
 
-/* === TableView grid lines in dark mode === */
+/* Grid lines */
 .table-view .table-cell {
-    -fx-border-color: derive(-system-background, +15%);          /* vertical & horizontal grid lines */
-    -fx-border-width: 0 0 0 1;       /* keep only bottom + right borders */
-    -fx-border-insets: 0;
-    -fx-padding: 0 4 0 4;            /* optional: keeps text from touching */
+    -fx-border-color: derive(-system-background, +15%);
+    -fx-border-width: 0 0 1 1;
+    -fx-padding: 0 4 0 4;
 }
 
-.table-view .column-header,
-.table-view .filler {
-    -fx-border-color: derive(-system-background, +15%);
-    -fx-border-width: 0 0 0 1;
-}
 
 /* Global dark progress bar */
 .progress-bar {
@@ -505,6 +497,7 @@
     -fx-border-radius: 6;
     -fx-border-width: 1;
 }
+
 
 .progress-bar > .bar {
     -fx-background-color: -fx-accent;  /* keep default blue */

@@ -28,4 +28,16 @@ public class UserManager {
     public boolean isUserExists(String username) {
         return usersSet.contains(username);
     }
+
+    public int getMainProgramsCount(String username) {return 0;}
+
+    public int getSubfunctionsCount(String username) {return 0;}
+
+    public int getCurrentCredits(String username) {return 0;}
+
+    public int getCreditsUsed(String username) {return 0;}
+
+    public int getNumberOfRuns(String username) {return 0;}
+
+
 }

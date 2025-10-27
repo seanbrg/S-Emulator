@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import okhttp3.MediaType;
@@ -46,20 +45,36 @@ public class DashboardStageController {
 
     @FXML
     public void initialize() {
+
+
         // Set up callback to refresh programs table when a new program is uploaded
         if (headerController != null && availableProgramsController != null) {
             headerController.setDashboardController(this);
-            //headerController.setScene(scene);
             headerController.setOnProgramUploadedCallback(() -> {
                 // Force immediate refresh of programs table
-                //availableProgramsController.startListRefresher();
+                // availableProgramsController.startListRefresher();
             });
         }
+
+        // Set up HTTP status update for users controller
+        if (availableUsersController != null) {
+            availableUsersController.setHttpStatusUpdate(this::updateHttpStatus);
+
+        }
+
+        // Set up HTTP status update for programs controller (if it has one)
+        if (availableProgramsController != null) {
+            // If AvailableProgramsController has a similar method, set it here
+
+        }
+
     }
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        this.headerController.setScene(scene);
+        if (this.headerController != null) {
+            this.headerController.setScene(scene);
+        }
     }
 
     public void setMainAppController(MainAppController controller) {
@@ -69,29 +84,47 @@ public class DashboardStageController {
     @FXML
     private void handleLogout() {
 
+
+        // Stop users refresher
+        if (availableUsersController != null) {
+            availableUsersController.close();
+        }
+
+        // Stop programs refresher
         if (availableProgramsController != null) {
             availableProgramsController.stopListRefresher();
         }
 
-        mainAppController.switchToLogin();
+        if (mainAppController != null) {
+            mainAppController.switchToLogin();
+        }
     }
 
     public void setActive(String userName) {
+
+
         // Start users refresher
         if (availableUsersController != null) {
+
             availableUsersController.startListRefresher();
         }
-
         // Start programs refresher
         if (availableProgramsController != null) {
+
             availableProgramsController.startListRefresher();
         }
 
-        // Show username in executionHeader
-        // not working
+        // Show username in header
         if (headerController != null) {
             headerController.setUserName(userName);
+
         }
+    }
+
+    private void updateHttpStatus(String status) {
+        System.out.println("[HTTP Status] " + status);
+
+        // Platform.runLater(() -> statusLabel.setText(status));
     }
 
     public Task<List<String>> createLoadTask(String filePath) {
@@ -117,16 +150,15 @@ public class DashboardStageController {
 
                 try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
                     if (!r.isSuccessful()) {
-                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+
                         throw new IOException("Upload failed: " + r.code());
                     }
                 }
+
                 List<String> funcNames;
                 try (Response r = HttpUtils.getSync(listUrl)) {
                     if (!r.isSuccessful() || r.body() == null) {
-                        System.out.println("[DEBUG] POST status=" + r.code() + " location=" + r.header("Location"));
-                        System.out.println("[DEBUG] POST body=" + (r.body() != null ? r.body().string() : "<no body>"));
+
                         throw new IOException("List fetch failed: " + r.code());
                     }
                     String json = r.body().string();

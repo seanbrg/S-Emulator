@@ -1,8 +1,8 @@
 package emulator.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
-import users.UserManager;
 import jakarta.servlet.ServletContext;
+import users.UserManagerDashboard;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,13 +12,15 @@ public class ServletsUtils {
     private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
     private static final Object userManagerLock = new Object();
 
-    public static UserManager getUserManager(ServletContext servletContext) {
+    public static UserManagerDashboard getUserManager(ServletContext servletContext) {
         synchronized (userManagerLock) {
             if (servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME) == null) {
-                servletContext.setAttribute(USER_MANAGER_ATTRIBUTE_NAME, new UserManager());
+
+                servletContext.setAttribute(USER_MANAGER_ATTRIBUTE_NAME, new UserManagerDashboard());
             }
         }
-        return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
+
+        return (UserManagerDashboard) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
     }
 
     public static void sendError(HttpServletResponse resp, int status, String message) throws IOException {
