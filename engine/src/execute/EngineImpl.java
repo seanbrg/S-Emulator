@@ -138,7 +138,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public boolean loadFromStream(InputStream inputStream) {
+    public List<String> loadFromStream(InputStream inputStream) {
         Map<String, Variable> vars = new HashMap<>();
         vars.putAll(this.inputVarsMap);
         vars.putAll(this.tempVarsMap);
@@ -152,10 +152,10 @@ public class EngineImpl implements Engine {
             pm.loadNew(programs);
             this.history.clear();
             if (printMode) System.out.println("Program '" + programs.getLast().getName() + "' loaded successfully!");
-            return true;
+            return programs.stream().map(Program::getName).toList();
         } else {
             if (printMode) System.out.println("Program not loaded. Keeping previous program.");
-            return false;
+            return null;
         }
     }
 
@@ -365,15 +365,6 @@ public class EngineImpl implements Engine {
         return result;
     }
 
-    @Override
-    public void loadFromStream(InputStream in, String userName) throws Exception {
-        Set<String> programsBefore = new HashSet<>(getAllProgramNames());
-
-        loadFromStream(in);
-
-        Set<String> programsAfter = new HashSet<>(getAllProgramNames());
-        programsAfter.removeAll(programsBefore);
-    }
 
     @Override
     public List<ProgramDTO> getProgramAndFunctionsDTO(String programName) {

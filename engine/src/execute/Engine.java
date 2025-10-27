@@ -36,7 +36,7 @@ public interface Engine {
 
     int getCycles(String program, int degree);
 
-    boolean loadFromStream(InputStream inputStream);
+    List<String> loadFromStream(InputStream inputStream);
 
     void fillOutVars(Map<String, Variable> vars);
 
@@ -65,8 +65,6 @@ public interface Engine {
     List<ProgramDTO> getAllProgramDTOs();
 
     List<String> getAllProgramNames();
-
-    void loadFromStream(InputStream in, String userName) throws Exception;
 
     List<ProgramDTO> getProgramAndFunctionsDTO(String programName);
 }

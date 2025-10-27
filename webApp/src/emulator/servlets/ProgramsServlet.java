@@ -224,6 +224,7 @@ public class ProgramsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try (InputStream in = request.getInputStream()) {
             Engine engine = ContextUtils.getEngine(getServletContext());
+            Map<String, String> programOwners = ContextUtils.getProgramOwners(getServletContext());
 
             if (engine == null) {
                 sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -236,8 +237,14 @@ public class ProgramsServlet extends HttpServlet {
             String userName = session != null ? (String) session.getAttribute("username") : "Unknown";
 
             synchronized (engine) {
-                engine.loadFromStream(in, userName);
+                List<String> programNames = engine.loadFromStream(in);
+                synchronized (programOwners) {
+                    for (String programName : programNames) {
+                        programOwners.put(programName, userName);
+                    }
+                }
             }
+
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
