@@ -1,8 +1,7 @@
 package client.components.dashboard.availablePrograms;
 
 import client.components.dashboard.availableUsers.AvailableUsersController;
-import client.util.HttpUtils;
-import emulator.utils.WebConstants;
+import client.util.refresh.ProgramsListRefresher;
 import execute.dto.ProgramMetadataDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -13,19 +12,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import okhttp3.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 
 import static client.util.Constants.REFRESH_RATE;
@@ -39,10 +29,8 @@ public class AvailableProgramsController {
     @FXML private TableColumn<ProgramTableData, Integer> columnMaxDegree;
     @FXML private TableColumn<ProgramTableData, Integer> columnNumberOfRuns;
     @FXML private TableColumn<ProgramTableData, String> columnAverageCreditCost;
-    @FXML private Button executuProgramButton;
+    @FXML private Button executeProgramButton;
 
-    private static final Gson GSON = new Gson();
-    private final OkHttpClient client = new OkHttpClient();
     private Timer timer;
     private TimerTask listRefresher;
     private BooleanProperty autoUpdate;
@@ -61,7 +49,7 @@ public class AvailableProgramsController {
         totalPrograms = new SimpleIntegerProperty(0);
 
 
-        executuProgramButton.setOnAction(event -> onExecuteProgramClicked());
+        executeProgramButton.setOnAction(event -> onExecuteProgramClicked());
     }
 
     private void setupTableColumns() {
@@ -94,7 +82,7 @@ public class AvailableProgramsController {
     public void startListRefresher() {
         listRefresher = new ProgramsListRefresher(
                 autoUpdate,
-                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
+                s->{}, // no status update
                 this::updateProgramsTable
         );
         timer = new Timer();
@@ -109,7 +97,7 @@ public class AvailableProgramsController {
 
     private void onExecuteProgramClicked() {
         ProgramTableData selected = availableProgramsTable.getSelectionModel().getSelectedItem();
-        //to implement execute button
+        //TODO: implement execute button for programs
 
     }
 
@@ -160,46 +148,4 @@ public class AvailableProgramsController {
         public String getAverageCreditCost() { return averageCreditCost.get(); }
         public SimpleStringProperty averageCreditCostProperty() { return averageCreditCost; }
     }
-
-    public static class ProgramsListRefresher extends TimerTask {
-        private final BooleanProperty autoUpdate;
-        private final Consumer<String> httpStatusConsumer;
-        private final Consumer<List<ProgramMetadataDTO>> programsListUpdater;
-        private static final Gson GSON = new Gson();
-
-        public ProgramsListRefresher(BooleanProperty autoUpdate,
-                                     Consumer<String> httpStatusConsumer,
-                                     Consumer<List<ProgramMetadataDTO>> programsListUpdater) {
-            this.autoUpdate = autoUpdate;
-            this.httpStatusConsumer = httpStatusConsumer;
-            this.programsListUpdater = programsListUpdater;
-        }
-
-        @Override
-        public void run() {
-            if (autoUpdate.get()) {
-                httpStatusConsumer.accept("Updating programs...");
-
-                HttpUtils.getAsync(WebConstants.PROGRAMS_METADATA_URL).thenAccept(json -> {
-                    // Parse JSON array of programMetadataDTO
-                    try {
-                        Type listType = new TypeToken<List<ProgramMetadataDTO>>() {}.getType();
-                        List<ProgramMetadataDTO> programs = GSON.fromJson(json, listType);
-
-                        programsListUpdater.accept(programs);
-                        httpStatusConsumer.accept("Programs updated.");
-
-                    } catch (Exception e) {
-                        httpStatusConsumer.accept("Failed to parse programs list: " + e.getMessage());
-                        return;
-                    }
-                }).exceptionally(ex -> {
-                    httpStatusConsumer.accept("Failed to update programs: " + ex.getCause().getMessage());
-                    return null;
-                });
-            }
-        }
-    }
-
-
 }

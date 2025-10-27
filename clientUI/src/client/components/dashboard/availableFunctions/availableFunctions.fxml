@@ -9,15 +9,15 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availableFunctions.AvailableFunctionsController">
    <bottom>
-      <Button fx:id="ExecuteProgramButton" mnemonicParsing="false" text="Execute Program" BorderPane.alignment="CENTER" />
+      <Button fx:id="executeFunctionButton" mnemonicParsing="false" text="Execute Program" BorderPane.alignment="CENTER" />
    </bottom>
    <top>
       <Label text="Avaliable Functions" BorderPane.alignment="CENTER" />
    </top>
    <center>
-      <TableView BorderPane.alignment="CENTER">
+      <TableView fx:id="availableFunctionsTable" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="columFuncName" prefWidth="85.60003662109375" text="FuncName" />
+          <TableColumn fx:id="columnFuncName" prefWidth="85.60003662109375" text="FuncName" />
           <TableColumn fx:id="columnProgramName" prefWidth="137.5999755859375" text="ProgramName" />
             <TableColumn fx:id="columnUser" prefWidth="112.79998779296875" text="User" />
             <TableColumn fx:id="columnNumberOfInst" prefWidth="156.0" text="Number Of Inst" />

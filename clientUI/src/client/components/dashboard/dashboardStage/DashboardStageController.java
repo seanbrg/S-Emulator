@@ -1,5 +1,6 @@
 package client.components.dashboard.dashboardStage;
 
+import client.components.dashboard.availableFunctions.AvailableFunctionsController;
 import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.components.dashboard.dashboardHeader.DashboardHeaderController;
@@ -39,6 +40,9 @@ public class DashboardStageController {
     @FXML private BorderPane availablePrograms;
     @FXML private AvailableProgramsController availableProgramsController;
 
+    @FXML private BorderPane availableFunctions;
+    @FXML private AvailableFunctionsController availableFunctionsController;
+
     private MainAppController mainAppController;
     private static final Gson GSON = new Gson();
     private Scene scene;
@@ -48,7 +52,7 @@ public class DashboardStageController {
 
 
         // Set up callback to refresh programs table when a new program is uploaded
-        if (headerController != null && availableProgramsController != null) {
+        if (headerController != null) {
             headerController.setDashboardController(this);
             headerController.setOnProgramUploadedCallback(() -> {
                 // Force immediate refresh of programs table
@@ -61,13 +65,6 @@ public class DashboardStageController {
             availableUsersController.setHttpStatusUpdate(this::updateHttpStatus);
 
         }
-
-        // Set up HTTP status update for programs controller (if it has one)
-        if (availableProgramsController != null) {
-            // If AvailableProgramsController has a similar method, set it here
-
-        }
-
     }
 
     public void setScene(Scene scene) {
@@ -102,16 +99,17 @@ public class DashboardStageController {
 
     public void setActive(String userName) {
 
-
         // Start users refresher
         if (availableUsersController != null) {
-
             availableUsersController.startListRefresher();
         }
         // Start programs refresher
         if (availableProgramsController != null) {
-
             availableProgramsController.startListRefresher();
+        }
+
+        if (availableFunctionsController != null) {
+            availableFunctionsController.startListRefresher();
         }
 
         // Show username in header

@@ -66,7 +66,7 @@ public interface Engine {
 
     List<String> getAllProgramNames();
 
-    List<ProgramMetadataDTO> getAllProgramMetadata();
-    void recordProgramRun(String programName, double cost);
     void loadFromStream(InputStream in, String userName) throws Exception;
+
+    List<ProgramDTO> getProgramAndFunctionsDTO(String programName);
 }

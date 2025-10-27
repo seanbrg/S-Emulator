@@ -3,6 +3,7 @@ package emulator.servlets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.ContextUtils;
+import emulator.utils.ProgramRunStats;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.dto.HistoryDTO;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import static emulator.utils.ServletsUtils.sendError;
 
@@ -32,6 +34,8 @@ public class RunServlet extends HttpServlet {
         response.setContentType("application/json");
 
         Engine engine = ContextUtils.getEngine(getServletContext());
+        Map<String, ProgramRunStats> programStats = ContextUtils.getProgramStats(getServletContext());
+
         if (engine == null) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized.");
             return;
@@ -90,7 +94,9 @@ public class RunServlet extends HttpServlet {
                         double executionCost = calculateExecutionCost(resultDto, degree);
 
                         // Record the execution statistics
-                        engine.recordProgramRun(programName, executionCost);
+                        synchronized (programStats) {
+                            recordRunStats(programName, executionCost, programStats);
+                        }
 
                         System.out.println("Executed program '" + programName + "' degree " + degree + " successfully. " +
                                 "Inputs: " + inputsDto + " Result: " + resultDto.getOutput().getVarString() +
@@ -133,4 +139,13 @@ public class RunServlet extends HttpServlet {
 
         return cost;
     }
+
+    public void recordRunStats(String programName, double cost, Map<String, ProgramRunStats> programStats) {
+        ProgramRunStats stats = programStats.computeIfAbsent(
+                programName,
+                k -> new ProgramRunStats()
+        );
+        stats.recordRun(cost);
+    }
+
 }

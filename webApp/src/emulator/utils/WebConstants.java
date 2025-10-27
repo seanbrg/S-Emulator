@@ -8,6 +8,8 @@ public class WebConstants {
     public static final String PROGRAM_DEGREE = "programDegree";
     public static final String PROGRAM_VARLIST = "programVarList";
     public static final String PROGRAM_INPUTS = "programInputs";
+    public static final String PROGRAM_STATS = "programStats";
+    public static final String PROGRAM_OWNERS = "programOwners";
 
     // Server configuration
     private final static String SERVER_PATH = "http://localhost:8080/semulator";
@@ -31,6 +33,7 @@ public class WebConstants {
     public static final String PROGRAMS_METADATA_PATH = "/metadata";
     public final static String INPUTS_PATH = "/inputs";
     public final static String DEBUG_W_PATH = DEBUG_PATH + WILDCARD_PATH;
+    public static final String PROGRAMS_FUNC_METADATA_PATH = PROGRAMS_FUNC_PATH + PROGRAMS_METADATA_PATH;
 
     // Full URLs
     public final static String LOGIN_URL = SERVER_PATH + LOGIN_PATH;
@@ -40,6 +43,7 @@ public class WebConstants {
     public final static String PROGRAMS_LIST_URL = PROGRAMS_URL + PROGRAMS_LIST_PATH;
     public final static String PROGRAMS_FUNC_URL = PROGRAMS_URL + PROGRAMS_FUNC_PATH;
     public final static String PROGRAMS_METADATA_URL = PROGRAMS_URL + PROGRAMS_METADATA_PATH;
+    public static final String PROGRAMS_FUNC_METADATA_URL = PROGRAMS_URL + PROGRAMS_FUNC_METADATA_PATH;
     public final static String INPUTS_URL = SERVER_PATH + INPUTS_PATH;
     public final static String MAXDEGREE_URL = PROGRAMS_URL + MAXDEGREE_PATH;
     public final static String RUN_URL = SERVER_PATH + RUN_PATH;

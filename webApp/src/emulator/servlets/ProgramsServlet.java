@@ -2,8 +2,11 @@ package emulator.servlets;
 
 import com.google.gson.Gson;
 import emulator.utils.ContextUtils;
+import emulator.utils.ProgramRunStats;
 import emulator.utils.WebConstants;
 import execute.Engine;
+import execute.EngineImpl;
+import execute.dto.FunctionMetadataDTO;
 import execute.dto.ProgramDTO;
 import execute.dto.ProgramMetadataDTO;
 import execute.dto.VariableDTO;
@@ -12,11 +15,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import logic.program.Program;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static emulator.utils.ServletsUtils.sendError;
 
@@ -30,6 +36,9 @@ public class ProgramsServlet extends HttpServlet {
         response.setContentType("application/json");
 
         Engine engine = ContextUtils.getEngine(getServletContext());
+        Map<String, ProgramRunStats> programStats = ContextUtils.getProgramStats(getServletContext());
+        Map<String, String> programOwners = ContextUtils.getProgramOwners(getServletContext());
+
         if (engine == null) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Engine not initialized.");
             return;
@@ -115,7 +124,24 @@ public class ProgramsServlet extends HttpServlet {
         if (WebConstants.PROGRAMS_METADATA_PATH.equals(path)) {  // /metadata
             List<ProgramMetadataDTO> metadata;
             synchronized (engine) {
-                metadata = engine.getAllProgramMetadata();
+                synchronized (programStats) {
+                    synchronized (programOwners) {
+                        metadata = getAllProgramMetadata(programStats, programOwners, engine);
+                    }
+                }
+            }
+            try (PrintWriter out = response.getWriter()) {
+                out.print(GSON.toJson(metadata));
+            }
+            return;
+        }
+
+        if (WebConstants.PROGRAMS_FUNC_METADATA_PATH.equals(path)) { // /func/metadata
+            List<FunctionMetadataDTO> metadata;
+            synchronized (engine) {
+                    synchronized (programOwners) {
+                        metadata = getAllFunctionMetadata(programOwners, engine);
+                    }
             }
             try (PrintWriter out = response.getWriter()) {
                 out.print(GSON.toJson(metadata));
@@ -190,7 +216,8 @@ public class ProgramsServlet extends HttpServlet {
 
 
         sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid URL. " +
-                "Use /semulator/programs, /semulator/programs?programName=&programDegree=, /semulator/programs/list, or /semulator/programs/metadata.");
+                "Use /semulator/programs, /semulator/programs?programName=&programDegree=," +
+                " /semulator/programs/list, /semulator/programs/metadata or /semulator/programs/func/metadata.");
     }
 
     @Override
@@ -216,5 +243,67 @@ public class ProgramsServlet extends HttpServlet {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                     "Error loading program: " + e.getMessage());
         }
+    }
+
+    public List<FunctionMetadataDTO> getAllFunctionMetadata(Map<String, String> programOwners,
+                                                            Engine engine) {
+        List<FunctionMetadataDTO> metadataList = new ArrayList<>();
+
+        for (String programName : engine.getAllProgramNames()) {
+            List<ProgramDTO> funcNames = engine.getProgramAndFunctionsDTO(programName);
+            for (ProgramDTO func : funcNames) {
+                String owner = programOwners.getOrDefault(programName, "Unknown");
+                String name = func.getProgramName();
+                ProgramDTO funcDto = engine.getProgramDTO(name, 0);
+                if (funcDto == null) continue;
+
+                // Create metadata DTO
+                FunctionMetadataDTO metadata = new FunctionMetadataDTO(
+                        name,
+                        programName,
+                        owner,
+                        func.getInstructions().size(), // number of instructions
+                        func.getMaxDegree()
+                );
+
+                metadataList.add(metadata);
+            }
+        }
+
+        return metadataList;
+    }
+
+
+    public List<ProgramMetadataDTO> getAllProgramMetadata(Map<String, ProgramRunStats> programStats,
+                                                          Map<String, String> programOwners,
+                                                          Engine engine) {
+        List<ProgramMetadataDTO> metadataList = new ArrayList<>();
+
+        for (String programName : engine.getAllProgramNames()) {
+            ProgramDTO programDto = engine.getProgramDTO(programName, 0);
+            if (programDto == null) continue;
+
+            // Get statistics
+            ProgramRunStats stats = programStats.getOrDefault(
+                    programName,
+                    new ProgramRunStats()
+            );
+
+            String owner = programOwners.getOrDefault(programName, "Unknown");
+
+            // Create metadata DTO
+            ProgramMetadataDTO metadata = new ProgramMetadataDTO(
+                    programName,
+                    owner,
+                    programDto.getInstructions().size(), // number of instructions
+                    programDto.getMaxDegree(),
+                    stats.getRunCount(),
+                    stats.getAverageCost()
+            );
+
+            metadataList.add(metadata);
+        }
+
+        return metadataList;
     }
 }
