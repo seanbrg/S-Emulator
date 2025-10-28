@@ -1,5 +1,6 @@
 package emulator.servlets;
 
+import client.components.dashboard.userHistory.UserRunHistory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.ContextUtils;
@@ -12,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +103,8 @@ public class RunServlet extends HttpServlet {
                         System.out.println("Executed program '" + programName + "' degree " + degree + " successfully. " +
                                 "Inputs: " + inputsDto + " Result: " + resultDto.getOutput().getVarString() +
                                 " Cost: " + executionCost);
+
+
 
                         String jsonResponse = GSON.toJson(resultDto);
                         PrintWriter out = response.getWriter();

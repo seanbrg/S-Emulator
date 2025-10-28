@@ -6,8 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="client.components.dashboard.userHistory.UserHistoryController"
-            >
+            fx:controller="client.components.dashboard.userHistory.UserHistoryController">
 
    <top>
       <VBox spacing="10" styleClass="section-header">
@@ -35,6 +34,16 @@
          </columnResizePolicy>
       </TableView>
    </center>
+
+   <bottom>
+      <HBox spacing="10" alignment="CENTER_LEFT" styleClass="button-bar">
+         <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+         </padding>
+         <Button fx:id="showStatusButton" text="Show Status" onAction="#onShowStatus"/>
+         <Button fx:id="rerunButton" text="Re-run" onAction="#onRerun"/>
+      </HBox>
+   </bottom>
 
    <padding>
       <Insets top="5" right="5" bottom="5" left="5"/>

@@ -1,16 +1,23 @@
 package client.components.dashboard.userHistory;
 
+import execute.dto.HistoryDTO;
 
+/**
+ * DTO for storing individual run history records for a user
+ */
 public class UserRunHistory {
     private String username;
     private int runNumber;
-    private boolean isMainProgram;  // true for main program, false for auxiliary function
+    private boolean isMainProgram;
     private String programName;
     private String architectureType;
     private int runLevel;
     private long outputValue;
     private int cycles;
     private long timestamp;
+
+    // Store the full history DTO for detailed information
+    private HistoryDTO historyDTO;
 
     public UserRunHistory() {
         this.timestamp = System.currentTimeMillis();
@@ -58,4 +65,6 @@ public class UserRunHistory {
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
+    public HistoryDTO getHistoryDTO() { return historyDTO; }
+    public void setHistoryDTO(HistoryDTO historyDTO) { this.historyDTO = historyDTO; }
 }
