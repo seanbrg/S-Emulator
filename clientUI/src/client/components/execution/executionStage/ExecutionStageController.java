@@ -5,6 +5,7 @@ import client.components.execution.instructionHistory.InstructionHistoryControll
 import client.components.execution.executionHeader.ExecutionHeaderController;
 import client.components.execution.programTab.ProgramTabController;
 import client.components.execution.runMenu.RunMenuController;
+import client.components.mainApp.MainAppController;
 import client.util.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,6 +54,7 @@ public class ExecutionStageController {
     private Map<Tab, ProgramTabController> tabControllerMap;
     private ObjectProperty<ProgramTabController> currentTabController;
     private ReadOnlyBooleanWrapper switchingProgram;
+    private MainAppController mainAppController;
 
     private ListProperty<VariableDTO> currentRawProgramInputs;
     private ListProperty<VariableDTO> currentActualProgramInputs;
@@ -128,6 +130,14 @@ public class ExecutionStageController {
         });
     }
 
+
+    public void setActive(List<String> programNames, String currentUserName) {
+        for (String programName : programNames) {
+            addProgramTab(programName, 0);
+        }
+        executionHeaderController.setUserName(currentUserName);
+    }
+
     private void runProgram() {
         ProgramTabController tabController = currentTabController.get();
         if (tabController == null) return;
@@ -188,22 +198,6 @@ public class ExecutionStageController {
             scene.getStylesheets().clear();
             scene.getStylesheets().add(resource.toExternalForm());
         }
-    }
-
-    public void loadProgram(List<String> funcNames) {
-        switchingProgram.set(!switchingProgram.get());
-        programTabs.getTabs().clear();
-        for (String func : funcNames) {
-            addProgramTab(func, 0);
-        }
-
-        Tab programTab = programTabs.getTabs().getFirst();
-        ProgramTabController tabController = tabControllerMap.get(programTab);
-
-        this.programTabs.getSelectionModel().select(programTab);
-        this.currentTabControllerProperty().set(tabController);
-        refreshInputs();
-
     }
 
     private void addProgramTab(String programName, int degree) {
@@ -360,8 +354,6 @@ public class ExecutionStageController {
         HttpUtils.postAsync(debugStartUrl, requestBody).thenAccept(v -> { debugLine.set(0); });
     }
 
-
-
     public CompletableFuture<Boolean> debugStep() {
         ProgramTabController tabController = currentTabController.get();
         if (tabController == null) {
@@ -398,46 +390,23 @@ public class ExecutionStageController {
                 });
     }
 
-
     public ObservableSet<Integer> highlightedRowsProperty() {
         return highlightedRows;
     }
+
     public ObservableSet<Integer> getHighlightedRows() {
         return highlightedRows;
     }
 
-    // Convenience methods for callers (any controller/service can use these):
     public void highlightRow(int line) { highlightedRows.add(line); }
+
     public void unhighlightRow(int line) { highlightedRows.remove(line); }
+
     public void replaceHighlights(Collection<Integer> lines) {
         highlightedRows.clear();
         highlightedRows.addAll(lines);
     }
     public void clearHighlights() { highlightedRows.clear(); }
-
-    public void alertLoadFailed() {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Load Failed");
-            alert.setHeaderText("Failed to load program file!");
-            alert.setContentText("Please check the file format and try again.");
-
-            // Use main window as owner if available
-            if (scene != null && scene.getWindow() != null) {
-                alert.initOwner(scene.getWindow());
-                // Inherit current theme
-                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
-            }
-
-            // Use app icon on the dialog window (if available)
-            try {
-                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
-                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-            } catch (Exception ignored) {  }
-
-            alert.showAndWait();
-        });
-    }
 
     public void finishDebugging() {
         HttpUtils.getAsync(WebConstants.DEBUG_URL).thenAccept(json -> {
@@ -454,4 +423,9 @@ public class ExecutionStageController {
     public RunMenuController getRunMenuController() {
         return runMenuController;
     }
+
+    public void setMainAppController(MainAppController mainAppController) {
+        this.mainAppController = mainAppController;
+    }
+
 }

@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import static client.util.Constants.DASHBOARD_FXML;
 import static client.util.Constants.LOGIN_FXML;
@@ -22,6 +23,7 @@ public class MainAppController {
     private final Stage primaryStage;
 
     private Parent loginComponent;
+    private Parent executionComponent;
     private LoginController loginController;
 
     private Parent dashboardComponent;
@@ -76,6 +78,23 @@ public class MainAppController {
         }
     }
 
+    private void loadExecution() {
+        try {
+            if (executionStageController == null) {
+                URL fxmlUrl = getClass().getResource("/client/components/execution/executionStage/ExecutionStage.fxml");
+                FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
+                executionComponent = fxmlLoader.load();
+                executionStageController = fxmlLoader.getController();
+                executionStageController.setMainAppController(this);
+                Platform.runLater(() -> {
+                    executionStageController.setScene(scene);
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // ---------------------- Stage switching ----------------------
 
     public void switchToDashboard(String userName) {
@@ -91,6 +110,18 @@ public class MainAppController {
     }
 
 
+    public void switchToExecute(List<String> programNames) {
+        loadExecution();
+
+        Platform.runLater(() -> {
+            primaryStage.getScene().setRoot(executionComponent);
+            executionStageController.setScene(primaryStage.getScene());
+            executionStageController.setActive(programNames, currentUserName);
+            primaryStage.sizeToScene();
+        });
+    }
+
+
     public void switchToLogin() {
         Platform.runLater(() -> {
             currentUserName = null;
@@ -101,5 +132,6 @@ public class MainAppController {
     public Stage getPrimaryStage() {
         return primaryStage;
     }
+
 }
 

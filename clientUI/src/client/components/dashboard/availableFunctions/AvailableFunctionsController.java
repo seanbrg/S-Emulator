@@ -1,5 +1,6 @@
 package client.components.dashboard.availableFunctions;
 
+import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.refresh.FunctionsListRefresher;
 import execute.dto.FunctionMetadataDTO;
 import javafx.application.Platform;
@@ -35,6 +36,7 @@ public class AvailableFunctionsController {
     StringProperty selectedProgramNameProperty;
     private ObservableList<FunctionTableData> functionsList = FXCollections.observableArrayList();
     private ScheduledExecutorService scheduler;
+    private DashboardStageController mainDashboardController;
 
 
     @FXML
@@ -94,13 +96,22 @@ public class AvailableFunctionsController {
         }
     }
 
+    public void setMainDashboardController(DashboardStageController controller) {
+        this.mainDashboardController = controller;
+    }
+
     private void onExecuteFunctionClicked() {
         FunctionTableData selected = availableFunctionsTable.getSelectionModel().getSelectedItem();
-        //TODO: implement execute button for functions
-
+        if (selected != null && mainDashboardController != null) {
+            mainDashboardController.switchToExecute(List.of(selected.getName()));
+        }
     }
 
     public StringProperty selectedProgramNameProperty() { return selectedProgramNameProperty; }
+
+    public List<String> getDisplayedFuncNames() {
+        return functionsList.stream().map(FunctionTableData::getName).toList();
+    }
 
     // table data binding
     public static class FunctionTableData {

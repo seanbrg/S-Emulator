@@ -150,6 +150,10 @@ public class ExecutionHeaderController {
     private void handleExpand() {
         mainController.expandProgram();
     }
+
+    public void setUserName(String currentUserName) {
+        //TODO: add user elements to this header
+    }
 }
 
 

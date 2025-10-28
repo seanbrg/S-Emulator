@@ -1,6 +1,8 @@
 package client.components.dashboard.availablePrograms;
 
+import client.components.dashboard.availableFunctions.AvailableFunctionsController;
 import client.components.dashboard.availableUsers.AvailableUsersController;
+import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.refresh.ProgramsListRefresher;
 import execute.dto.InstructionDTO;
 import execute.dto.ProgramMetadataDTO;
@@ -38,6 +40,7 @@ public class AvailableProgramsController {
     private IntegerProperty totalPrograms;
     private StringProperty selectedProgramNameProperty;
     private AvailableUsersController.HttpStatusUpdate httpStatusUpdate;
+    private DashboardStageController mainDashboardController;
 
 
     private ObservableList<ProgramTableData> programsList = FXCollections.observableArrayList();
@@ -59,6 +62,10 @@ public class AvailableProgramsController {
                 }
             });
         });
+    }
+
+    public void setMainDashboardController(DashboardStageController controller) {
+        this.mainDashboardController = controller;
     }
 
     private void setupTableColumns() {
@@ -110,8 +117,10 @@ public class AvailableProgramsController {
 
     private void onExecuteProgramClicked() {
         ProgramTableData selected = availableProgramsTable.getSelectionModel().getSelectedItem();
-        //TODO: implement execute button for programs
-
+        List<String> funcNames = mainDashboardController.getDisplayedFuncNames();
+        if (selected != null && mainDashboardController != null) {
+            mainDashboardController.switchToExecute(funcNames);
+        }
     }
 
     private void showAlert(String title, String content) {

@@ -5,28 +5,24 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"  xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availablePrograms.AvailableProgramsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availablePrograms.AvailableProgramsController">
    <top>
       <Label text="Avaliable Programs" BorderPane.alignment="CENTER" />
    </top>
+   <bottom>
+      <Button fx:id="executeProgramButton" mnemonicParsing="false" text="Execute Program" BorderPane.alignment="CENTER" />
+   </bottom>
    <center>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <TableView fx:id="availableProgramsTable" >
-              <columns>
-                <TableColumn fx:id="columnName"  text="Name" />
-                <TableColumn fx:id="columnUser"  text="User" />
-                  <TableColumn fx:id="columnNumberOfInst"  text="Number Of Inst" />
-                  <TableColumn fx:id="columnMaxDegree"  text="Max Degree" />
-                  <TableColumn fx:id="columnNumberOfRuns" text="Number Of Runs" />
-                  <TableColumn fx:id="columnAverageCreditCost" text="Average Credit Cost" />
-              </columns>
-            </TableView>
-            <Button fx:id="executeProgramButton" mnemonicParsing="false" text="Execute Program" />
-         </children>
-      </VBox>
+      <TableView fx:id="availableProgramsTable" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="columnName" text="Name" />
+          <TableColumn fx:id="columnUser" text="User" />
+            <TableColumn fx:id="columnNumberOfInst" text="Number Of Inst" />
+            <TableColumn fx:id="columnMaxDegree" text="Max Degree" />
+            <TableColumn fx:id="columnNumberOfRuns" text="Number Of Runs" />
+            <TableColumn fx:id="columnAverageCreditCost" text="Average Credit Cost" />
+        </columns>
+      </TableView>
    </center>
 </BorderPane>

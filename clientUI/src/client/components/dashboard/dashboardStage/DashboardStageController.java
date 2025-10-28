@@ -69,6 +69,11 @@ public class DashboardStageController {
         availableFunctionsController.selectedProgramNameProperty()
                 .bind(availableProgramsController.selectedProgramNameProperty());
 
+        Platform.runLater(() -> {
+            availableFunctionsController.setMainDashboardController(this);
+            availableProgramsController.setMainDashboardController(this);
+        });
+
     }
 
     public void setScene(Scene scene) {
@@ -193,5 +198,13 @@ public class DashboardStageController {
 
             alert.showAndWait();
         });
+    }
+
+    public void switchToExecute(List<String> programNames) {
+        mainAppController.switchToExecute(programNames);
+    }
+
+    public List<String> getDisplayedFuncNames() {
+        return availableFunctionsController.getDisplayedFuncNames();
     }
 }
