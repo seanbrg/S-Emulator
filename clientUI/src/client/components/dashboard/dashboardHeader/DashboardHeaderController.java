@@ -1,6 +1,7 @@
 package client.components.dashboard.dashboardHeader;
 
 import client.components.dashboard.dashboardStage.DashboardStageController;
+import client.util.HttpUtils;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -34,8 +35,10 @@ public class DashboardHeaderController {
     private ProgressBar progressBar;
 
     private static final String PROGRAMS_SERVLET_URL = "http://localhost:8080/semulator/programs";
+    private static final String USERS_SERVLET_URL = "http://localhost:8080/semulator/users";
 
     private int availableCredits = 50;
+    private String currentUsername = "";
     private DashboardStageController dashboardController;
 
     // Callback for notifying when a program is uploaded
@@ -67,10 +70,28 @@ public class DashboardHeaderController {
                 return;
             }
 
-            availableCredits += amount;
-            updateCreditLabel();
-            creditsTextField.clear();
-            showAlert("Credits Added", "Successfully added " + amount + " credits!");
+            // Send credits to server
+            chargeCreditsButton.setDisable(true);
+
+            String url = USERS_SERVLET_URL + "?username=" + currentUsername + "&credits=" + amount;
+
+            HttpUtils.postAsync(url, RequestBody.create(new byte[0]))
+                    .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            availableCredits += amount;
+                            updateCreditLabel();
+                            creditsTextField.clear();
+                            chargeCreditsButton.setDisable(false);
+                            showAlert("Credits Added", "Successfully added " + amount + " credits!");
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            chargeCreditsButton.setDisable(false);
+                            showAlert("Error", "Failed to add credits: " + ex.getMessage());
+                        });
+                        return null;
+                    });
 
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number.");
@@ -83,7 +104,6 @@ public class DashboardHeaderController {
         if (file == null) return;
         final String newPath = file.getPath();
 
-
         progressBar.setProgress(0);
         progressBar.setVisible(true);
 
@@ -94,13 +114,18 @@ public class DashboardHeaderController {
         Task<List<String>> task = dashboardController.createLoadTask(newPath);
 
         // when task leaves RUNNING, finish the bar and then open/notify
-        task.setOnSucceeded(e -> finish(true, task.getValue(), spinner));
+        task.setOnSucceeded(e -> {
+            finish(true, task.getValue(), spinner);
+            // Trigger callback to refresh programs list
+            if (onProgramUploadedCallback != null) {
+                onProgramUploadedCallback.run();
+            }
+        });
         task.setOnFailed(e -> finish(false, null, spinner));
 
         new Thread(task, "load-xml").start();
 
         Platform.runLater(() -> filePath.setText(newPath));
-
     }
 
     private File chooseXmlFile() {
@@ -160,9 +185,9 @@ public class DashboardHeaderController {
     }
 
     public void setUserName(String userName) {
+        this.currentUsername = userName;
         Platform.runLater(() -> userNameLable.setText(userName));
     }
-
 
     public void setOnProgramUploadedCallback(Runnable callback) {
         this.onProgramUploadedCallback = callback;

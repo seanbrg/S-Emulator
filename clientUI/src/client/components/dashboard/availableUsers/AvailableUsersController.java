@@ -34,24 +34,15 @@ import static client.util.Constants.REFRESH_RATE;
 public class AvailableUsersController implements Closeable {
 
     // ---------------------- FXML ----------------------
-    @FXML
-    private TableView<UserDashboard> usersTableView;
-    @FXML
-    private TableColumn<UserDashboard, String> userNameColumn;
-    @FXML
-    private TableColumn<UserDashboard, Integer> mainProgramsColumn;
-    @FXML
-    private TableColumn<UserDashboard, Integer> subfunctionsColumn;
-    @FXML
-    private TableColumn<UserDashboard, Integer> currentCreditsColumn;
-    @FXML
-    private TableColumn<UserDashboard, Integer> creditsUsedColumn;
-    @FXML
-    private TableColumn<UserDashboard, Integer> runsColumn;
-    @FXML
-    private Label usersHeaderLabel;
-    @FXML
-    private Button unselectUserButton;
+    @FXML private TableView<UserDashboard> usersTableView;
+    @FXML private TableColumn<UserDashboard, String> userNameColumn;
+    @FXML private TableColumn<UserDashboard, Integer> mainProgramsColumn;
+    @FXML private TableColumn<UserDashboard, Integer> subfunctionsColumn;
+    @FXML private TableColumn<UserDashboard, Integer> currentCreditsColumn;
+    @FXML private TableColumn<UserDashboard, Integer> creditsUsedColumn;
+    @FXML private TableColumn<UserDashboard, Integer> runsColumn;
+    @FXML private Label usersHeaderLabel;
+    @FXML private Button unselectUserButton;
 
     // ---------------------- Properties ----------------------
     private final BooleanProperty autoUpdate;
@@ -73,13 +64,12 @@ public class AvailableUsersController implements Closeable {
     @FXML
     public void initialize() {
 
-
         // Bind header label to show total users count
         usersHeaderLabel.textProperty().bind(
                 Bindings.concat("Available Users (", totalUsers.asString(), ")")
         );
 
-        // Setup table columns
+        // Setup table columns using PropertyValueFactory
         userNameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         mainProgramsColumn.setCellValueFactory(new PropertyValueFactory<>("mainProgramsUploaded"));
         subfunctionsColumn.setCellValueFactory(new PropertyValueFactory<>("subfunctionsContributed"));
@@ -94,8 +84,6 @@ public class AvailableUsersController implements Closeable {
         if (unselectUserButton != null) {
             unselectUserButton.setOnAction(event -> usersTableView.getSelectionModel().clearSelection());
         }
-
-
     }
 
     public void setHttpStatusUpdate(HttpStatusUpdate httpStatusUpdate) {
@@ -108,21 +96,52 @@ public class AvailableUsersController implements Closeable {
 
     // ---------------------- Update Logic ----------------------
     private void updateUsersList(List<UserDashboard> usersData) {
-
-
         Platform.runLater(() -> {
-            usersList.clear();
-            if (usersData != null && !usersData.isEmpty()) {
-                usersList.addAll(usersData);
-                totalUsers.set(usersData.size());
-
-
-            } else {
-                totalUsers.set(0);
-
+            // Create a map of existing users for efficient lookup
+            Map<String, UserDashboard> existingUsersMap = new HashMap<>();
+            for (UserDashboard u : usersList) {
+                existingUsersMap.put(u.getUsername(), u);
             }
+
+            // Track which users are in the new data
+            Set<String> newUsernames = new HashSet<>();
+
+            // List to hold users that need to be added
+            List<UserDashboard> usersToAdd = new ArrayList<>();
+
+            for (UserDashboard newUser : usersData) {
+                newUsernames.add(newUser.getUsername());
+                UserDashboard existing = existingUsersMap.get(newUser.getUsername());
+
+                if (existing != null) {
+                    // Update existing user's data
+                    existing.setMainProgramsUploaded(newUser.getMainProgramsUploaded());
+                    existing.setSubfunctionsContributed(newUser.getSubfunctionsContributed());
+                    existing.setCurrentCredits(newUser.getCurrentCredits());
+                    existing.setCreditsUsed(newUser.getCreditsUsed());
+                    existing.setNumberOfRuns(newUser.getNumberOfRuns());
+                } else {
+                    // New user - add to list
+                    usersToAdd.add(newUser);
+                }
+            }
+
+            // Add new users
+            if (!usersToAdd.isEmpty()) {
+                usersList.addAll(usersToAdd);
+            }
+
+            // Remove users that are no longer in the server response
+            usersList.removeIf(user -> !newUsernames.contains(user.getUsername()));
+
+            // Update total count
+            totalUsers.set(usersList.size());
+
+            // Force table refresh to update all visible cells
+            usersTableView.refresh();
         });
     }
+
 
     public void startListRefresher() {
 
@@ -153,4 +172,5 @@ public class AvailableUsersController implements Closeable {
     public interface HttpStatusUpdate {
         void updateHttpLine(String line);
     }
+
 }

@@ -35,13 +35,8 @@ public class UserListRefresher extends TimerTask {
         }
 
         final String url = WebConstants.USERS_URL;
-
-
-
         try {
             HttpUtils.getAsync(url).thenAccept(json -> {
-
-
                 try {
                     if (json == null || json.trim().isEmpty()) {
 
@@ -50,11 +45,9 @@ public class UserListRefresher extends TimerTask {
                         return;
                     }
 
-
                     Type listType = new TypeToken<List<UserDashboard>>() {
                     }.getType();
                     List<UserDashboard> usersList = GSON.fromJson(json, listType);
-
 
                     usersListUpdater.accept(usersList);
 

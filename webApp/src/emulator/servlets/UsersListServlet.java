@@ -28,8 +28,6 @@ public class UsersListServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-
-
         try (PrintWriter out = response.getWriter()) {
             UserManagerDashboard userManager = ServletsUtils.getUserManager(getServletContext());
 
@@ -42,35 +40,23 @@ public class UsersListServlet extends HttpServlet {
 
             Set<String> usersList = userManager.getUsers();
 
-
             // Convert usernames to UserDashboard objects with statistics
             List<UserDashboard> usersDataList = new ArrayList<>();
             for (String username : usersList) {
-                int mainPrograms = userManager.getMainProgramsCount(username);
-                int subfunctions = userManager.getSubfunctionsCount(username);
-                int currentCredits = userManager.getCurrentCredits(username);
-                int creditsUsed = userManager.getCreditsUsed(username);
-                int numberOfRuns = userManager.getNumberOfRuns(username);
-
                 UserDashboard user = new UserDashboard(
                         username,
-                        mainPrograms,
-                        subfunctions,
-                        currentCredits,
-                        creditsUsed,
-                        numberOfRuns
+                        userManager.getMainProgramsCount(username),
+                        userManager.getSubfunctionsCount(username),
+                        userManager.getCurrentCredits(username),
+                        userManager.getCreditsUsed(username),
+                        userManager.getNumberOfRuns(username)
                 );
                 usersDataList.add(user);
-
             }
 
             String json = GSON.toJson(usersDataList);
-
-
             out.println(json);
             out.flush();
-
-
 
         } catch (Exception e) {
             System.err.println("[UsersListServlet] EXCEPTION: " + e.getMessage());
@@ -78,6 +64,61 @@ public class UsersListServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             try (PrintWriter out = response.getWriter()) {
                 out.println(GSON.toJson(new ArrayList<>()));
+            }
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String username = request.getParameter("username");
+        String creditsStr = request.getParameter("credits");
+
+        try (PrintWriter out = response.getWriter()) {
+
+            if (username == null || creditsStr == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.println(GSON.toJson("Missing username or credits parameter"));
+                return;
+            }
+
+            int credits;
+            try {
+                credits = Integer.parseInt(creditsStr);
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.println(GSON.toJson("Invalid credits value"));
+                return;
+            }
+
+            UserManagerDashboard userManager = ServletsUtils.getUserManager(getServletContext());
+            if (userManager == null) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.println(GSON.toJson("UserManager is not available"));
+                return;
+            }
+
+            if (!userManager.userExists(username)) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.println(GSON.toJson("User not found"));
+                return;
+            }
+
+            // Add credits to the user
+            userManager.addCredits(username, credits);
+
+            // Return updated credits
+            int newCredits = userManager.getCurrentCredits(username);
+            out.println(GSON.toJson(newCredits));
+
+        } catch (Exception e) {
+            System.err.println("[UsersListServlet] EXCEPTION in POST: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(GSON.toJson("Error updating credits"));
             }
         }
     }

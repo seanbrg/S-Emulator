@@ -3,6 +3,7 @@ package emulator.servlets;
 import com.google.gson.Gson;
 import emulator.utils.ContextUtils;
 import emulator.utils.ProgramRunStats;
+import emulator.utils.ServletsUtils;
 import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.EngineImpl;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import logic.program.Program;
+import users.UserManagerDashboard;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,9 +141,9 @@ public class ProgramsServlet extends HttpServlet {
         if (WebConstants.PROGRAMS_FUNC_METADATA_PATH.equals(path)) { // /func/metadata
             List<FunctionMetadataDTO> metadata;
             synchronized (engine) {
-                    synchronized (programOwners) {
-                        metadata = getAllFunctionMetadata(programOwners, engine, programName);
-                    }
+                synchronized (programOwners) {
+                    metadata = getAllFunctionMetadata(programOwners, engine, programName);
+                }
             }
             try (PrintWriter out = response.getWriter()) {
                 out.print(GSON.toJson(metadata));
@@ -225,6 +227,7 @@ public class ProgramsServlet extends HttpServlet {
         try (InputStream in = request.getInputStream()) {
             Engine engine = ContextUtils.getEngine(getServletContext());
             Map<String, String> programOwners = ContextUtils.getProgramOwners(getServletContext());
+            UserManagerDashboard userManager = ServletsUtils.getUserManager(getServletContext());
 
             if (engine == null) {
                 sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -236,12 +239,43 @@ public class ProgramsServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
             String userName = session != null ? (String) session.getAttribute("username") : "Unknown";
 
+            List<String> programNames;
             synchronized (engine) {
-                List<String> programNames = engine.loadFromStream(in);
+                programNames = engine.loadFromStream(in);
                 synchronized (programOwners) {
                     for (String programName : programNames) {
                         programOwners.put(programName, userName);
                     }
+                }
+            }
+
+            // Update user statistics for program uploads
+            if (userManager != null && userName != null && !userName.equals("Unknown")) {
+                // Count main programs (degree 0) and subfunctions
+                int mainPrograms = 0;
+                int subfunctions = 0;
+
+                for (String programName : programNames) {
+                    synchronized (engine) {
+                        ProgramDTO program = engine.getProgramDTO(programName, 0);
+                        if (program != null) {
+                            if (program.getMaxDegree() == 0) {
+                                // This is a subfunction (no recursive calls)
+                                subfunctions++;
+                            } else {
+                                // This is a main program (has recursive capability)
+                                mainPrograms++;
+                            }
+                        }
+                    }
+                }
+
+                // Update user manager
+                for (int i = 0; i < mainPrograms; i++) {
+                    userManager.incrementMainPrograms(userName);
+                }
+                for (int i = 0; i < subfunctions; i++) {
+                    userManager.incrementSubfunctions(userName);
                 }
             }
 
