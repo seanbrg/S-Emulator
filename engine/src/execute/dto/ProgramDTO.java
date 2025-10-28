@@ -45,4 +45,6 @@ public class ProgramDTO {
     public List<InstructionDTO> getInstructions() { return this.instructions; }
     public Map<String, InstructionDTO> getLabels() { return this.labels; }
     public int getMaxDegree() { return this.maxDegree; }
+
+
 }

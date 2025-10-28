@@ -4,6 +4,7 @@ import client.components.dashboard.availableFunctions.AvailableFunctionsControll
 import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.components.dashboard.dashboardHeader.DashboardHeaderController;
+import client.components.dashboard.userHistory.UserHistoryController;
 import client.components.mainApp.MainAppController;
 import client.util.HttpUtils;
 import com.google.gson.Gson;
@@ -43,14 +44,15 @@ public class DashboardStageController {
     @FXML private BorderPane availableFunctions;
     @FXML private AvailableFunctionsController availableFunctionsController;
 
+    @FXML private BorderPane userHistory;
+    @FXML private UserHistoryController userHistoryController;
+
     private MainAppController mainAppController;
     private static final Gson GSON = new Gson();
     private Scene scene;
 
     @FXML
     public void initialize() {
-
-
         // Set up callback to refresh programs table when a new program is uploaded
         if (headerController != null) {
             headerController.setDashboardController(this);
@@ -63,13 +65,20 @@ public class DashboardStageController {
         // Set up HTTP status update for users controller
         if (availableUsersController != null) {
             availableUsersController.setHttpStatusUpdate(this::updateHttpStatus);
-
         }
 
-        availableFunctionsController.selectedProgramNameProperty()
-                .bind(availableProgramsController.selectedProgramNameProperty());
+        // Bind functions table to selected program
+        if (availableFunctionsController != null && availableProgramsController != null) {
+            availableFunctionsController.selectedProgramNameProperty()
+                    .bind(availableProgramsController.selectedProgramNameProperty());
+        }
 
-
+        // Bind user history to selected user
+        if (userHistoryController != null && availableUsersController != null) {
+            userHistoryController.bindToSelectedUsername(
+                    availableUsersController.selectedUsernameProperty()
+            );
+        }
     }
 
     public void setScene(Scene scene) {
@@ -89,8 +98,6 @@ public class DashboardStageController {
 
     @FXML
     private void handleLogout() {
-
-
         // Stop users refresher
         if (availableUsersController != null) {
             availableUsersController.close();
@@ -101,37 +108,51 @@ public class DashboardStageController {
             availableProgramsController.stopListRefresher();
         }
 
+        // Stop functions refresher
+        if (availableFunctionsController != null) {
+            availableFunctionsController.stopListRefresher();
+        }
+
+        // Stop user history refresher
+        if (userHistoryController != null) {
+            userHistoryController.stopRefresher();
+        }
+
         if (mainAppController != null) {
             mainAppController.switchToLogin();
         }
     }
 
     public void setActive(String userName) {
-
         // Start users refresher
         if (availableUsersController != null) {
             availableUsersController.startListRefresher();
         }
+
         // Start programs refresher
         if (availableProgramsController != null) {
             availableProgramsController.startListRefresher();
         }
 
+        // Start functions refresher
         if (availableFunctionsController != null) {
             availableFunctionsController.startListRefresher();
+        }
+
+        // Start user history refresher and set current user
+        if (userHistoryController != null) {
+            userHistoryController.setCurrentUser(userName);
+            userHistoryController.startRefresher();
         }
 
         // Show username in header
         if (headerController != null) {
             headerController.setUserName(userName);
-
         }
     }
 
     private void updateHttpStatus(String status) {
-        System.out.println("[HTTP Status] " + status);
 
-        // Platform.runLater(() -> statusLabel.setText(status));
     }
 
     public Task<List<String>> createLoadTask(String filePath) {
@@ -157,7 +178,6 @@ public class DashboardStageController {
 
                 try (Response r = HttpUtils.postSync(uploadUrl, requestBody)) {
                     if (!r.isSuccessful()) {
-
                         throw new IOException("Upload failed: " + r.code());
                     }
                 }
@@ -165,7 +185,6 @@ public class DashboardStageController {
                 List<String> funcNames;
                 try (Response r = HttpUtils.getSync(listUrl)) {
                     if (!r.isSuccessful() || r.body() == null) {
-
                         throw new IOException("List fetch failed: " + r.code());
                     }
                     String json = r.body().string();
@@ -190,7 +209,6 @@ public class DashboardStageController {
                 alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
             }
 
-            // Use app icon on the dialog window (if available)
             try {
                 Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
                 dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));

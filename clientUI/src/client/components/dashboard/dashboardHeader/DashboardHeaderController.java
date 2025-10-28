@@ -8,6 +8,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -19,20 +20,13 @@ import java.util.List;
 
 public class DashboardHeaderController {
 
-    @FXML
-    private Button loadFileButton;
-    @FXML
-    private Button chargeCreditsButton;
-    @FXML
-    private Label filePath;
-    @FXML
-    private Label userNameLable;
-    @FXML
-    private Label availableCreditsLable;
-    @FXML
-    private TextField creditsTextField;
-    @FXML
-    private ProgressBar progressBar;
+    @FXML private Button loadFileButton;
+    @FXML private Button chargeCreditsButton;
+    @FXML private Label filePath;
+    @FXML private Label userNameLable;
+    @FXML private Label availableCreditsLable;
+    @FXML private TextField creditsTextField;
+    @FXML private ProgressBar progressBar;
 
     private static final String PROGRAMS_SERVLET_URL = "http://localhost:8080/semulator/programs";
     private static final String USERS_SERVLET_URL = "http://localhost:8080/semulator/users";
@@ -110,10 +104,10 @@ public class DashboardHeaderController {
         // start continuous progress
         Timeline spinner = startContinuousProgress();
 
-        // background load (no UI work inside)
+        // background load
         Task<List<String>> task = dashboardController.createLoadTask(newPath);
 
-        // when task leaves RUNNING, finish the bar and then open/notify
+
         task.setOnSucceeded(e -> {
             finish(true, task.getValue(), spinner);
             // Trigger callback to refresh programs list
@@ -176,12 +170,25 @@ public class DashboardHeaderController {
         Platform.runLater(() -> availableCreditsLable.setText(String.valueOf(availableCredits)));
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+    public void showAlert(String title, String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+
+            if (scene != null && scene.getWindow() != null) {
+                alert.initOwner(scene.getWindow());
+                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+            }
+
+            try {
+                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
+            } catch (Exception ignored) { }
+
+            alert.showAndWait();
+        });
     }
 
     public void setUserName(String userName) {

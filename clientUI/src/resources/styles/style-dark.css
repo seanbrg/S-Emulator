@@ -658,7 +658,7 @@
     -fx-opacity: 0.55;
 }
 
-/* highlight for full row
+highlight for full row
 .table-row-cell:highlighted {
     -fx-background-color: -fx-accent, -tertiary-system-background ;
     -fx-background-insets: 0, 0 0 1 0;
@@ -669,31 +669,28 @@
 
 .table-row-cell:highlighted .text {
     -fx-font-weight: bold;
-}*/
+}
 
-/* ===== Dark Dialog (matches muted gray theme) ===== */
+/* ===== Dark Dialog (matches dark dashboard) ===== */
 .dialog-pane {
-    /* surfaces & border consistent with the app */
-    -fx-background-color: derive(-system-background, -12%), derive(-system-background, -16%);
-    -fx-border-color: derive(-system-background, -25%);
+    -fx-background-color: #2b2b2b;  /* main dark background */
+    -fx-border-color: #444;          /* subtle border */
     -fx-border-width: 1;
     -fx-border-radius: 10;
-
-    /* text + spacing */
-    -fx-text-fill: -label-color;
+    -fx-text-fill: #f0f0f0;          /* default text color */
     -fx-font-size: 13px;
     -fx-padding: 12;
 }
 
-/* Header strip: subtle divider like your TabPane/menu surfaces */
+/* Header strip */
 .dialog-pane > .header-panel {
     -fx-background-color: transparent;
     -fx-padding: 10 12 8 12;
-    -fx-border-color: derive(-system-background, -25%);
+    -fx-border-color: #444;
     -fx-border-width: 0 0 1 0;
 }
 .dialog-pane > .header-panel .label {
-    -fx-text-fill: -label-color;
+    -fx-text-fill: #f0f0f0;
     -fx-font-weight: 600;
 }
 .dialog-pane > .header-panel .graphic-container {
@@ -705,40 +702,42 @@
     -fx-padding: 12;
 }
 .dialog-pane .content.label {
-    -fx-text-fill: -label-color;
+    -fx-text-fill: #f0f0f0;
 }
 
-/* Button bar (reuse your button look with the same tokens) */
+/* Button bar */
 .dialog-pane .button-bar .container {
     -fx-background-color: transparent;
 }
 .dialog-pane .button-bar .button {
-    -fx-background-color: -secondary-system-background;
-    -fx-text-fill: -label-color;
+    -fx-background-color: #444;
+    -fx-text-fill: #f0f0f0;
     -fx-background-radius: 6;
     -fx-border-radius: 6;
     -fx-padding: 6 12;
 }
 .dialog-pane .button-bar .button:hover {
-    -fx-background-color: derive(-secondary-system-background, 10%);
+    -fx-background-color: #666;
 }
 .dialog-pane .button-bar .button:pressed {
-    -fx-background-color: derive(-secondary-system-background, -10%);
+    -fx-background-color: #222;
 }
-/* “Default” (OK) button uses your blue accent */
+
+/* Default (OK) button accent */
 .dialog-pane .button-bar .button:default {
-    -fx-background-color: -system-blue;
+    -fx-background-color: #2196f3;  /* blue accent */
     -fx-text-fill: white;
 }
 .dialog-pane .button-bar .button:default:hover {
-    -fx-background-color: derive(-system-blue, 15%);
+    -fx-background-color: #42a5f5;
 }
 
-/* Remove bright focus rings to match the rest of your dark styling */
+/* Remove bright focus rings */
 .dialog-pane,
 .dialog-pane .button {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
+
 
 

@@ -2,87 +2,161 @@ package client.components.dashboard.availableUsers;
 
 import client.util.HttpUtils;
 import client.util.refresh.UserListRefresher;
+import client.util.refresh.UserListRefresher;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import emulator.utils.WebConstants;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.*;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import users.UserDashboard;
 
-import java.io.Closeable;
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static client.util.Constants.REFRESH_RATE;
 
-public class AvailableUsersController implements Closeable {
+public class AvailableUsersController {
 
-    // ---------------------- FXML ----------------------
-    @FXML private TableView<UserDashboard> usersTableView;
-    @FXML private TableColumn<UserDashboard, String> userNameColumn;
-    @FXML private TableColumn<UserDashboard, Integer> mainProgramsColumn;
-    @FXML private TableColumn<UserDashboard, Integer> subfunctionsColumn;
-    @FXML private TableColumn<UserDashboard, Integer> currentCreditsColumn;
-    @FXML private TableColumn<UserDashboard, Integer> creditsUsedColumn;
-    @FXML private TableColumn<UserDashboard, Integer> runsColumn;
-    @FXML private Label usersHeaderLabel;
-    @FXML private Button unselectUserButton;
+    @FXML private TableView<UserTableData> availableUsersTable;
+    @FXML private TableColumn<UserTableData, String> columnUsername;
+    @FXML private TableColumn<UserTableData, Integer> columnMainPrograms;
+    @FXML private TableColumn<UserTableData, Integer> columnSubfunctions;
+    @FXML private TableColumn<UserTableData, Integer> columnCurrentCredits;
+    @FXML private TableColumn<UserTableData, Integer> columnCreditsUsed;
+    @FXML private TableColumn<UserTableData, Integer> columnNumberOfRuns;
 
-    // ---------------------- Properties ----------------------
-    private final BooleanProperty autoUpdate;
-    private final IntegerProperty totalUsers;
-    private HttpStatusUpdate httpStatusUpdate;
+    @FXML private TextField creditsField;
+    @FXML private Button addCreditsButton;
+    @FXML private Button unselectButton;
 
-    // ---------------------- Timer ----------------------
     private Timer timer;
     private TimerTask listRefresher;
+    private BooleanProperty autoUpdate;
+    private IntegerProperty totalUsers;
+    private StringProperty selectedUsernameProperty;
+    private HttpStatusUpdate httpStatusUpdate;
 
-    // ---------------------- Observable List ----------------------
-    private final ObservableList<UserDashboard> usersList = FXCollections.observableArrayList();
+    private ObservableList<UserTableData> usersList = FXCollections.observableArrayList();
+    private ScheduledExecutorService scheduler;
+    private static final Gson GSON = new Gson();
 
-    public AvailableUsersController() {
-        autoUpdate = new SimpleBooleanProperty(true);
-        totalUsers = new SimpleIntegerProperty(0);
+    public interface HttpStatusUpdate {
+        void updateHttpLine(String line);
     }
 
     @FXML
     public void initialize() {
+        setupTableColumns();
+        availableUsersTable.setItems(usersList);
+        autoUpdate = new SimpleBooleanProperty(true);
+        totalUsers = new SimpleIntegerProperty(0);
+        selectedUsernameProperty = new SimpleStringProperty("");
 
-        // Bind header label to show total users count
-        usersHeaderLabel.textProperty().bind(
-                Bindings.concat("Available Users (", totalUsers.asString(), ")")
+        Platform.runLater(() -> {
+            availableUsersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    selectedUsernameProperty.set(newSelection.getUsername());
+
+                } else {
+                    selectedUsernameProperty.set("");
+
+                }
+            });
+        });
+
+        if (addCreditsButton != null) {
+            addCreditsButton.disableProperty().bind(
+                    availableUsersTable.getSelectionModel().selectedItemProperty().isNull()
+            );
+        }
+
+        // Set up unselect button
+        if (unselectButton != null) {
+            unselectButton.disableProperty().bind(
+                    availableUsersTable.getSelectionModel().selectedItemProperty().isNull()
+            );
+            unselectButton.setOnAction(event -> handleUnselectUser());
+        }
+
+        // Set up add credits button
+        if (addCreditsButton != null) {
+            addCreditsButton.setOnAction(event -> handleAddCredits());
+        }
+    }
+
+    private void setupTableColumns() {
+        columnUsername.setCellValueFactory(data -> data.getValue().usernameProperty());
+        columnMainPrograms.setCellValueFactory(data -> data.getValue().mainProgramsProperty().asObject());
+        columnSubfunctions.setCellValueFactory(data -> data.getValue().subfunctionsProperty().asObject());
+        columnCurrentCredits.setCellValueFactory(data -> data.getValue().currentCreditsProperty().asObject());
+        columnCreditsUsed.setCellValueFactory(data -> data.getValue().creditsUsedProperty().asObject());
+        columnNumberOfRuns.setCellValueFactory(data -> data.getValue().numberOfRunsProperty().asObject());
+    }
+
+    public void updateUsersTable(List<UserDashboard> users) {
+        Platform.runLater(() -> {
+            String selectedUsername = null;
+            UserTableData current = availableUsersTable.getSelectionModel().getSelectedItem();
+            if (current != null) {
+                selectedUsername = current.getUsername();
+            }
+
+            List<UserTableData> newTableData = new ArrayList<>();
+            for (UserDashboard user : users) {
+                UserTableData tableData = new UserTableData(
+                        user.getUsername(),
+                        user.getMainProgramsUploaded(),
+                        user.getSubfunctionsContributed(),
+                        user.getCurrentCredits(),
+                        user.getCreditsUsed(),
+                        user.getNumberOfRuns()
+                );
+                newTableData.add(tableData);
+            }
+            usersList.setAll(newTableData);
+
+            // Restore selection by matching username
+            if (selectedUsername != null) {
+                for (UserTableData u : usersList) {
+                    if (selectedUsername.equals(u.getUsername())) {
+                        availableUsersTable.getSelectionModel().select(u);
+                        break;
+                    }
+                }
+            }
+
+            totalUsers.set(users.size());
+        });
+    }
+
+    public void startListRefresher() {
+        listRefresher = new UserListRefresher(
+                autoUpdate,
+                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
+                this::updateUsersTable
         );
+        timer = new Timer();
+        timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
 
-        // Setup table columns using PropertyValueFactory
-        userNameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        mainProgramsColumn.setCellValueFactory(new PropertyValueFactory<>("mainProgramsUploaded"));
-        subfunctionsColumn.setCellValueFactory(new PropertyValueFactory<>("subfunctionsContributed"));
-        currentCreditsColumn.setCellValueFactory(new PropertyValueFactory<>("currentCredits"));
-        creditsUsedColumn.setCellValueFactory(new PropertyValueFactory<>("creditsUsed"));
-        runsColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfRuns"));
-
-        // Set the observable list to the table
-        usersTableView.setItems(usersList);
-
-        // Setup unselect button
-        if (unselectUserButton != null) {
-            unselectUserButton.setOnAction(event -> usersTableView.getSelectionModel().clearSelection());
+    public void close() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (listRefresher != null) {
+            listRefresher.cancel();
+            listRefresher = null;
+        }
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
         }
     }
 
@@ -90,87 +164,115 @@ public class AvailableUsersController implements Closeable {
         this.httpStatusUpdate = httpStatusUpdate;
     }
 
-    public BooleanProperty autoUpdatesProperty() {
-        return autoUpdate;
-    }
+    public IntegerProperty totalUsersProperty() {return totalUsers;}
 
-    // ---------------------- Update Logic ----------------------
-    private void updateUsersList(List<UserDashboard> usersData) {
-        Platform.runLater(() -> {
-            // Create a map of existing users for efficient lookup
-            Map<String, UserDashboard> existingUsersMap = new HashMap<>();
-            for (UserDashboard u : usersList) {
-                existingUsersMap.put(u.getUsername(), u);
+    public StringProperty selectedUsernameProperty() {return selectedUsernameProperty;}
+
+    private void handleUnselectUser() {availableUsersTable.getSelectionModel().clearSelection();}
+
+    private void handleAddCredits() {
+        UserTableData selected = availableUsersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("No User Selected", "Please select a user to add credits.");
+            return;
+        }
+
+        String creditsText = creditsField.getText();
+        if (creditsText == null || creditsText.trim().isEmpty()) {
+            showAlert("Invalid Input", "Please enter a credit amount.");
+            return;
+        }
+
+        try {
+            int credits = Integer.parseInt(creditsText.trim());
+            if (credits <= 0) {
+                showAlert("Invalid Input", "Credits must be a positive number.");
+                return;
             }
 
-            // Track which users are in the new data
-            Set<String> newUsernames = new HashSet<>();
+            // Send request to server
+            addCreditsToUser(selected.getUsername(), credits);
 
-            // List to hold users that need to be added
-            List<UserDashboard> usersToAdd = new ArrayList<>();
+            // Clear field after successful submission
+            creditsField.clear();
 
-            for (UserDashboard newUser : usersData) {
-                newUsernames.add(newUser.getUsername());
-                UserDashboard existing = existingUsersMap.get(newUser.getUsername());
+        } catch (NumberFormatException e) {
+            showAlert("Invalid Input", "Please enter a valid number.");
+        }
+    }
 
-                if (existing != null) {
-                    // Update existing user's data
-                    existing.setMainProgramsUploaded(newUser.getMainProgramsUploaded());
-                    existing.setSubfunctionsContributed(newUser.getSubfunctionsContributed());
-                    existing.setCurrentCredits(newUser.getCurrentCredits());
-                    existing.setCreditsUsed(newUser.getCreditsUsed());
-                    existing.setNumberOfRuns(newUser.getNumberOfRuns());
-                } else {
-                    // New user - add to list
-                    usersToAdd.add(newUser);
+    private void addCreditsToUser(String username, int credits) {
+        new Thread(() -> {
+            try {
+                String url = "http://localhost:8080/semulator/users";
+                String formData = "username=" + username + "&credits=" + credits;
+                RequestBody body = RequestBody.create(
+                        formData,
+                        MediaType.parse("application/x-www-form-urlencoded")
+                );
+
+                try (Response response = HttpUtils.postSync(url, body)) {
+                    if (response.isSuccessful()) {
+                        Platform.runLater(() -> {
+                            showAlert("Success", "Added " + credits + " credits to " + username);
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            showAlert("Error", "Failed to add credits: " + response.message());
+                        });
+                    }
                 }
+            } catch (IOException e) {
+                Platform.runLater(() -> {
+                    showAlert("Error", "Failed to add credits: " + e.getMessage());
+                });
             }
-
-            // Add new users
-            if (!usersToAdd.isEmpty()) {
-                usersList.addAll(usersToAdd);
-            }
-
-            // Remove users that are no longer in the server response
-            usersList.removeIf(user -> !newUsernames.contains(user.getUsername()));
-
-            // Update total count
-            totalUsers.set(usersList.size());
-
-            // Force table refresh to update all visible cells
-            usersTableView.refresh();
-        });
+        }).start();
     }
 
-
-    public void startListRefresher() {
-
-        listRefresher = new UserListRefresher(
-                autoUpdate,
-                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {
-                },
-                this::updateUsersList
-        );
-        timer = new Timer();
-        timer.schedule(listRefresher, 0, REFRESH_RATE);
-
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
-    @Override
-    public void close() {
-        usersList.clear();
-        totalUsers.set(0);
-        if (listRefresher != null) {
-            listRefresher.cancel();
+    // Table data binding class
+    public static class UserTableData {
+        private final SimpleStringProperty username;
+        private final SimpleIntegerProperty mainPrograms;
+        private final SimpleIntegerProperty subfunctions;
+        private final SimpleIntegerProperty currentCredits;
+        private final SimpleIntegerProperty creditsUsed;
+        private final SimpleIntegerProperty numberOfRuns;
+
+        public UserTableData(String username, int mainPrograms, int subfunctions,
+                             int currentCredits, int creditsUsed, int numberOfRuns) {
+            this.username = new SimpleStringProperty(username);
+            this.mainPrograms = new SimpleIntegerProperty(mainPrograms);
+            this.subfunctions = new SimpleIntegerProperty(subfunctions);
+            this.currentCredits = new SimpleIntegerProperty(currentCredits);
+            this.creditsUsed = new SimpleIntegerProperty(creditsUsed);
+            this.numberOfRuns = new SimpleIntegerProperty(numberOfRuns);
         }
-        if (timer != null) {
-            timer.cancel();
-        }
-    }
 
-    @FunctionalInterface
-    public interface HttpStatusUpdate {
-        void updateHttpLine(String line);
-    }
+        public String getUsername() { return username.get(); }
+        public SimpleStringProperty usernameProperty() { return username; }
 
+        public int getMainPrograms() { return mainPrograms.get(); }
+        public SimpleIntegerProperty mainProgramsProperty() { return mainPrograms; }
+
+        public int getSubfunctions() { return subfunctions.get(); }
+        public SimpleIntegerProperty subfunctionsProperty() { return subfunctions; }
+
+        public int getCurrentCredits() { return currentCredits.get(); }
+        public SimpleIntegerProperty currentCreditsProperty() { return currentCredits; }
+
+        public int getCreditsUsed() { return creditsUsed.get(); }
+        public SimpleIntegerProperty creditsUsedProperty() { return creditsUsed; }
+
+        public int getNumberOfRuns() { return numberOfRuns.get(); }
+        public SimpleIntegerProperty numberOfRunsProperty() { return numberOfRuns; }
+    }
 }

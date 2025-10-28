@@ -6,23 +6,29 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availableUsers.AvailableUsersController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.components.dashboard.availableUsers.AvailableUsersController">
+
    <bottom>
-      <Button fx:id="unselectUserButton" mnemonicParsing="false" text="Unselect User" BorderPane.alignment="CENTER" />
+      <Button fx:id="unselectButton" mnemonicParsing="false" text="Unselect User" BorderPane.alignment="CENTER" />
    </bottom>
+
    <top>
       <Label fx:id="usersHeaderLabel" style="-fx-font-size: 16px; -fx-padding: 10px;" text="Available Users" BorderPane.alignment="CENTER" />
    </top>
+
    <center>
-      <TableView fx:id="usersTableView" BorderPane.alignment="CENTER">
+      <TableView fx:id="availableUsersTable" BorderPane.alignment="CENTER">
          <columns>
-            <TableColumn fx:id="userNameColumn" prefWidth="120.0" text="Username" />
-            <TableColumn fx:id="mainProgramsColumn" prefWidth="130.4000244140625" text="Main Programs" />
-            <TableColumn fx:id="subfunctionsColumn" prefWidth="120.0" text="Subfunctions" />
-            <TableColumn fx:id="currentCreditsColumn" prefWidth="136.0" text="Current Credits" />
-            <TableColumn fx:id="creditsUsedColumn" prefWidth="123.99993896484375" text="Credits Used" />
-            <TableColumn fx:id="runsColumn" prefWidth="170.40008544921875" text="Number of Runs" />
+            <TableColumn fx:id="columnUsername" text="Username" prefWidth="120"/>
+            <TableColumn fx:id="columnMainPrograms" text="Main Programs" prefWidth="110"/>
+            <TableColumn fx:id="columnSubfunctions" text="Subfunctions" prefWidth="100"/>
+            <TableColumn fx:id="columnCurrentCredits" text="Credits" prefWidth="80"/>
+            <TableColumn fx:id="columnCreditsUsed" text="Used" prefWidth="80"/>
+            <TableColumn fx:id="columnNumberOfRuns" text="Runs" prefWidth="70"/>
          </columns>
       </TableView>
    </center>
 </BorderPane>
+

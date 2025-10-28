@@ -1,16 +1,20 @@
 package users;
 
 public class UserDashboard {
-    private String username;
+    private final String username;
     private int mainProgramsUploaded;
     private int subfunctionsContributed;
     private int currentCredits;
     private int creditsUsed;
     private int numberOfRuns;
 
-    // Constructor for Gson
-    public UserDashboard() {
-        this.username = "";
+    public UserDashboard(String username) {
+        this.username = username;
+        this.mainProgramsUploaded = 0;
+        this.subfunctionsContributed = 0;
+        this.currentCredits = 0;
+        this.creditsUsed = 0;
+        this.numberOfRuns = 0;
     }
 
     public UserDashboard(String username, int mainProgramsUploaded, int subfunctionsContributed,
@@ -23,67 +27,34 @@ public class UserDashboard {
         this.numberOfRuns = numberOfRuns;
     }
 
-    // Getters
-    public String getUsername() {
-        return username;
+    public String getUsername() { return username; }
+
+    public int getMainProgramsUploaded() { return mainProgramsUploaded; }
+    public void setMainProgramsUploaded(int val) { this.mainProgramsUploaded = val; }
+    public void incrementMainProgramsUploaded() { this.mainProgramsUploaded++; }
+
+    public int getSubfunctionsContributed() { return subfunctionsContributed; }
+    public void setSubfunctionsContributed(int val) { this.subfunctionsContributed = val; }
+    public void incrementSubfunctionsContributed() { this.subfunctionsContributed++; }
+
+    public int getCurrentCredits() { return currentCredits; }
+    public void setCurrentCredits(int credits) { this.currentCredits = credits; }
+    public void addCredits(int credits) { this.currentCredits += credits; }
+
+    public boolean deductCredits(int credits) {
+        if (this.currentCredits >= credits) {
+            this.currentCredits -= credits;
+            this.creditsUsed += credits;
+            return true;
+        }
+        return false;
     }
 
-    public int getMainProgramsUploaded() {
-        return mainProgramsUploaded;
-    }
+    public int getCreditsUsed() { return creditsUsed; }
+    public void setCreditsUsed(int val) { this.creditsUsed = val; }
 
-    public int getSubfunctionsContributed() {
-        return subfunctionsContributed;
-    }
+    public int getNumberOfRuns() { return numberOfRuns; }
+    public void setNumberOfRuns(int val) { this.numberOfRuns = val; }
+    public void incrementNumberOfRuns() { this.numberOfRuns++; }
 
-    public int getCurrentCredits() {
-        return currentCredits;
-    }
-
-    public int getCreditsUsed() {
-        return creditsUsed;
-    }
-
-    public int getNumberOfRuns() {
-        return numberOfRuns;
-    }
-
-    // Setters
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setMainProgramsUploaded(int mainProgramsUploaded) {
-        this.mainProgramsUploaded = mainProgramsUploaded;
-    }
-
-    public void setSubfunctionsContributed(int subfunctionsContributed) {
-        this.subfunctionsContributed = subfunctionsContributed;
-    }
-
-    public void setCurrentCredits(int currentCredits) {
-        this.currentCredits = currentCredits;
-    }
-
-    public void setCreditsUsed(int creditsUsed) {
-        this.creditsUsed = creditsUsed;
-    }
-
-    public void setNumberOfRuns(int numberOfRuns) {
-        this.numberOfRuns = numberOfRuns;
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", mainPrograms=" + mainProgramsUploaded +
-                ", subfunctions=" + subfunctionsContributed +
-                ", currentCredits=" + currentCredits +
-                ", creditsUsed=" + creditsUsed +
-                ", numberOfRuns=" + numberOfRuns +
-                '}';
-    }
 }

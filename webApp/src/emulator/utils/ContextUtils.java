@@ -1,11 +1,14 @@
 package emulator.utils;
 
+import client.components.dashboard.userHistory.UserRunHistory;
 import execute.Engine;
 import execute.EngineImpl;
 import jakarta.servlet.ServletContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ContextUtils {
 
@@ -43,5 +46,15 @@ public class ContextUtils {
             }
         }
         return (Map<String, String>) servletContext.getAttribute(WebConstants.PROGRAM_OWNERS);
+    }
+    @SuppressWarnings("unchecked")
+    public static Map<String, List<UserRunHistory>> getUserHistoryMap(ServletContext context) {
+        Map<String, List<UserRunHistory>> historyMap =
+                (Map<String, List<UserRunHistory>>) context.getAttribute("userHistory");
+        if (historyMap == null) {
+            historyMap = new ConcurrentHashMap<>();
+            context.setAttribute("userHistory", historyMap);
+        }
+        return historyMap;
     }
 }

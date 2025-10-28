@@ -249,27 +249,26 @@ public class ProgramsServlet extends HttpServlet {
                 }
             }
 
-            // Update user statistics for program uploads
+// Update user statistics for program uploads
             if (userManager != null && userName != null && !userName.equals("Unknown")) {
-                // Count main programs (degree 0) and subfunctions
                 int mainPrograms = 0;
                 int subfunctions = 0;
 
                 for (String programName : programNames) {
-                    synchronized (engine) {
-                        ProgramDTO program = engine.getProgramDTO(programName, 0);
-                        if (program != null) {
-                            if (program.getMaxDegree() == 0) {
-                                // This is a subfunction (no recursive calls)
-                                subfunctions++;
-                            } else {
-                                // This is a main program (has recursive capability)
+                    try {
+                        synchronized (engine) {
+
+                            List<ProgramDTO> allFuncs = engine.getProgramAndFunctionsDTO(programName);
+                            if (allFuncs != null && !allFuncs.isEmpty()) {
                                 mainPrograms++;
+                                int subCount = allFuncs.size() - 1;
+                                subfunctions += subCount;
                             }
                         }
+                    } catch (Exception e) {
+                        System.err.println("Error processing program " + programName + ": " + e.getMessage());
                     }
                 }
-
                 // Update user manager
                 for (int i = 0; i < mainPrograms; i++) {
                     userManager.incrementMainPrograms(userName);
