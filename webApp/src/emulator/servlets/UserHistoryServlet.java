@@ -73,6 +73,4 @@ public class UserHistoryServlet extends HttpServlet {
         return runs;
     }
 
-
-
 }
