@@ -10,7 +10,7 @@
    <content>
       <BorderPane minHeight="-Infinity" minWidth="1000.0" prefHeight="650.0" prefWidth="1000.0">
          <top>
-            <fx:include fx:id="header" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../executionHeader/executionHeader.fxml" />
+            <fx:include fx:id="executionHeader" maxHeight="26.0" maxWidth="Infinity" minHeight="40.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" source="../executionHeader/executionHeader.fxml" />
          </top>
          <right>
             <fx:include fx:id="runMenu" maxHeight="Infinity" maxWidth="Infinity" source="../runMenu/runMenu.fxml" />

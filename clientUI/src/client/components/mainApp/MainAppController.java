@@ -111,6 +111,7 @@ public class MainAppController {
 
 
     public void switchToExecute(List<String> programNames) {
+        System.out.println("Switching to execute with programs: " + programNames);
         loadExecution();
 
         Platform.runLater(() -> {

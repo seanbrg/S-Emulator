@@ -172,7 +172,9 @@ public class ExecutionStageController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        this.executionHeaderController.setScene(scene);
+        Platform.runLater(() ->{
+            this.executionHeaderController.setScene(scene);
+        });
     }
 
     public ObjectProperty<ProgramTabController> currentTabControllerProperty() {

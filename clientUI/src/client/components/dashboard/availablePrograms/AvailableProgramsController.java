@@ -15,6 +15,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,6 +64,10 @@ public class AvailableProgramsController {
                 }
             });
         });
+
+        executeProgramButton.disableProperty().bind(
+                availableProgramsTable.getSelectionModel().selectedItemProperty().isNull()
+        );
     }
 
     public void setMainDashboardController(DashboardStageController controller) {
@@ -77,10 +83,14 @@ public class AvailableProgramsController {
         columnAverageCreditCost.setCellValueFactory(data -> data.getValue().averageCreditCostProperty());
     }
 
-    private void updateProgramsTable(List<ProgramMetadataDTO> programs) {
+    public void updateProgramsTable(List<ProgramMetadataDTO> programs) {
         Platform.runLater(() -> {
-            programsList.clear();
+            // remember selected program name
+            String selectedName = null;
+            ProgramTableData current = availableProgramsTable.getSelectionModel().getSelectedItem();
+            if (current != null) selectedName = current.getName();
 
+            List<ProgramTableData> newTableData = new ArrayList<>();
             for (ProgramMetadataDTO dto : programs) {
                 ProgramTableData tableData = new ProgramTableData(
                         dto.getName(),
@@ -90,10 +100,22 @@ public class AvailableProgramsController {
                         dto.getRunCount(),
                         dto.getAverageCost()
                 );
-                programsList.add(tableData);
+                newTableData.add(tableData);
+            }
+            programsList.setAll(newTableData);
+
+            // restore selection by matching name
+            if (selectedName != null) {
+                for (ProgramTableData p : programsList) {
+                    if (selectedName.equals(p.getName())) {
+                        availableProgramsTable.getSelectionModel().select(p);
+                        break;
+                    }
+                }
             }
         });
     }
+
 
     public void startListRefresher() {
         listRefresher = new ProgramsListRefresher(

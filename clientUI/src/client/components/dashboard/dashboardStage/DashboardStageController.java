@@ -69,10 +69,6 @@ public class DashboardStageController {
         availableFunctionsController.selectedProgramNameProperty()
                 .bind(availableProgramsController.selectedProgramNameProperty());
 
-        Platform.runLater(() -> {
-            availableFunctionsController.setMainDashboardController(this);
-            availableProgramsController.setMainDashboardController(this);
-        });
 
     }
 
@@ -85,6 +81,10 @@ public class DashboardStageController {
 
     public void setMainAppController(MainAppController controller) {
         this.mainAppController = controller;
+        if (availableFunctionsController != null)
+            availableFunctionsController.setMainDashboardController(this);
+        if (availableProgramsController != null)
+            availableProgramsController.setMainDashboardController(this);
     }
 
     @FXML

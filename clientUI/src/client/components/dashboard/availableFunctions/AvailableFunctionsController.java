@@ -1,5 +1,6 @@
 package client.components.dashboard.availableFunctions;
 
+import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.refresh.FunctionsListRefresher;
 import execute.dto.FunctionMetadataDTO;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,6 +50,10 @@ public class AvailableFunctionsController {
         selectedProgramNameProperty = new SimpleStringProperty("");
 
         executeFunctionButton.setOnAction(event -> onExecuteFunctionClicked());
+
+        executeFunctionButton.disableProperty().bind(
+                availableFunctionsTable.getSelectionModel().selectedItemProperty().isNull()
+        );
     }
 
     private void setupTableColumns() {
@@ -60,8 +66,12 @@ public class AvailableFunctionsController {
 
     private void updateFunctionsTable(List<FunctionMetadataDTO> functions) {
         Platform.runLater(() -> {
-            functionsList.clear();
+            // remember selected function name
+            String selectedName = null;
+            FunctionTableData current = availableFunctionsTable.getSelectionModel().getSelectedItem();
+            if (current != null) selectedName = current.getName();
 
+            List<FunctionTableData> newTableData = new ArrayList<>();
             for (FunctionMetadataDTO dto : functions) {
                 FunctionTableData tableData = new FunctionTableData(
                         dto.getName(),
@@ -70,10 +80,22 @@ public class AvailableFunctionsController {
                         dto.getNumberOfInstructions(),
                         dto.getMaxDegree()
                 );
-                functionsList.add(tableData);
+                newTableData.add(tableData);
+            }
+            functionsList.setAll(newTableData);
+
+            // restore selection by matching name
+            if (selectedName != null) {
+                for (FunctionTableData f : functionsList) {
+                    if (selectedName.equals(f.getName())) {
+                        availableFunctionsTable.getSelectionModel().select(f);
+                        break;
+                    }
+                }
             }
         });
     }
+
 
     public void startListRefresher() {
         Platform.runLater(() -> {
