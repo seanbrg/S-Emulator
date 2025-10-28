@@ -106,7 +106,7 @@
                <graphic>
                   <ImageView fx:id="imageRun" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../resources/images/run.png" />
+                        <Image url="@../../../../resources/images/run.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -125,7 +125,7 @@
                <graphic>
                   <ImageView fx:id="imageDebug" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../resources/images/debug.png" />
+                        <Image url="@../../../../resources/images/debug.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -144,7 +144,7 @@
                <graphic>
                   <ImageView fx:id="imageDebugStep" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../resources/images/next.png" />
+                        <Image url="@../../../../resources/images/next.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -163,7 +163,7 @@
                <graphic>
                   <ImageView fx:id="imageDebugStop" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../resources/images/stopDebug.png" />
+                        <Image url="@../../../../resources/images/stopDebug.png" />
                      </image>
                   </ImageView>
                </graphic>

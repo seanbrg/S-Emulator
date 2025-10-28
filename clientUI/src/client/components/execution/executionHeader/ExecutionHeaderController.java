@@ -19,7 +19,6 @@ import client.components.execution.executionStage.ExecutionStageController;
 public class ExecutionHeaderController {
     @FXML
     private ExecutionStageController mainController;
-
     @FXML
     private MenuItem menuItemExpand;
     @FXML
@@ -34,6 +33,9 @@ public class ExecutionHeaderController {
     public Menu menuViewVariables;
     @FXML
     public MenuItem menuViewClear;
+    @FXML public Label userLabel;
+    @FXML public Label creditsLabel;
+
 
     private Scene scene;
     private ToggleGroup labelsGroup;
@@ -152,7 +154,7 @@ public class ExecutionHeaderController {
     }
 
     public void setUserName(String currentUserName) {
-        //TODO: add user elements to this header
+        userLabel.setText(currentUserName);
     }
 }
 

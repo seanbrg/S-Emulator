@@ -135,6 +135,12 @@ public class ExecutionStageController {
         for (String programName : programNames) {
             addProgramTab(programName, 0);
         }
+
+        // select first tab
+        Platform.runLater(() -> {
+            programTabs.getSelectionModel().select(0);
+        });
+
         executionHeaderController.setUserName(currentUserName);
     }
 
@@ -326,8 +332,7 @@ public class ExecutionStageController {
                     inputsJson,
                     new TypeToken<List<VariableDTO>>() {}.getType());
 
-            Platform.runLater(() -> currentRawProgramInputs.setAll(inputs));
-            });
+        });
     }
 
     public IntegerProperty runCyclesProperty() {
