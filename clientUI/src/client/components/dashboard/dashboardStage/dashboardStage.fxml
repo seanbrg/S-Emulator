@@ -6,7 +6,7 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.components.dashboard.dashboardStage.DashboardStageController"
-            >
+>
 
    <content>
       <BorderPane>
@@ -18,7 +18,7 @@
          <center>
             <SplitPane dividerPositions="0.5">
 
-               <!-- Left Side: Users + RunHistory -->
+
                <SplitPane orientation="VERTICAL" dividerPositions="0.5">
                   <items>
                      <fx:include fx:id="availableUsers" source="../availableUsers/availableUsers.fxml"/>
@@ -27,7 +27,7 @@
                   </items>
                </SplitPane>
 
-               <!-- Right Side: Programs + Functions -->
+
                <SplitPane orientation="VERTICAL" dividerPositions="0.5">
                   <items>
                      <fx:include fx:id="availablePrograms" source="../availablePrograms/availablePrograms.fxml"/>

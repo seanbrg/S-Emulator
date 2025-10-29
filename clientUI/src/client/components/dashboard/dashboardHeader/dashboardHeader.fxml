@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.dashboardHeader.DashboardHeaderController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="800.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.dashboardHeader.DashboardHeaderController">
    <children>
       <HBox>
          <children>
@@ -24,7 +24,7 @@
             </Label>
             <Label text="Available Credits :">
                <HBox.margin>
-                  <Insets left="270.0" />
+                  <Insets left="700.0" />
                </HBox.margin>
             </Label>
             <Label fx:id="availableCreditsLable" text="0">
@@ -40,12 +40,12 @@
 
       <HBox>
          <children>
-            <Button fx:id="loadFileButton" mnemonicParsing="false" text="Load File">
+            <Button fx:id="loadFileButton" mnemonicParsing="false" prefWidth="100.0" text="Load File">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Label fx:id="filePath" text="filePath">
+            <Label fx:id="filePath" prefWidth="100.0" text="filePath">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
@@ -58,7 +58,7 @@
 
             <TextField fx:id="creditsTextField" promptText="Enter credits">
                <HBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="300.0" />
                </HBox.margin>
             </TextField>
             <Button fx:id="chargeCreditsButton" mnemonicParsing="false" text="Charge Credits">

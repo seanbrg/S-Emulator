@@ -1,28 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availablePrograms.AvailableProgramsController">
-   <top>
-      <Label text="Avaliable Programs" BorderPane.alignment="CENTER" />
-   </top>
-   <bottom>
-      <Button fx:id="executeProgramButton" mnemonicParsing="false" text="Execute Program" BorderPane.alignment="CENTER" />
-   </bottom>
-   <center>
-      <TableView fx:id="availableProgramsTable" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="columnName" text="Name" />
-          <TableColumn fx:id="columnUser" text="User" />
-            <TableColumn fx:id="columnNumberOfInst" text="Number Of Inst" />
-            <TableColumn fx:id="columnMaxDegree" text="Max Degree" />
-            <TableColumn fx:id="columnNumberOfRuns" text="Number Of Runs" />
-            <TableColumn fx:id="columnAverageCreditCost" text="Average Credit Cost" />
-        </columns>
-      </TableView>
-   </center>
+<BorderPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.dashboard.availablePrograms.AvailableProgramsController">
+
+    <top>
+        <VBox spacing="10" styleClass="section-header">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <Label style="-fx-font-size: 16px;" styleClass="section-title" text="Available Programs" />
+            <Separator />
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="availableProgramsTable" styleClass="data-table">
+            <columns>
+                <TableColumn fx:id="columnName" prefWidth="100" styleClass="table-column" text="Name" />
+                <TableColumn fx:id="columnUser" prefWidth="90" styleClass="table-column" text="User" />
+                <TableColumn fx:id="columnNumberOfInst" prefWidth="100" styleClass="table-column" text="# Instructions" />
+                <TableColumn fx:id="columnMaxDegree" prefWidth="90" styleClass="table-column" text="Max Degree" />
+                <TableColumn fx:id="columnNumberOfRuns" prefWidth="70" styleClass="table-column" text="Runs" />
+                <TableColumn fx:id="columnAverageCreditCost" prefWidth="90" styleClass="table-column" text="Avg Cost" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" spacing="10" styleClass="button-bar">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <Button fx:id="executeProgramButton" text="Execute Program" />
+        </HBox>
+    </bottom>
+
+    <padding>
+        <Insets bottom="5" left="5" right="5" top="5" />
+    </padding>
 </BorderPane>
