@@ -389,27 +389,76 @@
     -fx-background-color: rgba(0,0,0,0.20);
 }
 
-
-/* Hide TableView headers without using -fx-size */
+/* Show the header row */
 .table-view .column-header-background {
-    visibility: hidden;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
-    -fx-max-height: 0;
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
+    visibility: visible;
+    -fx-background-color: derive(-system-background, +15%);
+    -fx-border-color: derive(-system-background, +25%);
+    -fx-border-width: 0 0 1 0;
 }
 
-/* Collapse executionHeader row & filler without -fx-size */
-.table-view .column-header,
-.table-view .filler {
-    -fx-padding: 0;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
-    -fx-max-height: 0;
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
+/* Header cells */
+.table-view .column-header {
+    -fx-background-color: derive(-system-background, +15%);
+    -fx-border-color: derive(-system-background, -10%);
+    -fx-border-width: 0 1 0 0;
+    -fx-text-fill: -label-color;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
 }
+
+/* Header text */
+.table-view .column-header .label {
+    -fx-text-fill: -label-color;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+/* Base table background */
+.table-view {
+    -fx-background-color: derive(-system-background, +8%);
+    -fx-control-inner-background: derive(-system-background, +8%);
+    -fx-border-color: derive(-system-background, +25%);
+    -fx-border-width: 1;
+}
+
+/* Rows */
+.table-row-cell {
+    -fx-background-color: derive(-system-background, +8%);
+    -fx-text-fill: black;
+}
+
+/* Alternate row */
+.table-row-cell:odd {
+    -fx-background-color: derive(-system-background, +12%);
+}
+
+/* Hovered row */
+.table-row-cell:hover {
+    -fx-background-color: derive(-system-background, +18%);
+}
+
+/* Selected row */
+.table-row-cell:selected {
+    -fx-background-color: derive(-system-background, +25%);
+    -fx-text-fill: #1a5fb4; /* slightly darker blue for contrast on light background */
+}
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #1a5fb4;
+}
+
+/* Empty placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: rgba(0,0,0,0.5);
+}
+
+/* Grid lines */
+.table-view .table-cell {
+    -fx-border-color: derive(-system-background, -15%);
+    -fx-border-width: 0 0 1 1;
+    -fx-padding: 0 4 0 4;
+}
+
 
 /* Global light progress bar */
 .progress-bar {
