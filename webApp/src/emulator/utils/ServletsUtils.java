@@ -26,6 +26,7 @@ public class ServletsUtils {
     public static void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setStatus(status);
         resp.setContentType("application/json; charset=UTF-8");
+        System.err.println("[DEBUG]: " + message);
         try (PrintWriter out = resp.getWriter()) {
             out.print("Error loading program: " + message);
         }

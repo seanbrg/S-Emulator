@@ -74,22 +74,21 @@ public class DebugServlet extends HttpServlet {
                         return;
                     }
 
+                    HttpSession session = request.getSession();
                     synchronized (engine) {
                         if (!engine.isProgramExists(programName, degree)) {
                             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                                     "Program '" + programName + "' with degree " + degree + " does not exist.");
                             return;
                         }
-
-                        response.setStatus(HttpServletResponse.SC_OK);
                         engine.debugStart(programName, degree, inputsDto);
-                        HttpSession session = request.getSession();
-                        session.setAttribute(WebConstants.PROGRAM_INPUTS, inputsDto);
                         session.setAttribute(WebConstants.PROGRAM_VARLIST, engine.getOutputs(programName, degree));
-                        session.setAttribute(WebConstants.PROGRAM_NAME, programName);
-                        session.setAttribute(WebConstants.PROGRAM_DEGREE, degree);
-
                     }
+                    session.setAttribute(WebConstants.PROGRAM_NAME, programName);
+                    session.setAttribute(WebConstants.PROGRAM_DEGREE, degree);
+                    session.setAttribute(WebConstants.PROGRAM_INPUTS, inputsDto);
+                    response.setStatus(HttpServletResponse.SC_OK);
+
                 } catch (Exception e) {
                     sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Error loading inputs: " + e.getMessage());
                 }
@@ -98,6 +97,7 @@ public class DebugServlet extends HttpServlet {
                         "An error occurred while starting debug: " + e.getMessage());
             }
         }
+
         else if (path.equals(WebConstants.DEBUG_NEXT_PATH)) {
             // next debug step
             HttpSession session = request.getSession(false);

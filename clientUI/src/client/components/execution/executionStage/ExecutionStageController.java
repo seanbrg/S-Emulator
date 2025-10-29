@@ -121,12 +121,6 @@ public class ExecutionStageController {
                 runMenuController.runningProperty().set(false); // ready for next run
             }
         });
-
-        runMenuController.debuggingProperty().addListener((obs, was, is) -> {
-            if (is) {
-                debugStart();
-            }
-        });
     }
 
 
@@ -346,26 +340,38 @@ public class ExecutionStageController {
         return programCycles;
     }
 
-    public void debugStart() {
+    public CompletableFuture<Boolean> debugStart() {
         ProgramTabController tabController = currentTabController.get();
-        if (tabController == null) return;
+        if (tabController == null) {
+            //System.out.println("[DEBUG]: no tab controller");
+            return CompletableFuture.completedFuture(false);
+        }
 
         String programName = tabController.getProgramName();
-        if (programName == null || programName.isEmpty()) return;
+        if (programName == null || programName.isEmpty()) {
+            //System.out.println("[DEBUG]: no program name");
+            return CompletableFuture.completedFuture(false);
+        }
 
         int degree = tabController.getCurrentDegree();
         List<VariableDTO> inputs = currentActualProgramInputs.get();
         debugLine.set(0);
 
         String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
-        String debugStartUrl = WebConstants.DEBUG_URL +
+        String debugStartUrl = WebConstants.DEBUG_START_URL +
                 "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
                 "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
         RequestBody requestBody = RequestBody.create(
                 GSON.toJson(inputs),
                 MediaType.parse("application/json")
         );
-        HttpUtils.postAsync(debugStartUrl, requestBody).thenAccept(v -> { debugLine.set(0); });
+        return HttpUtils.postAsync(debugStartUrl, requestBody).thenApply(response -> {
+            return true;
+        }).exceptionally(e -> {
+            //System.out.println("[DEBUG]: server error at " + debugStartUrl);
+            System.err.println(e.getMessage());
+            return false;
+        });
     }
 
     public CompletableFuture<Boolean> debugStep() {
@@ -379,7 +385,6 @@ public class ExecutionStageController {
                 GSON.toJson(outputs),
                 MediaType.parse("application/json"));
 
-        // Assume postAsync returns CompletableFuture<String> with the response body
         return HttpUtils.postAsync(WebConstants.DEBUG_NEXT_URL, requestBody)
                 .thenApply(json -> {
                     DebugServlet.DebugInfo info =  GSON.fromJson(json, DebugServlet.DebugInfo.class);
@@ -396,7 +401,7 @@ public class ExecutionStageController {
                         if (!hasMore) clearHighlights();
                     });
 
-                    return hasMore;   // ✅ this value becomes the future’s result
+                    return hasMore;
                 })
                 .exceptionally(ex -> {
                     Platform.runLater(() -> System.err.println(ex.getMessage()));
