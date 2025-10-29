@@ -91,13 +91,13 @@ public class ExecutionStageController {
         // whenever selection changes, update the currentTabController
         programTabs.getSelectionModel()
                 .selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-            if (newTab != null) {
-                currentTabController.set(tabControllerMap.get(newTab));
-            } else {
-                currentTabController.set(null);
-            }
-            clearHighlights();
-        });
+                    if (newTab != null) {
+                        currentTabController.set(tabControllerMap.get(newTab));
+                    } else {
+                        currentTabController.set(null);
+                    }
+                    clearHighlights();
+                });
 
         currentTabControllerProperty().addListener((obs, oldC, newC) -> refreshInputs());
         Bindings.bindContent(currentActualProgramInputs, runMenuController.actualInputVariablesProperty());

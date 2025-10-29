@@ -2,9 +2,6 @@ package client.components.dashboard.userHistory;
 
 import execute.dto.HistoryDTO;
 
-/**
- * DTO for storing individual run history records for a user
- */
 public class UserRunHistory {
     private String username;
     private int runNumber;
@@ -15,8 +12,6 @@ public class UserRunHistory {
     private long outputValue;
     private int cycles;
     private long timestamp;
-
-    // Store the full history DTO for detailed information
     private HistoryDTO historyDTO;
 
     public UserRunHistory() {
@@ -37,7 +32,6 @@ public class UserRunHistory {
         this.timestamp = System.currentTimeMillis();
     }
 
-    // Getters and setters
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 

@@ -9,20 +9,12 @@ import emulator.utils.WebConstants;
 import execute.Engine;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import jakarta.servlet.http.*;
+import java.io.*;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import static emulator.utils.ServletsUtils.sendError;
 
 @WebServlet(name = "RunServlet", urlPatterns = {WebConstants.RUN_PATH})
@@ -91,6 +83,35 @@ public class RunServlet extends HttpServlet {
                         // Execute the program
                         HistoryDTO resultDto = engine.runProgramAndRecord(programName, degree, inputsDto);
 
+                        System.out.println("DEBUG: Full resultDto JSON: " + GSON.toJson(resultDto));
+
+                // Convert resultDto to UserRunHistory
+                /*UserRunHistory runEntry = new UserRunHistory();
+                runEntry.setRunNumber(resultDto.getNum());
+                runEntry.setMainProgram(resultDto.getProgram().isMainProgram());
+                runEntry.setProgramName(resultDto.getProgram().getProgramName());
+                runEntry.setArchitectureType(resultDto.getProgram().getArchitectureType());
+                runEntry.setRunLevel(resultDto.getDegree());
+                runEntry.setOutputValue(resultDto.getOutput() != null ? resultDto.getOutput().getValue() : 0);
+                runEntry.setCycles(resultDto.getCycles());
+                runEntry.setHistoryDTO(resultDto);
+
+                // Save runEntry to user history map in context
+                ServletContext context = getServletContext();
+                Map<String, List<UserRunHistory>> userHistoryMap =
+                        (Map<String, List<UserRunHistory>>) context.getAttribute("userHistoryMap");
+                if (userHistoryMap == null) {
+                    userHistoryMap = new HashMap<>();
+                    context.setAttribute("userHistoryMap", userHistoryMap);
+                }
+
+                synchronized (userHistoryMap) {
+                    List<UserRunHistory> userHistory = userHistoryMap.computeIfAbsent(username, k -> new ArrayList<>());
+                    userHistory.add(runEntry);
+                    System.out.println("DEBUG: Added runEntry to history for user " + username +
+                            " (total runs=" + userHistory.size() + ")");
+                }*/
+
                         // Calculate cost (you can adjust this formula based on your requirements)
                         // Example: cost = number of steps * degree * some multiplier
                         double executionCost = calculateExecutionCost(resultDto, degree);
@@ -123,33 +144,45 @@ public class RunServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Calculate the cost of executing a program
-     * You can adjust this formula based on your requirements
-     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+
+        String username = request.getParameter("username");
+        if (username == null || username.isBlank()) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Missing username parameter.");
+            return;
+        }
+
+        ServletContext context = getServletContext();
+        Map<String, List<UserRunHistory>> userHistoryMap =
+                (Map<String, List<UserRunHistory>>) context.getAttribute("userHistoryMap");
+
+        List<UserRunHistory> userHistory = (userHistoryMap != null)
+                ? userHistoryMap.getOrDefault(username, new ArrayList<>())
+                : new ArrayList<>();
+
+        System.out.println("DEBUG: Returning " + userHistory.size() + " history entries for user " + username);
+
+        String json = GSON.toJson(userHistory);
+        PrintWriter out = response.getWriter();
+        out.println(json);
+        out.flush();
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    // ------------------------- Helpers -------------------------
     private double calculateExecutionCost(HistoryDTO historyDto, int degree) {
-        // Example cost calculation:
-        // Base cost per execution + cost per step + multiplier for degree
         final double BASE_COST = 1.0;
         final double COST_PER_STEP = 0.5;
         final double DEGREE_MULTIPLIER = 1.5;
-
-        // Get number of steps from history (if available in your HistoryDTO)
-        // Adjust this based on your actual HistoryDTO structure
-        int numberOfSteps = 1; // Default to 1 if not available
-
-        // Calculate cost
-        double cost = BASE_COST + (numberOfSteps * COST_PER_STEP) + (degree * DEGREE_MULTIPLIER);
-
-        return cost;
+        int numberOfSteps = 1;
+        return BASE_COST + (numberOfSteps * COST_PER_STEP) + (degree * DEGREE_MULTIPLIER);
     }
 
     public void recordRunStats(String programName, double cost, Map<String, ProgramRunStats> programStats) {
-        ProgramRunStats stats = programStats.computeIfAbsent(
-                programName,
-                k -> new ProgramRunStats()
-        );
+        ProgramRunStats stats = programStats.computeIfAbsent(programName, k -> new ProgramRunStats());
         stats.recordRun(cost);
     }
-
 }

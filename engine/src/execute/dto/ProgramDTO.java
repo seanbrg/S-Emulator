@@ -47,4 +47,13 @@ public class ProgramDTO {
     public int getMaxDegree() { return this.maxDegree; }
 
 
+    public boolean isMainProgram() {
+        return true;
+    }
+
+    public String getArchitectureType() {
+        return "a";
+    }
+
+
 }
