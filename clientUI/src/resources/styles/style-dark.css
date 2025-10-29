@@ -468,8 +468,12 @@
 /* Selected row */
 .table-row-cell:selected {
     -fx-background-color: derive(-system-background, -25%);
-    -fx-text-fill: white;
+    -fx-text-fill: #3a82d0;
 }
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #3a82d0; /* blue text for selected row cells */
+}
+
 
 /* Empty placeholder */
 .table-view .placeholder .label {
