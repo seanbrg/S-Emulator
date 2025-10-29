@@ -22,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
@@ -56,7 +55,7 @@ public class ExecutionStageController {
     private ReadOnlyBooleanWrapper switchingProgram;
     private MainAppController mainAppController;
 
-    private ListProperty<VariableDTO> currentRawProgramInputs;
+    private ListProperty<VariableDTO> currentProgramInputsNames;
     private ListProperty<VariableDTO> currentActualProgramInputs;
     private ListProperty<VariableDTO> currentVariables;
     private ListProperty<LabelDTO> currentLabels;
@@ -73,7 +72,7 @@ public class ExecutionStageController {
     public void initialize() {
         this.currentTabController = new SimpleObjectProperty<>();
         this.tabControllerMap = new HashMap<Tab, ProgramTabController>();
-        this.currentRawProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.currentProgramInputsNames = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentActualProgramInputs = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentVariables = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.currentLabels = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -312,8 +311,8 @@ public class ExecutionStageController {
         return EngineImpl.getInstrParents(selectedInstr);
     }
 
-    public ListProperty<VariableDTO> currentRawProgramInputsProperty() {
-        return currentRawProgramInputs;
+    public ListProperty<VariableDTO> currentProgramInputsNamesProperty() {
+        return currentProgramInputsNames;
     }
 
     private void refreshInputs() {
@@ -335,7 +334,7 @@ public class ExecutionStageController {
             List<VariableDTO> inputs = GSON.fromJson(
                     inputsJson,
                     new TypeToken<List<VariableDTO>>() {}.getType());
-
+            currentProgramInputsNames.setAll(inputs);
         });
     }
 

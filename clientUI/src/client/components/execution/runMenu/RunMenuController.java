@@ -37,7 +37,7 @@ public class RunMenuController {
     @FXML private Button buttonDebugResume;
 
 
-    private ListProperty<VariableDTO> inputVariablesRaw;
+    private ListProperty<VariableDTO> inputVariablesNames;
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
     private ReadOnlyListWrapper<VariableDTO> outputVariables;
     private Map<String, Long> editedValues;
@@ -66,7 +66,7 @@ public class RunMenuController {
         tooltipDebugStep.setShowDelay(Duration.millis(50));
         tooltipDebugStop.setShowDelay(Duration.millis(50));
 
-        inputVariablesRaw = new SimpleListProperty<>();
+        inputVariablesNames = new SimpleListProperty<>();
         ActualInputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
         outputVariables = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
         editedValues = new HashMap<>();
@@ -88,7 +88,7 @@ public class RunMenuController {
         );
 
 
-        inputsTable.itemsProperty().bind(inputVariablesRaw);
+        inputsTable.itemsProperty().bind(inputVariablesNames);
 
         // TableView <- inputVariables
         varColumn.setCellValueFactory(cd -> new ReadOnlyStringWrapper(cd.getValue().getName()));
@@ -176,7 +176,7 @@ public class RunMenuController {
     public void setMainController(ExecutionStageController dashboardController) {
         mainController = dashboardController;
 
-        inputVariablesRaw.bind(mainController.currentRawProgramInputsProperty());
+        inputVariablesNames.bind(mainController.currentProgramInputsNamesProperty());
 
         buttonRun.disableProperty().bind(
                 mainController.currentTabControllerProperty().isNull().or(preparingNewRun.not()).or(debugging)
@@ -203,7 +203,7 @@ public class RunMenuController {
         inputsTable.disableProperty().bind(preparingNewRun.not());
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
-            inputVariablesRaw.clear();
+            inputVariablesNames.clear();
             outputVariables.clear();
             editedValues.clear();
             previousValues.clear();
@@ -350,7 +350,7 @@ public class RunMenuController {
             var zeroed = inputsTable.getItems().stream()
                     .map(v -> new VariableDTO(v.getName(), 0L))
                     .toList();
-            inputVariablesRaw.setAll(zeroed);
+            inputVariablesNames.setAll(zeroed);
             ActualInputVariables.clear();
 
 
@@ -396,7 +396,7 @@ public class RunMenuController {
 
     public void setInputVariables(List<VariableDTO> inputs) {
         editedValues.clear();
-        inputVariablesRaw.setAll(inputs);
+        inputVariablesNames.setAll(inputs);
         rebuildInputsFromTable();  // <-- add this line
         Platform.runLater(() -> inputsTable.refresh());
     }
