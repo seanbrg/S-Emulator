@@ -11,6 +11,7 @@ public class WebConstants {
     public static final String PROGRAM_STATS = "programStats";
     public static final String PROGRAM_OWNERS = "programOwners";
     public static final String HISTORIES = "histories";
+    public static final String PROGRAM_ARCH = "arch";
 
     // Server configuration
     private final static String SERVER_PATH = "http://localhost:8080/semulator";

@@ -38,9 +38,10 @@ public class RunServlet extends HttpServlet {
 
         final String programName = request.getParameter(WebConstants.PROGRAM_NAME);
         final String degreeStr = request.getParameter(WebConstants.PROGRAM_DEGREE);
+        final String arch = request.getParameter(WebConstants.PROGRAM_ARCH);
 
         // Require both if either is present
-        if (programName == null || degreeStr == null) {
+        if (programName == null || degreeStr == null || arch == null) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                     "Provide both 'programName' and 'programDegree', or neither to list all.");
             return;
@@ -91,7 +92,7 @@ public class RunServlet extends HttpServlet {
                     runEntry.setRunNumber(resultDto.getNum());
                     runEntry.setMainProgram(resultDto.getProgram().isMainProgram());
                     runEntry.setProgramName(resultDto.getProgram().getProgramName());
-                    runEntry.setArchitectureType(resultDto.getProgram().getArchitectureType());
+                    runEntry.setArchitectureType(arch);
                     runEntry.setRunLevel(resultDto.getDegree());
                     runEntry.setOutputValue(resultDto.getOutput() != null ? resultDto.getOutput().getValue() : 0);
                     runEntry.setCycles(resultDto.getCycles());

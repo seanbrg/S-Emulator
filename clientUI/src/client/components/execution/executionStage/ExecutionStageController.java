@@ -140,12 +140,14 @@ public class ExecutionStageController {
         if (programName == null || programName.isEmpty()) return;
 
         int degree = tabController.getCurrentDegree();
+        String selectedArch = runMenuController.getSelectedArchitecture().get();
 
         List<VariableDTO> inputs = currentActualProgramInputs.get();
         String encodedName = URLEncoder.encode(programName, StandardCharsets.UTF_8);
         String runUrl = WebConstants.RUN_URL +
                 "?" + WebConstants.PROGRAM_NAME + "=" + encodedName +
-                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree;
+                "&" + WebConstants.PROGRAM_DEGREE + "=" + degree +
+                "&" + WebConstants.PROGRAM_ARCH + "=" + selectedArch;
         RequestBody requestBody = RequestBody.create(
                 GSON.toJson(inputs),
                 MediaType.parse("application/json")
@@ -462,5 +464,4 @@ public class ExecutionStageController {
     public Scene getScene() {
         return scene;
     }
-
 }
