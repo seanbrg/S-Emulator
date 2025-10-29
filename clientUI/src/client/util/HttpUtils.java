@@ -1,8 +1,14 @@
 package client.util;
 
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -109,6 +115,27 @@ public class HttpUtils {
         System.out.println("Shutting down HTTP CLIENT");
         HTTP_CLIENT.dispatcher().executorService().shutdown();
         HTTP_CLIENT.connectionPool().evictAll();
+    }
+
+    public static void showAlert(String title, String content, Scene scene) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+
+            if (scene != null && scene.getWindow() != null) {
+                alert.initOwner(scene.getWindow());
+                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
+            }
+
+            try {
+                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
+                dlg.getIcons().add(new Image(Objects.requireNonNull(HttpUtils.class.getResourceAsStream("/client/resources/images/icon.png"))));
+            } catch (Exception ignored) { }
+
+            alert.showAndWait();
+        });
     }
 
 

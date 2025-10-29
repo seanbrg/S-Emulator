@@ -28,7 +28,7 @@ public class DashboardHeaderController {
     @FXML private TextField creditsTextField;
     @FXML private ProgressBar progressBar;
 
-    private int availableCredits = 50;
+    private int availableCredits = 50; // starting amount
     private String currentUsername = "";
     private DashboardStageController dashboardController;
 
@@ -50,14 +50,14 @@ public class DashboardHeaderController {
     private void onChargeCreditsClicked() {
         String text = creditsTextField.getText().trim();
         if (text.isEmpty()) {
-            showAlert("Missing Input", "Please enter how many credits to add.");
+            HttpUtils.showAlert("Missing Input", "Please enter how many credits to add.", scene);
             return;
         }
 
         try {
             int amount = Integer.parseInt(text);
             if (amount <= 0) {
-                showAlert("Invalid Amount", "Please enter a positive number.");
+                HttpUtils.showAlert("Invalid Amount", "Please enter a positive number.", scene);
                 return;
             }
 
@@ -73,19 +73,21 @@ public class DashboardHeaderController {
                             updateCreditLabel();
                             creditsTextField.clear();
                             loadCreditsButton.setDisable(false);
-                            showAlert("Credits Added", "Successfully added " + amount + " credits!");
+                            HttpUtils.showAlert("Credits Added",
+                                    "Successfully added " + amount + " credits!", scene);
                         });
                     })
                     .exceptionally(ex -> {
                         Platform.runLater(() -> {
                             loadCreditsButton.setDisable(false);
-                            showAlert("Error", "Failed to add credits: " + ex.getMessage());
+                            HttpUtils.showAlert("Error",
+                                    "Failed to add credits: " + ex.getMessage(), scene);
                         });
                         return null;
                     });
 
         } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Please enter a valid number.");
+            HttpUtils.showAlert("Invalid Input", "Please enter a valid number.", scene);
         }
     }
 
@@ -163,27 +165,6 @@ public class DashboardHeaderController {
 
     private void updateCreditLabel() {
         Platform.runLater(() -> creditsLabel.setText(String.valueOf(availableCredits)));
-    }
-
-    public void showAlert(String title, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(content);
-
-            if (scene != null && scene.getWindow() != null) {
-                alert.initOwner(scene.getWindow());
-                alert.getDialogPane().getStylesheets().addAll(scene.getStylesheets());
-            }
-
-            try {
-                Stage dlg = (Stage) alert.getDialogPane().getScene().getWindow();
-                dlg.getIcons().add(new Image(getClass().getResourceAsStream("/client/resources/images/icon.png")));
-            } catch (Exception ignored) { }
-
-            alert.showAndWait();
-        });
     }
 
     public void setUserName(String userName) {

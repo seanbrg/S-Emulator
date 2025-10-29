@@ -1,6 +1,9 @@
 package client.components.execution.executionHeader;
 
 import client.components.execution.programTab.ProgramTabController;
+import client.util.HttpUtils;
+import emulator.utils.WebConstants;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +18,7 @@ import java.util.List;
 
 import javafx.animation.*;
 import client.components.execution.executionStage.ExecutionStageController;
+import okhttp3.RequestBody;
 
 public class ExecutionHeaderController {
     @FXML
@@ -38,11 +42,14 @@ public class ExecutionHeaderController {
     @FXML
     public MenuItem menuViewClear;
     @FXML public Label creditsLabel;
+    @FXML private Button loadCreditsButton;
 
 
     private Scene scene;
     private ToggleGroup labelsGroup;
     private ToggleGroup varsGroup;
+    private int availableCredits;
+    private String currentUsername;
 
     @FXML
     private void initialize() {
@@ -52,10 +59,10 @@ public class ExecutionHeaderController {
         menuItemExpand.setOnAction(event -> handleExpand());
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
+        loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
 
         progressBar.setProgress(0);
         progressBar.setVisible(false);
-
     }
 
     public void setMainController(ExecutionStageController mainController) {
@@ -143,6 +150,58 @@ public class ExecutionHeaderController {
         menuViewVariables.getItems().clear();
     }
 
+    private void onChargeCreditsClicked() {
+        String text = creditsTextField.getText().trim();
+        if (text.isEmpty()) {
+            HttpUtils.showAlert("Missing Input", "Please enter how many credits to add.", scene);
+            return;
+        }
+
+        try {
+            int amount = Integer.parseInt(text);
+            if (amount <= 0) {
+                HttpUtils.showAlert("Invalid Amount", "Please enter a positive number.", scene);
+                return;
+            }
+
+            // Send credits to server
+            loadCreditsButton.setDisable(true);
+
+            String creditsUrl = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + amount;
+
+            HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0]))
+                    .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            availableCredits += amount;
+                            updateCreditLabel();
+                            creditsTextField.clear();
+                            loadCreditsButton.setDisable(false);
+                            HttpUtils.showAlert("Credits Added",
+                                    "Successfully added " + amount + " credits!", scene);
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            loadCreditsButton.setDisable(false);
+                            HttpUtils.showAlert("Error",
+                                    "Failed to add credits: " + ex.getMessage(), scene);
+                        });
+                        return null;
+                    });
+
+        } catch (NumberFormatException e) {
+            HttpUtils.showAlert("Invalid Input", "Please enter a valid number.", scene);
+        }
+    }
+
+    private void postAddCredits(int credits) {
+
+    }
+
+
+    private void updateCreditLabel() {
+        creditsLabel.setText(String.valueOf(availableCredits));
+    }
 
     private void handleThemeLight() {
         mainController.switchTheme(false);
@@ -157,7 +216,19 @@ public class ExecutionHeaderController {
     }
 
     public void setUserName(String currentUserName) {
+        this.currentUsername = currentUserName;
         usernameLabel.setText(currentUserName);
+
+        String creditsUrl = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + 0;
+        HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0])).thenAccept(response -> {
+            Platform.runLater(() -> {
+                System.out.println(response);
+                availableCredits = Integer.parseInt(response.trim());
+                updateCreditLabel();
+                creditsTextField.clear();
+                loadCreditsButton.setDisable(false);
+            });
+        });
     }
 }
 

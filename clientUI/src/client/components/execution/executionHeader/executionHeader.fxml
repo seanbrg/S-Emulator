@@ -49,7 +49,7 @@
       </ProgressBar>
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="295.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../resources/images/file.png" />
+            <Image url="@../../../../resources/images/user.png" />
          </image>
          <HBox.margin>
             <Insets left="60.0" />
@@ -58,7 +58,7 @@
       <Label fx:id="usernameLabel" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="80.0" text="Username" />
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="476.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../resources/images/file.png" />
+            <Image url="@../../../../resources/images/credits.png" />
          </image>
          <HBox.margin>
             <Insets left="20.0" />
@@ -67,7 +67,7 @@
       <Label maxWidth="-Infinity" minWidth="-Infinity" prefHeight="18.0" prefWidth="40.0" text="Credits:" />
       <Label fx:id="creditsLabel" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" text="----" />
        <TextField fx:id="creditsTextField" minWidth="30.0" prefWidth="60.0" />
-       <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="90.0" text="Load Credits">
+       <Button fx:id="loadCreditsButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="90.0" text="Load Credits">
          <HBox.margin>
             <Insets right="10.0" />
          </HBox.margin>
