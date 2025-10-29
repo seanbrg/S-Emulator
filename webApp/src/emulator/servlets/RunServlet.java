@@ -85,7 +85,7 @@ public class RunServlet extends HttpServlet {
 
                         System.out.println("DEBUG: Full resultDto JSON: " + GSON.toJson(resultDto));
 
-                // Convert resultDto to UserRunHistory
+                //Convert resultDto to UserRunHistory
                 /*UserRunHistory runEntry = new UserRunHistory();
                 runEntry.setRunNumber(resultDto.getNum());
                 runEntry.setMainProgram(resultDto.getProgram().isMainProgram());
@@ -96,7 +96,7 @@ public class RunServlet extends HttpServlet {
                 runEntry.setCycles(resultDto.getCycles());
                 runEntry.setHistoryDTO(resultDto);
 
-                // Save runEntry to user history map in context
+                //Save runEntry to user history map in context
                 ServletContext context = getServletContext();
                 Map<String, List<UserRunHistory>> userHistoryMap =
                         (Map<String, List<UserRunHistory>>) context.getAttribute("userHistoryMap");

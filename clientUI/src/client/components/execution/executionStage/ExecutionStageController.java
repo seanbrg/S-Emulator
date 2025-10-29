@@ -172,10 +172,13 @@ public class ExecutionStageController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        Platform.runLater(() ->{
-            this.executionHeaderController.setScene(scene);
+
+        Platform.runLater(() -> {
+
+            executionHeaderController.setScene(scene);
         });
     }
+
 
     public ObjectProperty<ProgramTabController> currentTabControllerProperty() {
         return currentTabController;
@@ -192,13 +195,16 @@ public class ExecutionStageController {
         if (scene == null) return;
 
         String cssPath = dark ?
-                "/client/resources/styles/style-dark.css" :
-                "/client/resources/styles/style-light.css";
+                "/resources/styles/style-dark.css" :
+                "/resources/styles/style-light.css";
 
         URL resource = getClass().getResource(cssPath);
         if (resource != null) {
+            String cssUrl = resource.toExternalForm();
+
             scene.getStylesheets().clear();
-            scene.getStylesheets().add(resource.toExternalForm());
+            scene.getStylesheets().add(cssUrl);
+            scene.getRoot().applyCss();
         }
     }
 

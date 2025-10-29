@@ -102,8 +102,9 @@ public class MainAppController {
         loadDashboard();
 
         Platform.runLater(() -> {
-            primaryStage.getScene().setRoot(dashboardComponent);
-            dashboardStageController.setScene(primaryStage.getScene());
+            Scene currentScene = primaryStage.getScene();
+            currentScene.setRoot(dashboardComponent);
+            dashboardStageController.setScene(currentScene);
             dashboardStageController.setActive(userName);
             primaryStage.sizeToScene();
         });
@@ -111,16 +112,17 @@ public class MainAppController {
 
 
     public void switchToExecute(List<String> programNames) {
-        System.out.println("Switching to execute with programs: " + programNames);
         loadExecution();
 
         Platform.runLater(() -> {
-            primaryStage.getScene().setRoot(executionComponent);
-            executionStageController.setScene(primaryStage.getScene());
+            Scene currentScene = primaryStage.getScene();
+            currentScene.setRoot(executionComponent);
+            executionStageController.setScene(currentScene);
             executionStageController.setActive(programNames, currentUserName);
             primaryStage.sizeToScene();
         });
     }
+
 
 
     public void switchToLogin() {
