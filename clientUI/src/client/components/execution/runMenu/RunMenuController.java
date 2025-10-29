@@ -246,7 +246,7 @@ public class RunMenuController {
         );
 
         buttonNewRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)                        .or(selectedArchitecture.isEmpty())
+                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)
                         .or(selectedArchitecture.isEmpty())
         );
 
@@ -441,12 +441,14 @@ public class RunMenuController {
     }
 
     public void setOutputVariables(List<VariableDTO> outputs) {
-        outputVariables.clear();
-        outputVariables.addAll(outputs);
+        Platform.runLater(() -> {
+            outputVariables.clear();
+            outputVariables.addAll(outputs);
 
-        if (debugging.get()) {
-            Platform.runLater(() -> resultsList.refresh());
-        }
+            if (debugging.get()) {
+                Platform.runLater(() -> resultsList.refresh());
+            }
+        });
     }
 
     @FXML
@@ -469,7 +471,8 @@ public class RunMenuController {
             mainController.clearHighlights();
 
             log("=== New Run Started ===");
-            log("Selected Architecture: " + selectedArchitecture.get() + " (Cost: " + ARCHITECTURE_COSTS.get(selectedArchitecture.get()) + " credits)");
+            log("Selected Architecture: " + selectedArchitecture.get() +
+                    " (Cost: " + ARCHITECTURE_COSTS.get(selectedArchitecture.get()) + " credits)");
         });
     }
 
