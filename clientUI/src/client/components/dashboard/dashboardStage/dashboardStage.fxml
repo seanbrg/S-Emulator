@@ -4,7 +4,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane  xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.components.dashboard.dashboardStage.DashboardStageController"
 >
 
