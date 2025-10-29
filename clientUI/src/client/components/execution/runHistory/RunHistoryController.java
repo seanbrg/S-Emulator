@@ -51,7 +51,7 @@ public class RunHistoryController {
         buttonShowStatus.setOnAction(e -> showSelectedRunStatus());
         buttonReRun.setOnAction(e -> rerunSelectedRun());
 
-        // Disable buttons when no selection
+        // Disable buttons when no selections
         buttonShowStatus.disableProperty().bind(
                 runHistory.getSelectionModel().selectedItemProperty().isNull()
         );

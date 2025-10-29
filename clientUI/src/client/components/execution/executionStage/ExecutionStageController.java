@@ -136,11 +136,6 @@ public class ExecutionStageController {
             addProgramTab(programName, 0);
         }
 
-        // select first tab
-        Platform.runLater(() -> {
-            programTabs.getSelectionModel().select(0);
-        });
-
         executionHeaderController.setUserName(currentUserName);
     }
 
@@ -249,8 +244,17 @@ public class ExecutionStageController {
                         tabController.setVariablesList(FXCollections.observableList(varList));
                         tabController.setLabelsList(FXCollections.observableList(inputList));
 
-                        this.programTabs.getTabs().add(programTab);
-                        this.tabControllerMap.put(programTab, tabController);
+                        programTabs.getTabs().add(programTab);
+                        boolean isFirst = tabControllerMap.isEmpty();
+                        tabControllerMap.put(programTab, tabController);
+
+                        if (isFirst) {
+                            Platform.runLater(() -> {
+                                programTabs.getSelectionModel().select(programTab);
+                                currentTabControllerProperty().set(tabController);
+                            });
+
+                        }
                     } catch (IOException io) {
                         io.printStackTrace();
                     }
