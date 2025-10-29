@@ -313,24 +313,23 @@ public class RunMenuController {
     }
 
     private void runProgram(String arch) {
-        // The actual run happens in ExecutionStageController
-        // We need to wait for it to complete to get the cycle count
         mainController.runCyclesProperty().addListener((obs, oldVal, newVal) -> {
-            if (running.get() && newVal.intValue() > 0) {
-                int cycles = newVal.intValue();
+            if (!running.get() || newVal.intValue() <= 0) return;
 
-                // Check if user has enough credits for the cycles
-                if (!checkAndDeductCredits(cycles, cycles + " cycles")) {
-                    log("=== Run Aborted: Insufficient credits for execution ===");
-                    running.set(false);
-                    return;
-                }
+            int cycles = newVal.intValue();
 
-                log("=== Run Finished ===");
-                log(cycles + " cycles executed (" + cycles + " credits deducted)");
+            int cycleCreditCost = cycles;
+            if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
+                log("=== Run Aborted: Insufficient credits for execution ===");
+                running.set(false);
+                return;
             }
+
+            log("=== Run Finished ===");
+            log(cycles + " cycles executed (" + cycleCreditCost + " credits deducted)");
         });
     }
+
 
     public BooleanProperty runningProperty() {
         return running;
