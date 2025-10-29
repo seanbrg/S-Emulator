@@ -1,10 +1,7 @@
 package emulator.servlets;
 
 import com.google.gson.Gson;
-import emulator.utils.ContextUtils;
-import emulator.utils.ProgramRunStats;
-import emulator.utils.ServletsUtils;
-import emulator.utils.WebConstants;
+import emulator.utils.*;
 import execute.Engine;
 import execute.EngineImpl;
 import execute.dto.FunctionMetadataDTO;
@@ -236,8 +233,7 @@ public class ProgramsServlet extends HttpServlet {
             }
 
             // Get username from session
-            HttpSession session = request.getSession(false);
-            String userName = session != null ? (String) session.getAttribute("username") : "Unknown";
+            String userName = SessionUtils.getUsername(request);
 
             List<String> programNames;
             synchronized (engine) {
@@ -249,7 +245,7 @@ public class ProgramsServlet extends HttpServlet {
                 }
             }
 
-// Update user statistics for program uploads
+            // Update user statistics for program uploads
             if (userManager != null && userName != null && !userName.equals("Unknown")) {
                 int mainPrograms = 0;
                 int subfunctions = 0;
@@ -257,7 +253,6 @@ public class ProgramsServlet extends HttpServlet {
                 for (String programName : programNames) {
                     try {
                         synchronized (engine) {
-
                             List<ProgramDTO> allFuncs = engine.getProgramAndFunctionsDTO(programName);
                             if (allFuncs != null && !allFuncs.isEmpty()) {
                                 mainPrograms++;

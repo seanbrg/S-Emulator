@@ -388,7 +388,25 @@ public class RunMenuController {
         log("=== Debug Started (Architecture " + selectedArch + ") ===");
         log("Architecture cost: " + archCost + " credits deducted");
 
-        this.handleDebugStep();
+        mainController.debugStart()
+                .thenAccept(success -> {
+                    if (Boolean.FALSE.equals(success)) {
+                        Platform.runLater(() -> {
+                            debugging.set(false);
+                            System.err.println("Failed to start debug session.");
+                        });
+                        return;
+                    }
+                    // run the first debug step on the FX thread
+                    Platform.runLater(this::handleDebugStep);
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        debugging.set(false);
+                        System.err.println("Error starting debug: " + ex.getMessage());
+                    });
+                    return null;
+                });
     }
 
     private void handleDebugStep() {

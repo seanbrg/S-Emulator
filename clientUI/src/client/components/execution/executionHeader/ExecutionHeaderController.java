@@ -234,11 +234,14 @@ public class ExecutionHeaderController {
 
         // Sync with server
         String creditsUrl = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + (-amount);
-        HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0])).thenAccept(response -> {
-            Platform.runLater(() -> {
-                System.out.println("Credits deducted: " + amount);
-            });
-        });
+        HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0]));
+                /*
+                .thenAccept(response -> {
+                    Platform.runLater(() -> {
+                        System.out.println("[DEBUG]: Credits deducted: " + amount);
+                    });
+                });
+                */
     }
 }
 
