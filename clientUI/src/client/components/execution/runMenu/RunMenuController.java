@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import client.components.execution.executionStage.ExecutionStageController;
+import client.util.HttpUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,11 @@ public class RunMenuController {
     @FXML private TextArea console;
     @FXML private Button buttonNewRun;
     @FXML private Button buttonDebugResume;
-
+    @FXML private MenuButton architectureMenuButton;
+    @FXML private MenuItem arch1;
+    @FXML private MenuItem arch2;
+    @FXML private MenuItem arch3;
+    @FXML private MenuItem arch4;
 
     private ListProperty<VariableDTO> inputVariablesNames;
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
@@ -44,14 +49,22 @@ public class RunMenuController {
     private BooleanProperty preparingNewRun;
     private BooleanProperty running;
     private BooleanProperty debugging;
-
-    // Track previous values for highlighting changes
     private Map<String, Long> previousValues;
+    private String selectedArchitecture = "I"; // Default
 
+    // Architecture costs(moove to utils later)
+    private static final Map<String, Integer> ARCHITECTURE_COSTS = Map.of(
+            "I", 5,
+            "II", 100,
+            "III", 500,
+            "IV", 1000
+    );
 
     @FXML
     public void initialize() {
         vBox.getStyleClass().add("darker-vbox");
+
+        setupArchitectureMenu();
 
         buttonRun.setOnAction(event -> handleRun());
         buttonDebug.setOnAction(event -> handleDebugStart());
@@ -79,26 +92,20 @@ public class RunMenuController {
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
 
-
-        // fit once after first layout, then refit when items change
         Platform.runLater(this::lockVarWidth);
         inputsTable.getItems().addListener(
                 (javafx.collections.ListChangeListener<? super VariableDTO>) c ->
                         javafx.application.Platform.runLater(this::lockVarWidth)
         );
 
-
         inputsTable.itemsProperty().bind(inputVariablesNames);
 
-        // TableView <- inputVariables
         varColumn.setCellValueFactory(cd -> new ReadOnlyStringWrapper(cd.getValue().getName()));
         valueColumn.setCellValueFactory(cd -> new ReadOnlyObjectWrapper<>(cd.getValue().getValue()));
 
-        // align bottom-center and tag this column for CSS
-        varColumn.getStyleClass().add("var-col");   // tag for CSS
-        varColumn.setStyle("-fx-alignment: CENTER;"); // exact middle (both axes)
+        varColumn.getStyleClass().add("var-col");
+        varColumn.setStyle("-fx-alignment: CENTER;");
 
-        // ListView <- outputVariables with highlighting
         resultsList.itemsProperty().bind(outputVariables);
         resultsList.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(VariableDTO v, boolean empty) {
@@ -109,7 +116,6 @@ public class RunMenuController {
                 } else {
                     setText(v.getName() + " = " + v.getValue());
 
-                    // Highlight if value changed
                     if (debugging.get() && previousValues.containsKey(v.getName()) &&
                             !previousValues.get(v.getName()).equals(v.getValue())) {
                         setStyle("-fx-background-color: #4a4a4a; -fx-font-weight: bold;");
@@ -126,11 +132,9 @@ public class RunMenuController {
         valueColumn.setCellFactory(col -> new TableCell<VariableDTO, Long>() {
             private final TextField tf = new TextField();
             {
-                // only digits
                 tf.setTextFormatter(new TextFormatter<String>(change ->
                         change.getControlNewText().matches("\\d*") ? change : null
                 ));
-                // commit on Enter or focus loss
                 tf.setOnAction(e -> commit());
                 tf.focusedProperty().addListener((obs, was, is) -> { if (!is) commit(); });
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
@@ -161,6 +165,58 @@ public class RunMenuController {
                 setGraphic(tf);
             }
         });
+    }
+
+    private void setupArchitectureMenu() {
+        // Set up menu items with their actions and costs
+        arch1.setOnAction(e -> selectArchitecture("I", 5));
+        arch2.setOnAction(e -> selectArchitecture("II", 100));
+        arch3.setOnAction(e -> selectArchitecture("III", 500));
+        arch4.setOnAction(e -> selectArchitecture("IV", 1000));
+
+        updateArchitectureButtonText();
+
+        Tooltip tooltip = new Tooltip(
+                "Select Architecture:\n" +
+                        "I: 5 credits\n" +
+                        "II: 100 credits\n" +
+                        "III: 500 credits\n" +
+                        "IV: 1000 credits"
+        );
+        tooltip.setShowDelay(Duration.millis(200));
+        architectureMenuButton.setTooltip(tooltip);
+    }
+
+    private void selectArchitecture(String arch, int cost) {
+        selectedArchitecture = arch;
+        updateArchitectureButtonText();
+        log("Architecture " + arch + " selected (Cost: " + cost + " credits)");
+    }
+
+    private void updateArchitectureButtonText() {
+        architectureMenuButton.setText("Arch: " + selectedArchitecture);
+    }
+
+    private boolean checkAndDeductCredits(int cost, String operation) {
+        int availableCredits = mainController.getAvailableCredits();
+
+        if (availableCredits < cost) {
+            Platform.runLater(() -> {
+                HttpUtils.showAlert("Insufficient Credits",
+                        "You need " + cost + " credits for " + operation + ".\n" +
+                                "Available: " + availableCredits + " credits.\n" +
+                                "Returning to dashboard...",
+                        mainController.getScene());
+
+                // Return to dashboard after showing alert
+                mainController.backToDashboard();
+            });
+            return false;
+        }
+
+        // Deduct credits
+        mainController.deductCredits(cost);
+        return true;
     }
 
     private void handleDebugStop() {
@@ -195,12 +251,10 @@ public class RunMenuController {
         );
 
         buttonDebugStep.disableProperty().bind(debugging.not());
-
         buttonDebugStop.disableProperty().bind(debugging.not());
-
         buttonDebugResume.disableProperty().bind(debugging.not());
-
         inputsTable.disableProperty().bind(preparingNewRun.not());
+
 
         this.mainController.programSwitchedProperty().addListener((obs, was, now) -> {
             inputVariablesNames.clear();
@@ -216,9 +270,7 @@ public class RunMenuController {
         varColumn.setMinWidth(w);
         varColumn.setPrefWidth(w);
         varColumn.setMaxWidth(w);
-        // valueColumn stays resizable (default) and, under CONSTRAINED policy, takes the remaining width
     }
-
 
     private double contentWidth(TableColumn<?, ?> col) {
         double max = textW(col.getText());
@@ -235,6 +287,14 @@ public class RunMenuController {
 
     @FXML
     private void handleRun() {
+        String selectedArch = selectedArchitecture;
+        int archCost = ARCHITECTURE_COSTS.get(selectedArch);
+
+        // Check and deduct architecture cost
+        if (!checkAndDeductCredits(archCost, "Architecture " + selectedArch)) {
+            return;
+        }
+
         Platform.runLater(() -> {
             preparingNewRun.setValue(false);
             mainController.clearHighlights();
@@ -243,19 +303,42 @@ public class RunMenuController {
             running.set(true);
             debugging.set(false);
             previousValues.clear();
-            log("=== Run Finished ===");
-            log(mainController.runCyclesProperty().get() + " cycles requested.");
+
+            log("=== Run Started (Architecture " + selectedArch + ") ===");
+            log("Architecture cost: " + archCost + " credits deducted");
+        });
+
+        // Wait for the run to complete and get cycles
+        runProgram(selectedArch);
+    }
+
+    private void runProgram(String arch) {
+        // The actual run happens in ExecutionStageController
+        // We need to wait for it to complete to get the cycle count
+        mainController.runCyclesProperty().addListener((obs, oldVal, newVal) -> {
+            if (running.get() && newVal.intValue() > 0) {
+                int cycles = newVal.intValue();
+
+                // Check if user has enough credits for the cycles
+                if (!checkAndDeductCredits(cycles, cycles + " cycles")) {
+                    log("=== Run Aborted: Insufficient credits for execution ===");
+                    running.set(false);
+                    return;
+                }
+
+                log("=== Run Finished ===");
+                log(cycles + " cycles executed (" + cycles + " credits deducted)");
+            }
         });
     }
 
     public BooleanProperty runningProperty() {
         return running;
-    };
+    }
 
     public BooleanProperty debuggingProperty() {
         return debugging;
     }
-
 
     public ReadOnlyListProperty<VariableDTO> actualInputVariablesProperty() {
         return ActualInputVariables;
@@ -276,7 +359,7 @@ public class RunMenuController {
     public void log(String line) {
         javafx.application.Platform.runLater(() -> {
             console.appendText(line + System.lineSeparator());
-            console.positionCaret(console.getLength()); // auto-scroll
+            console.positionCaret(console.getLength());
         });
     }
 
@@ -284,40 +367,52 @@ public class RunMenuController {
         javafx.application.Platform.runLater(() -> console.clear());
     }
 
-
-
-    // adjust the constructor to your actual DTO shape
     private VariableDTO copyWithValue(VariableDTO src, long newValue) {
         return new VariableDTO(src.getName(), newValue);
     }
 
     private void handleDebugStart() {
+        String selectedArch = selectedArchitecture;
+        int archCost = ARCHITECTURE_COSTS.get(selectedArch);
+
+        // Check and deduct architecture cost
+        if (!checkAndDeductCredits(archCost, "Architecture " + selectedArch + " (Debug Mode)")) {
+            return;
+        }
+
         rebuildInputsFromTable();
         outputVariables.clear();
         previousValues.clear();
         preparingNewRun.setValue(false);
         debugging.set(true);
+
+        log("=== Debug Started (Architecture " + selectedArch + ") ===");
+        log("Architecture cost: " + archCost + " credits deducted");
+
         this.handleDebugStep();
     }
 
     private void handleDebugStep() {
-        // Store previous values BEFORE executing the step
+        // Deduct 1 credit per cycle (debug step)
+        if (!checkAndDeductCredits(1, "1 debug step")) {
+            handleDebugStop();
+            return;
+        }
+
         storePreviousValues();
 
         mainController.debugStep().thenAccept(hasMore -> {
             debugging.setValue(hasMore);
 
             clearLog();
-            log("Debug mode: line " + mainController.debugLineProperty().get() + " executed.");
+            log("Debug mode: line " + mainController.debugLineProperty().get() + " executed (1 credit deducted).");
             if (!debugging.get()) {
                 clearLog();
                 log("=== Debug Finished ===");
                 mainController.finishDebugging();
             }
 
-            // Refresh the list to trigger highlighting
             Platform.runLater(() -> resultsList.refresh());
-
         });
     }
 
@@ -332,7 +427,6 @@ public class RunMenuController {
         outputVariables.clear();
         outputVariables.addAll(outputs);
 
-        // Trigger refresh to show highlights
         if (debugging.get()) {
             Platform.runLater(() -> resultsList.refresh());
         }
@@ -341,18 +435,15 @@ public class RunMenuController {
     @FXML
     private void handleNewRun() {
         Platform.runLater(() -> {
-            // Reset run/debug states
             preparingNewRun.set(true);
             running.set(false);
             debugging.set(false);
 
-            // Reset inputs to 0
             var zeroed = inputsTable.getItems().stream()
                     .map(v -> new VariableDTO(v.getName(), 0L))
                     .toList();
             inputVariablesNames.setAll(zeroed);
             ActualInputVariables.clear();
-
 
             outputVariables.clear();
             editedValues.clear();
@@ -360,8 +451,8 @@ public class RunMenuController {
             clearLog();
             mainController.clearHighlights();
 
-
             log("=== New Run Started ===");
+            log("Selected Architecture: " + selectedArchitecture + " (Cost: " + ARCHITECTURE_COSTS.get(selectedArchitecture) + " credits)");
         });
     }
 
@@ -370,34 +461,24 @@ public class RunMenuController {
         this.handleRun();
     }
 
-    /**
-     * Clear all output variables
-     */
     public void clearOutputs() {
         outputVariables.clear();
         previousValues.clear();
         Platform.runLater(() -> resultsList.refresh());
     }
 
-    /**
-     * Clear edited values map (used for re-run to reset manual edits)
-     */
     public void clearEditedValues() {
         editedValues.clear();
     }
 
-    /**
-     * Force refresh of input table
-     */
     public void refreshInputTable() {
         inputsTable.refresh();
     }
 
-
     public void setInputVariables(List<VariableDTO> inputs) {
         editedValues.clear();
         inputVariablesNames.setAll(inputs);
-        rebuildInputsFromTable();  // <-- add this line
+        rebuildInputsFromTable();
         Platform.runLater(() -> inputsTable.refresh());
     }
 
@@ -409,8 +490,11 @@ public class RunMenuController {
         ActualInputVariables.setAll(rebuilt);
     }
 
-
     public List<VariableDTO> getOutputVariables() {
         return outputVariables.get();
+    }
+
+    public String getSelectedArchitecture() {
+        return selectedArchitecture;
     }
 }

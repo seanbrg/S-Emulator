@@ -446,5 +446,16 @@ public class ExecutionStageController {
             mainAppController.switchToDashboard(mainAppController.getCurrentUserName());
         }
     }
+    public int getAvailableCredits() {
+        return executionHeaderController.getAvailableCredits();
+    }
+
+    public void deductCredits(int amount) {
+        executionHeaderController.deductCredits(amount);
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
 
 }

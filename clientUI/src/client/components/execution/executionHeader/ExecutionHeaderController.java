@@ -224,6 +224,22 @@ public class ExecutionHeaderController {
     private void handleBackToDashboard() {
         mainController.backToDashboard();
     }
+    public int getAvailableCredits() {
+        return availableCredits;
+    }
+
+    public void deductCredits(int amount) {
+        availableCredits -= amount;
+        updateCreditLabel();
+
+        // Sync with server
+        String creditsUrl = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + (-amount);
+        HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0])).thenAccept(response -> {
+            Platform.runLater(() -> {
+                System.out.println("Credits deducted: " + amount);
+            });
+        });
+    }
 }
 
 
