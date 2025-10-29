@@ -58,4 +58,14 @@ public class ContextUtils {
             return (Map<String, List<UserRunHistoryDTO>>) servletContext.getAttribute(WebConstants.HISTORIES);
         }
     }
+    public static Map<String, Integer> getUserRunCounts(ServletContext servletContext) {
+        synchronized (historiesLock) {
+            if (servletContext.getAttribute("USER_RUN_COUNTS") == null) {
+                Map<String, Integer> userRunCounts = new HashMap<>();
+                servletContext.setAttribute("USER_RUN_COUNTS", userRunCounts);
+            }
+            return (Map<String, Integer>) servletContext.getAttribute("USER_RUN_COUNTS");
+        }
+    }
+
 }

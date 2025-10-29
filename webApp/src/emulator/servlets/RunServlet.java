@@ -106,8 +106,15 @@ public class RunServlet extends HttpServlet {
                     synchronized (userHistoryMap) {
                         List<UserRunHistoryDTO> thisUsersHistory = userHistoryMap.computeIfAbsent(username, k -> new ArrayList<>());
                         thisUsersHistory.add(runEntry);
+
+
+                        Map<String, Integer> userRunCounts = ContextUtils.getUserRunCounts(getServletContext());
+                        synchronized (userRunCounts) {
+                            userRunCounts.put(username, userRunCounts.getOrDefault(username, 0) + 1);
+                        }
                         System.out.println("DEBUG: Added runEntry to history for user " + username +
-                                " (total runs=" + userHistoryMap.size() + ")");
+                                " (total runs for user=" + userRunCounts.get(username) + ")");
+
                     }
 
                     // Calculate cost (you can adjust this formula based on your requirements)

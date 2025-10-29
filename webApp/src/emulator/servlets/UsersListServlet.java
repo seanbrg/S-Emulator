@@ -1,5 +1,6 @@
 package emulator.servlets;
 
+import emulator.utils.ContextUtils;
 import emulator.utils.ServletsUtils;
 import com.google.gson.Gson;
 import users.UserDashboard;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @WebServlet(name = "UsersListServlet", urlPatterns = {"/users"})
@@ -39,18 +41,22 @@ public class UsersListServlet extends HttpServlet {
             }
 
             Set<String> usersList = userManager.getUsers();
+            Map<String, Integer> userRunCounts = ContextUtils.getUserRunCounts(getServletContext());
 
             // Convert usernames to UserDashboard objects with statistics
             List<UserDashboard> usersDataList = new ArrayList<>();
             for (String username : usersList) {
+                int runs = userRunCounts.getOrDefault(username, 0);
+
                 UserDashboard user = new UserDashboard(
                         username,
                         userManager.getMainProgramsCount(username),
                         userManager.getSubfunctionsCount(username),
                         userManager.getCurrentCredits(username),
                         userManager.getCreditsUsed(username),
-                        userManager.getNumberOfRuns(username)
+                        runs
                 );
+
                 usersDataList.add(user);
             }
 
