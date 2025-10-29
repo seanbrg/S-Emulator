@@ -79,7 +79,7 @@
                <children>
                   <Button fx:id="buttonNewRun" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="New Run">
                      <HBox.margin>
-                        <Insets left="15.0" top="5.0" />
+                        <Insets left="5.0" top="5.0" />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="buttonDebugResume" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="Resume">
