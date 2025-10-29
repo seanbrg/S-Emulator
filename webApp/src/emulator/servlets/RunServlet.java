@@ -95,6 +95,8 @@ public class RunServlet extends HttpServlet {
                     runEntry.setRunLevel(resultDto.getDegree());
                     runEntry.setOutputValue(resultDto.getOutput() != null ? resultDto.getOutput().getValue() : 0);
                     runEntry.setCycles(resultDto.getCycles());
+                    Date time = new Date();
+                    runEntry.setTimestamp(time.getTime());
                     runEntry.setHistoryDTO(resultDto);
 
                     // Save runEntry to user history map in context

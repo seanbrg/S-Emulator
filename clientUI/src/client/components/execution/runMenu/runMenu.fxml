@@ -2,10 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -78,32 +77,26 @@
          <top>
             <HBox prefHeight="48.0" prefWidth="349.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="buttonNewRun" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="New Run">
+                  <Button fx:id="buttonNewRun" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="New Run">
                      <HBox.margin>
-                        <Insets left="60.0" top="5.0" />
+                        <Insets left="15.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonDebugResume" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Resume">
+                  <Button fx:id="buttonDebugResume" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="Resume">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonExpand" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Expand">
+                  <Button fx:id="buttonExpand" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="Expand">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <MenuButton fx:id="architectureMenuButton" mnemonicParsing="false" prefWidth="120.0" text="architecture">
-                    <items>
-                      <MenuItem fx:id="arch1" mnemonicParsing="false" text="I" />
-                      <MenuItem fx:id="arch2" mnemonicParsing="false" text="II" />
-                        <MenuItem fx:id="arch3" mnemonicParsing="false" text="III" />
-                        <MenuItem fx:id="arch4" mnemonicParsing="false" text="IV" />
-                    </items>
+                  <ComboBox fx:id="architecturePicker" prefHeight="26.0" prefWidth="80.0" promptText="Arch...">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
-                  </MenuButton>
+                  </ComboBox>
                </children>
             </HBox>
          </top>

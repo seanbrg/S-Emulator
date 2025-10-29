@@ -1,5 +1,7 @@
 package execute.dto;
 
+import java.util.Objects;
+
 public class UserRunHistoryDTO {
     private String username;
     private int runNumber;
@@ -59,4 +61,19 @@ public class UserRunHistoryDTO {
 
     public HistoryDTO getHistoryDTO() { return historyDTO; }
     public void setHistoryDTO(HistoryDTO historyDTO) { this.historyDTO = historyDTO; }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                username,
+                isMainProgram,
+                programName,
+                architectureType,
+                runLevel,
+                outputValue,
+                cycles,
+                timestamp,
+                historyDTO
+        );
+    }
 }

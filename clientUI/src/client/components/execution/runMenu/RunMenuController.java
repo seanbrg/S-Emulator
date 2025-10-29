@@ -22,6 +22,7 @@ public class RunMenuController {
     @FXML public Tooltip tooltipDebugStep;
     @FXML public Tooltip tooltipDebugStop;
     @FXML public Tooltip tooltipRun;
+    @FXML public ComboBox<String> architecturePicker;
     @FXML private ExecutionStageController mainController;
 
     @FXML private Button buttonRun;
@@ -36,11 +37,6 @@ public class RunMenuController {
     @FXML private TextArea console;
     @FXML private Button buttonNewRun;
     @FXML private Button buttonDebugResume;
-    @FXML private MenuButton architectureMenuButton;
-    @FXML private MenuItem arch1;
-    @FXML private MenuItem arch2;
-    @FXML private MenuItem arch3;
-    @FXML private MenuItem arch4;
 
     private ListProperty<VariableDTO> inputVariablesNames;
     private ReadOnlyListWrapper<VariableDTO> ActualInputVariables;
@@ -50,7 +46,7 @@ public class RunMenuController {
     private BooleanProperty running;
     private BooleanProperty debugging;
     private Map<String, Long> previousValues;
-    private String selectedArchitecture = "I"; // Default
+    private StringProperty selectedArchitecture; // Default
 
     // Architecture costs(moove to utils later)
     private static final Map<String, Integer> ARCHITECTURE_COSTS = Map.of(
@@ -87,10 +83,16 @@ public class RunMenuController {
         debugging = new SimpleBooleanProperty(false);
         preparingNewRun = new SimpleBooleanProperty(false);
         previousValues = new HashMap<>();
+        selectedArchitecture = new SimpleStringProperty("");
 
         buttonDebugResume.disableProperty().bind(debugging.not());
 
         inputsTable.getColumns().setAll(varColumn, valueColumn);
+
+        architecturePicker.setItems(FXCollections.observableArrayList(
+                "I", "II", "III", "IV"
+        ));
+
 
         Platform.runLater(this::lockVarWidth);
         inputsTable.getItems().addListener(
@@ -169,12 +171,14 @@ public class RunMenuController {
 
     private void setupArchitectureMenu() {
         // Set up menu items with their actions and costs
-        arch1.setOnAction(e -> selectArchitecture("I", 5));
-        arch2.setOnAction(e -> selectArchitecture("II", 100));
-        arch3.setOnAction(e -> selectArchitecture("III", 500));
-        arch4.setOnAction(e -> selectArchitecture("IV", 1000));
-
-        updateArchitectureButtonText();
+        architecturePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            switch (newValue) {
+                case "I" -> selectArchitecture("I", 5);
+                case "II" -> selectArchitecture("II", 100);
+                case "III" -> selectArchitecture("III", 500);
+                case "IV" -> selectArchitecture("IV", 1000);
+            }
+        });
 
         Tooltip tooltip = new Tooltip(
                 "Select Architecture:\n" +
@@ -184,17 +188,12 @@ public class RunMenuController {
                         "IV: 1000 credits"
         );
         tooltip.setShowDelay(Duration.millis(200));
-        architectureMenuButton.setTooltip(tooltip);
+        architecturePicker.setTooltip(tooltip);
     }
 
     private void selectArchitecture(String arch, int cost) {
-        selectedArchitecture = arch;
-        updateArchitectureButtonText();
+        selectedArchitecture.set(arch);
         log("Architecture " + arch + " selected (Cost: " + cost + " credits)");
-    }
-
-    private void updateArchitectureButtonText() {
-        architectureMenuButton.setText("Arch: " + selectedArchitecture);
     }
 
     private boolean checkAndDeductCredits(int cost, String operation) {
@@ -247,7 +246,8 @@ public class RunMenuController {
         );
 
         buttonNewRun.disableProperty().bind(
-                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)
+                mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)                        .or(selectedArchitecture.isEmpty())
+                        .or(selectedArchitecture.isEmpty())
         );
 
         buttonDebugStep.disableProperty().bind(debugging.not());
@@ -287,7 +287,7 @@ public class RunMenuController {
 
     @FXML
     private void handleRun() {
-        String selectedArch = selectedArchitecture;
+        String selectedArch = selectedArchitecture.get();
         int archCost = ARCHITECTURE_COSTS.get(selectedArch);
 
         // Check and deduct architecture cost
@@ -371,7 +371,7 @@ public class RunMenuController {
     }
 
     private void handleDebugStart() {
-        String selectedArch = selectedArchitecture;
+        String selectedArch = selectedArchitecture.get();
         int archCost = ARCHITECTURE_COSTS.get(selectedArch);
 
         // Check and deduct architecture cost
@@ -469,7 +469,7 @@ public class RunMenuController {
             mainController.clearHighlights();
 
             log("=== New Run Started ===");
-            log("Selected Architecture: " + selectedArchitecture + " (Cost: " + ARCHITECTURE_COSTS.get(selectedArchitecture) + " credits)");
+            log("Selected Architecture: " + selectedArchitecture.get() + " (Cost: " + ARCHITECTURE_COSTS.get(selectedArchitecture.get()) + " credits)");
         });
     }
 
@@ -511,7 +511,7 @@ public class RunMenuController {
         return outputVariables.get();
     }
 
-    public String getSelectedArchitecture() {
+    public StringProperty getSelectedArchitecture() {
         return selectedArchitecture;
     }
 }

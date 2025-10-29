@@ -101,7 +101,7 @@ public class UserHistoryController {
             // restore selection by matching name
             if (current != null) {
                 for (UserRunHistoryDTO p : historyList) {
-                    if (current.toString().equals(p.toString())) {
+                    if (current.getTimestamp() == p.getTimestamp()) {
                         userHistoryTable.getSelectionModel().select(p);
                         break;
                     }
