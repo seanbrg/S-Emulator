@@ -84,7 +84,7 @@ public class RunServlet extends HttpServlet {
                     // Execute the program
                     HistoryDTO resultDto = engine.runProgramAndRecord(programName, degree, inputsDto);
 
-                    System.out.println("DEBUG: Full resultDto JSON: " + GSON.toJson(resultDto));
+                    //System.out.println("DEBUG: Full resultDto JSON: " + GSON.toJson(resultDto));
 
                     // Convert resultDto to UserRunHistory
                     UserRunHistoryDTO runEntry = new UserRunHistoryDTO();
@@ -135,29 +135,6 @@ public class RunServlet extends HttpServlet {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "An error occurred while processing the request: " + e.getMessage());
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-
-        String username = request.getParameter(WebConstants.USERNAME);
-        if (username == null || username.isBlank()) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Missing username parameter.");
-            return;
-        }
-
-        Map<String, List<UserRunHistoryDTO>> userHistoryMap = ContextUtils.getUserHistoryMap(getServletContext());
-        List<UserRunHistoryDTO> userHistory = userHistoryMap.getOrDefault(username, new ArrayList<>());
-
-        //System.out.println("DEBUG: Returning " + userHistory.size() + " history entries for user " + username);
-
-        String json = GSON.toJson(userHistory);
-        PrintWriter out = response.getWriter();
-        out.println(json);
-        out.flush();
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     // ------------------------- Helpers -------------------------

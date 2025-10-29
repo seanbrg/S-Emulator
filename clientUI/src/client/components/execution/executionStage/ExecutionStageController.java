@@ -156,7 +156,7 @@ public class ExecutionStageController {
                 GSON.toJson(inputs),
                 MediaType.parse("application/json")
         );
-        System.out.println(runUrl + "\n" + inputs);
+        //System.out.println("[DEBUG] " + runUrl + "\n" + inputs);
 
         HttpUtils.postAsync(runUrl, requestBody).thenAccept(json -> {
             HistoryDTO result = GSON.fromJson(json, HistoryDTO.class);
