@@ -226,4 +226,6 @@ public class DashboardStageController {
     public List<String> getDisplayedFuncNames() {
         return availableFunctionsController.getDisplayedFuncNames();
     }
+
+
 }

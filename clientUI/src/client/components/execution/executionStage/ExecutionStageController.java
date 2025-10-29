@@ -443,5 +443,10 @@ public class ExecutionStageController {
     public void setMainAppController(MainAppController mainAppController) {
         this.mainAppController = mainAppController;
     }
+    public void backToDashboard() {
+        if (mainAppController != null) {
+            mainAppController.switchToDashboard(mainAppController.getCurrentUserName());
+        }
+    }
 
 }

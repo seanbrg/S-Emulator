@@ -21,29 +21,19 @@ import client.components.execution.executionStage.ExecutionStageController;
 import okhttp3.RequestBody;
 
 public class ExecutionHeaderController {
-    @FXML
-    public TextField creditsTextField;
-    @FXML
-    public Label usernameLabel;
-    @FXML
-    private ExecutionStageController mainController;
-    @FXML
-    private MenuItem menuItemExpand;
-    @FXML
-    private MenuItem menuItemThemeLight;
-    @FXML
-    private MenuItem menuItemThemeDark;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    public Menu menuViewLabels;
-    @FXML
-    public Menu menuViewVariables;
-    @FXML
-    public MenuItem menuViewClear;
+    @FXML public TextField creditsTextField;
+    @FXML public Label usernameLabel;
+    @FXML private ExecutionStageController mainController;
+    @FXML private MenuItem menuItemExpand;
+    @FXML private MenuItem menuItemThemeLight;
+    @FXML private MenuItem menuItemThemeDark;
+    @FXML private ProgressBar progressBar;
+    @FXML public Menu menuViewLabels;
+    @FXML public Menu menuViewVariables;
+    @FXML public MenuItem menuViewClear;
     @FXML public Label creditsLabel;
     @FXML private Button loadCreditsButton;
-
+    @FXML private Button backToDashboard;
 
     private Scene scene;
     private ToggleGroup labelsGroup;
@@ -60,6 +50,7 @@ public class ExecutionHeaderController {
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
         loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
+        backToDashboard.setOnAction(event -> handleBackToDashboard());
 
         progressBar.setProgress(0);
         progressBar.setVisible(false);
@@ -230,6 +221,9 @@ public class ExecutionHeaderController {
                 loadCreditsButton.setDisable(false);
             });
         });
+    }
+    private void handleBackToDashboard() {
+        mainController.backToDashboard();
     }
 }
 

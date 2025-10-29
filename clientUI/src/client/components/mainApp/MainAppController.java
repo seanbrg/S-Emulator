@@ -135,6 +135,9 @@ public class MainAppController {
     public Stage getPrimaryStage() {
         return primaryStage;
     }
+    public String getCurrentUserName() {
+        return currentUserName;
+    }
 
 }
 
