@@ -17,11 +17,14 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public class DashboardHeaderController {
 
     @FXML private MenuItem menuItemLoad;
+    @FXML private MenuItem menuItemThemeLight;
+    @FXML private MenuItem menuItemThemeDark;
     @FXML private Button loadCreditsButton;
     @FXML private Label usernameLabel;
     @FXML private Label creditsLabel;
@@ -39,6 +42,8 @@ public class DashboardHeaderController {
     @FXML
     public void initialize() {
         menuItemLoad.setOnAction(event -> handleLoad());
+        menuItemThemeLight.setOnAction(event -> handleThemeLight());
+        menuItemThemeDark.setOnAction(event -> handleThemeDark());
         loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
         updateCreditLabel();
 
@@ -50,6 +55,31 @@ public class DashboardHeaderController {
 
     public void setDashboardController(DashboardStageController controller) {
         this.dashboardController = controller;
+    }
+
+    private void handleThemeLight() {
+        switchTheme(false);
+    }
+
+    private void handleThemeDark() {
+        switchTheme(true);
+    }
+
+    private void switchTheme(boolean dark) {
+        if (scene == null) return;
+
+        String cssPath = dark ?
+                "/resources/styles/style-dark.css" :
+                "/resources/styles/style-light.css";
+
+        URL resource = getClass().getResource(cssPath);
+        if (resource != null) {
+            String cssUrl = resource.toExternalForm();
+
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(cssUrl);
+            scene.getRoot().applyCss();
+        }
     }
 
     private void onChargeCreditsClicked() {
@@ -110,7 +140,6 @@ public class DashboardHeaderController {
 
         // background load
         Task<List<String>> task = dashboardController.createLoadTask(newPath);
-
 
         task.setOnSucceeded(e -> {
             finish(true, task.getValue(), spinner);
