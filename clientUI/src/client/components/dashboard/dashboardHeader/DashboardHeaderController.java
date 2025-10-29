@@ -41,6 +41,11 @@ public class DashboardHeaderController {
         menuItemLoad.setOnAction(event -> handleLoad());
         loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
         updateCreditLabel();
+
+        progressBar.setProgress(0);
+        progressBar.setVisible(false);
+        Platform.runLater(() -> progressBar.requestFocus());
+        creditsTextField.setFocusTraversable(false);
     }
 
     public void setDashboardController(DashboardStageController controller) {

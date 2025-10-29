@@ -63,6 +63,7 @@ public class ExecutionHeaderController {
 
         progressBar.setProgress(0);
         progressBar.setVisible(false);
+        creditsTextField.setFocusTraversable(false);
     }
 
     public void setMainController(ExecutionStageController mainController) {
