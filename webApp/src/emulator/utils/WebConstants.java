@@ -10,6 +10,7 @@ public class WebConstants {
     public static final String PROGRAM_INPUTS = "programInputs";
     public static final String PROGRAM_STATS = "programStats";
     public static final String PROGRAM_OWNERS = "programOwners";
+    public static final String HISTORIES = "histories";
 
     // Server configuration
     private final static String SERVER_PATH = "http://localhost:8080/semulator";
@@ -23,6 +24,7 @@ public class WebConstants {
     public final static String DEBUG_PATH = "/debug";
     public static final String DEBUG_START_PATH = "/start";
     public static final String DEBUG_NEXT_PATH = "/next";
+    public static final String USERS_HISTORY_PATH = "/userHistory";
 
     // Programs paths
     public final static String PROGRAMS_PATH = "/programs";
@@ -50,4 +52,5 @@ public class WebConstants {
     public final static String DEBUG_URL = SERVER_PATH + DEBUG_PATH;
     public final static String DEBUG_START_URL = DEBUG_URL + DEBUG_START_PATH;
     public final static String DEBUG_NEXT_URL = DEBUG_URL + DEBUG_NEXT_PATH;
+    public static final String USERS_HISTORY_URL = SERVER_PATH + USERS_HISTORY_PATH;
 }

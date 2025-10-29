@@ -18,7 +18,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -68,15 +67,9 @@ public class DashboardStageController {
             availableUsersController.setHttpStatusUpdate(this::updateHttpStatus);
         }
 
-        // Bind functions table to selected program
-        if (availableFunctionsController != null && availableProgramsController != null) {
-            availableFunctionsController.selectedProgramNameProperty()
-                    .bind(availableProgramsController.selectedProgramNameProperty());
-        }
-
         // Bind user history to selected user
         if (userHistoryController != null && availableUsersController != null) {
-            userHistoryController.bindToSelectedUsername(
+            userHistoryController.selectedUsernameProperty().bind(
                     availableUsersController.selectedUsernameProperty()
             );
         }
@@ -140,10 +133,11 @@ public class DashboardStageController {
             availableFunctionsController.startListRefresher();
         }
 
-        // Start user history refresher and set current user
+        // Start user history refresher and bind user selection
         if (userHistoryController != null) {
-            userHistoryController.setCurrentUser(userName);
-            userHistoryController.startRefresher();
+            userHistoryController.startListRefresher();
+            availableFunctionsController.selectedProgramNameProperty()
+                    .bind(availableProgramsController.selectedProgramNameProperty());
         }
 
         // Show username in header

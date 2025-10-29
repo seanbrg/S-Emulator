@@ -156,17 +156,15 @@ public class ExecutionStageController {
                 GSON.toJson(inputs),
                 MediaType.parse("application/json")
         );
+        System.out.println(runUrl + "\n" + inputs);
 
         HttpUtils.postAsync(runUrl, requestBody).thenAccept(json -> {
             HistoryDTO result = GSON.fromJson(json, HistoryDTO.class);
-            Platform.runLater(() -> {
-                if (result == null) {
-                    throw new RuntimeException("Run failed for program: " + programName);
-                }
-
-                programCycles.set(result.getCycles());
-                runMenuController.setOutputVariables(result.getOutputAndTemps());
-            });
+            programCycles.set(result.getCycles());
+            runMenuController.setOutputVariables(result.getOutputAndTemps());
+        }).exceptionally(e -> {
+            System.err.println(e.getMessage());
+            return null;
         });
     }
 

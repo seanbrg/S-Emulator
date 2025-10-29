@@ -1,8 +1,6 @@
-package client.components.dashboard.userHistory;
+package execute.dto;
 
-import execute.dto.HistoryDTO;
-
-public class UserRunHistory {
+public class UserRunHistoryDTO {
     private String username;
     private int runNumber;
     private boolean isMainProgram;
@@ -14,11 +12,11 @@ public class UserRunHistory {
     private long timestamp;
     private HistoryDTO historyDTO;
 
-    public UserRunHistory() {
+    public UserRunHistoryDTO() {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public UserRunHistory(String username, int runNumber, boolean isMainProgram,
+    public UserRunHistoryDTO(String username, int runNumber, boolean isMainProgram,
                           String programName, String architectureType,
                           int runLevel, long outputValue, int cycles) {
         this.username = username;

@@ -214,7 +214,6 @@ public class ExecutionHeaderController {
         String creditsUrl = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + 0;
         HttpUtils.postAsync(creditsUrl, RequestBody.create(new byte[0])).thenAccept(response -> {
             Platform.runLater(() -> {
-                System.out.println(response);
                 availableCredits = Integer.parseInt(response.trim());
                 updateCreditLabel();
                 creditsTextField.clear();

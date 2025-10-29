@@ -1,8 +1,8 @@
 package emulator.utils;
 
-import client.components.dashboard.userHistory.UserRunHistory;
 import execute.Engine;
 import execute.EngineImpl;
+import execute.dto.UserRunHistoryDTO;
 import jakarta.servlet.ServletContext;
 
 import java.util.HashMap;
@@ -15,6 +15,7 @@ public class ContextUtils {
     private static final Object engineLock = new Object();
     private static final Object statsLock = new Object();
     private static final Object ownersLock = new Object();
+    private static final Object historiesLock = new Object();
 
     public static Engine getEngine(ServletContext servletContext) {
 
@@ -47,14 +48,14 @@ public class ContextUtils {
         }
         return (Map<String, String>) servletContext.getAttribute(WebConstants.PROGRAM_OWNERS);
     }
-    @SuppressWarnings("unchecked")
-    public static Map<String, List<UserRunHistory>> getUserHistoryMap(ServletContext context) {
-        Map<String, List<UserRunHistory>> historyMap =
-                (Map<String, List<UserRunHistory>>) context.getAttribute("userHistory");
-        if (historyMap == null) {
-            historyMap = new ConcurrentHashMap<>();
-            context.setAttribute("userHistory", historyMap);
+
+    public static Map<String, List<UserRunHistoryDTO>> getUserHistoryMap(ServletContext servletContext) {
+        synchronized (historiesLock) {
+            if (servletContext.getAttribute(WebConstants.HISTORIES) == null) {
+                Map<String, List<UserRunHistoryDTO>> historyMap = new HashMap<>();
+                servletContext.setAttribute(WebConstants.HISTORIES, historyMap);
+            }
+            return (Map<String, List<UserRunHistoryDTO>>) servletContext.getAttribute(WebConstants.HISTORIES);
         }
-        return historyMap;
     }
 }
