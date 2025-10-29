@@ -2,6 +2,7 @@ package client.components.dashboard.dashboardHeader;
 
 import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.HttpUtils;
+import emulator.utils.WebConstants;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -20,16 +21,12 @@ import java.util.List;
 
 public class DashboardHeaderController {
 
-    @FXML private Button loadFileButton;
-    @FXML private Button chargeCreditsButton;
-    @FXML private Label filePath;
-    @FXML private Label userNameLable;
-    @FXML private Label availableCreditsLable;
+    @FXML private MenuItem menuItemLoad;
+    @FXML private Button loadCreditsButton;
+    @FXML private Label usernameLabel;
+    @FXML private Label creditsLabel;
     @FXML private TextField creditsTextField;
     @FXML private ProgressBar progressBar;
-
-    private static final String PROGRAMS_SERVLET_URL = "http://localhost:8080/semulator/programs";
-    private static final String USERS_SERVLET_URL = "http://localhost:8080/semulator/users";
 
     private int availableCredits = 50;
     private String currentUsername = "";
@@ -41,8 +38,8 @@ public class DashboardHeaderController {
 
     @FXML
     public void initialize() {
-        loadFileButton.setOnAction(event -> handleLoad());
-        chargeCreditsButton.setOnAction(event -> onChargeCreditsClicked());
+        menuItemLoad.setOnAction(event -> handleLoad());
+        loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
         updateCreditLabel();
     }
 
@@ -65,9 +62,9 @@ public class DashboardHeaderController {
             }
 
             // Send credits to server
-            chargeCreditsButton.setDisable(true);
+            loadCreditsButton.setDisable(true);
 
-            String url = USERS_SERVLET_URL + "?username=" + currentUsername + "&credits=" + amount;
+            String url = WebConstants.USERS_URL + "?username=" + currentUsername + "&credits=" + amount;
 
             HttpUtils.postAsync(url, RequestBody.create(new byte[0]))
                     .thenAccept(response -> {
@@ -75,13 +72,13 @@ public class DashboardHeaderController {
                             availableCredits += amount;
                             updateCreditLabel();
                             creditsTextField.clear();
-                            chargeCreditsButton.setDisable(false);
+                            loadCreditsButton.setDisable(false);
                             showAlert("Credits Added", "Successfully added " + amount + " credits!");
                         });
                     })
                     .exceptionally(ex -> {
                         Platform.runLater(() -> {
-                            chargeCreditsButton.setDisable(false);
+                            loadCreditsButton.setDisable(false);
                             showAlert("Error", "Failed to add credits: " + ex.getMessage());
                         });
                         return null;
@@ -118,8 +115,6 @@ public class DashboardHeaderController {
         task.setOnFailed(e -> finish(false, null, spinner));
 
         new Thread(task, "load-xml").start();
-
-        Platform.runLater(() -> filePath.setText(newPath));
     }
 
     private File chooseXmlFile() {
@@ -167,7 +162,7 @@ public class DashboardHeaderController {
     }
 
     private void updateCreditLabel() {
-        Platform.runLater(() -> availableCreditsLable.setText(String.valueOf(availableCredits)));
+        Platform.runLater(() -> creditsLabel.setText(String.valueOf(availableCredits)));
     }
 
     public void showAlert(String title, String content) {
@@ -193,7 +188,7 @@ public class DashboardHeaderController {
 
     public void setUserName(String userName) {
         this.currentUsername = userName;
-        Platform.runLater(() -> userNameLable.setText(userName));
+        Platform.runLater(() -> usernameLabel.setText(userName));
     }
 
     public void setOnProgramUploadedCallback(Runnable callback) {

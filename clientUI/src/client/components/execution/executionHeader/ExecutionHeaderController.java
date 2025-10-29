@@ -18,6 +18,10 @@ import client.components.execution.executionStage.ExecutionStageController;
 
 public class ExecutionHeaderController {
     @FXML
+    public TextField creditsTextField;
+    @FXML
+    public Label usernameLabel;
+    @FXML
     private ExecutionStageController mainController;
     @FXML
     private MenuItem menuItemExpand;
@@ -33,7 +37,6 @@ public class ExecutionHeaderController {
     public Menu menuViewVariables;
     @FXML
     public MenuItem menuViewClear;
-    @FXML public Label userLabel;
     @FXML public Label creditsLabel;
 
 
@@ -154,7 +157,7 @@ public class ExecutionHeaderController {
     }
 
     public void setUserName(String currentUserName) {
-        userLabel.setText(currentUserName);
+        usernameLabel.setText(currentUserName);
     }
 }
 

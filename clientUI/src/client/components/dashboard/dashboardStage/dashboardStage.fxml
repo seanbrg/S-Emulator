@@ -12,7 +12,7 @@
       <BorderPane>
 
          <top>
-            <fx:include fx:id="header" source="../dashboardHeader/dashboardHeader.fxml"/>
+            <fx:include fx:id="dashboardHeader" source="../dashboardHeader/dashboardHeader.fxml"/>
          </top>
 
          <center>

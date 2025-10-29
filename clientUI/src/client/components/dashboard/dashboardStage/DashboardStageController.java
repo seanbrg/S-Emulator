@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import okhttp3.MediaType;
@@ -32,8 +33,8 @@ import java.util.List;
 
 public class DashboardStageController {
 
-    @FXML private VBox header;
-    @FXML private DashboardHeaderController headerController;
+    @FXML private HBox dashboardHeader;
+    @FXML private DashboardHeaderController dashboardHeaderController;
 
     @FXML private BorderPane availableUsers;
     @FXML private AvailableUsersController availableUsersController;
@@ -54,9 +55,9 @@ public class DashboardStageController {
     @FXML
     public void initialize() {
         // Set up callback to refresh programs table when a new program is uploaded
-        if (headerController != null) {
-            headerController.setDashboardController(this);
-            headerController.setOnProgramUploadedCallback(() -> {
+        if (dashboardHeaderController != null) {
+            dashboardHeaderController.setDashboardController(this);
+            dashboardHeaderController.setOnProgramUploadedCallback(() -> {
                 // Force immediate refresh of programs table
                 // availableProgramsController.startListRefresher();
             });
@@ -83,8 +84,8 @@ public class DashboardStageController {
 
     public void setScene(Scene scene) {
         this.scene = scene;
-        if (this.headerController != null) {
-            this.headerController.setScene(scene);
+        if (this.dashboardHeaderController != null) {
+            this.dashboardHeaderController.setScene(scene);
         }
     }
 
@@ -146,8 +147,8 @@ public class DashboardStageController {
         }
 
         // Show username in header
-        if (headerController != null) {
-            headerController.setUserName(userName);
+        if (dashboardHeaderController != null) {
+            dashboardHeaderController.setUserName(userName);
         }
     }
 
