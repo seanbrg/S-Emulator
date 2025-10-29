@@ -1,10 +1,15 @@
 package client.components.dashboard.userHistory;
 
-import client.components.mainApp.MainAppController;
+import client.components.dashboard.availablePrograms.AvailableProgramsController;
+import client.components.dashboard.availableUsers.AvailableUsersController;
 import client.util.HttpUtils;
+import client.util.refresh.HistoriesListRefresher;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import emulator.utils.WebConstants;
 import execute.dto.HistoryDTO;
+import execute.dto.ProgramMetadataDTO;
+import execute.dto.UserRunHistoryDTO;
 import execute.dto.VariableDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -15,9 +20,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import okhttp3.Response;
+import users.UserDashboard;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +33,27 @@ import static client.util.Constants.REFRESH_RATE;
 public class UserHistoryController {
 
     // Table and columns
-    @FXML private TableView<UserRunHistory> userHistoryTable;
-    @FXML private TableColumn<UserRunHistory, Number> columnRunNumber;
-    @FXML private TableColumn<UserRunHistory, String> columnType;
-    @FXML private TableColumn<UserRunHistory, String> columnProgramName;
-    @FXML private TableColumn<UserRunHistory, String> columnArchitecture;
-    @FXML private TableColumn<UserRunHistory, Number> columnRunLevel;
-    @FXML private TableColumn<UserRunHistory, Number> columnOutputValue;
-    @FXML private TableColumn<UserRunHistory, Number> columnCycles;
+    @FXML private TableView<UserRunHistoryDTO> userHistoryTable;
+    @FXML private TableColumn<UserRunHistoryDTO, Number> columnRunNumber;
+    @FXML private TableColumn<UserRunHistoryDTO, String> columnType;
+    @FXML private TableColumn<UserRunHistoryDTO, String> columnProgramName;
+    @FXML private TableColumn<UserRunHistoryDTO, String> columnArchitecture;
+    @FXML private TableColumn<UserRunHistoryDTO, Number> columnRunLevel;
+    @FXML private TableColumn<UserRunHistoryDTO, Number> columnOutputValue;
+    @FXML private TableColumn<UserRunHistoryDTO, Number> columnCycles;
 
     // Buttons
     @FXML private Button showStatusButton;
     @FXML private Button rerunButton;
 
-    private final ObservableList<UserRunHistory> historyList = FXCollections.observableArrayList();
+    private final ObservableList<UserRunHistoryDTO> historyList = FXCollections.observableArrayList();
     private final Gson GSON = new Gson();
-    private String currentUser;
+    private StringProperty selectedUsername;
+    private Timer timer;
+    private TimerTask listRefresher;
+    private BooleanProperty autoUpdate;
+    private HttpStatusUpdate httpStatusUpdate;
+
 
     @FXML
     private void initialize() {
@@ -56,6 +65,10 @@ public class UserHistoryController {
         columnRunLevel.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getRunLevel()));
         columnOutputValue.setCellValueFactory(data -> new SimpleLongProperty(data.getValue().getOutputValue()));
         columnCycles.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getCycles()));
+
+        selectedUsername = new SimpleStringProperty();
+        autoUpdate = new SimpleBooleanProperty(true);
+
 
         // Set items
         userHistoryTable.setItems(historyList);
@@ -72,64 +85,35 @@ public class UserHistoryController {
         });
     }
 
-    /** Called by DashboardStageController */
-    public void bindToSelectedUsername(StringProperty selectedUsernameProperty) {
-        selectedUsernameProperty.addListener((obs, oldVal, newVal) -> {
-            String userToShow = (newVal == null || newVal.trim().isEmpty())
-                    ? currentUser
-                    : newVal;
-            loadUserHistory(userToShow);
-        });
+    public interface HttpStatusUpdate {
+        void updateHttpLine(String line);
     }
 
-    public void setCurrentUser(String username) {
-        this.currentUser = username;
-        loadUserHistory(username);
+    public StringProperty selectedUsernameProperty() {
+        return selectedUsername;
     }
 
-    private void loadUserHistory(String username) {
-        if (username == null || username.isBlank()) return;
+    private void updateUsersTable(List<UserRunHistoryDTO> histories) {
+        Platform.runLater(() -> {
+            UserRunHistoryDTO current = userHistoryTable.getSelectionModel().getSelectedItem();
+            historyList.setAll(histories);
 
-        String url = "http://localhost:8080/semulator/run?username=" + username;
-        HttpUtils.getAsync(url)
-                .thenAcceptAsync(json -> {
-                    Type listType = new TypeToken<List<HistoryDTO>>() {}.getType();
-                    List<HistoryDTO> historyDTOList = GSON.fromJson(json, listType);
-
-                    if (historyDTOList == null) return;
-
-                    List<UserRunHistory> userRunHistories = new ArrayList<>();
-                    int runNumber = 1;
-                    for (HistoryDTO dto : historyDTOList) {
-                        UserRunHistory runHistory = new UserRunHistory();
-                        runHistory.setUsername(username);
-                        runHistory.setRunNumber(runNumber++);
-                        runHistory.setMainProgram(dto.getProgram().isMainProgram());
-                        runHistory.setProgramName(dto.getProgram().getProgramName());
-                        runHistory.setArchitectureType(dto.getProgram().getArchitectureType());
-                        runHistory.setRunLevel(dto.getDegree());
-                        runHistory.setOutputValue(dto.getOutput() != null ? dto.getOutput().getValue() : 0);
-                        runHistory.setCycles(dto.getCycles());
-                        runHistory.setTimestamp(System.currentTimeMillis());
-                        runHistory.setHistoryDTO(dto);
-                        userRunHistories.add(runHistory);
+            // restore selection by matching name
+            if (current != null) {
+                for (UserRunHistoryDTO p : historyList) {
+                    if (current.toString().equals(p.toString())) {
+                        userHistoryTable.getSelectionModel().select(p);
+                        break;
                     }
-
-                    Platform.runLater(() -> {
-                        historyList.clear();
-                        historyList.addAll(userRunHistories);
-                    });
-                })
-                .exceptionally(ex -> {
-                    ex.printStackTrace();
-                    return null;
-                });
+                }
+            }
+        });
     }
 
     // Buttons handlers (optional, implement as needed)
     @FXML
     private void onShowStatus() {
-        UserRunHistory selected = userHistoryTable.getSelectionModel().getSelectedItem();
+        UserRunHistoryDTO selected = userHistoryTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
         HistoryDTO dto = selected.getHistoryDTO();
@@ -168,20 +152,15 @@ public class UserHistoryController {
     // add these fields
     private Timer refresherTimer;
 
-    // start refresher
-    public void startRefresher() {
-        stopRefresher(); // make sure only one timer is running
-        if (currentUser == null || currentUser.isBlank()) return;
-
-        refresherTimer = new Timer(true); // daemon thread
-        refresherTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (currentUser != null && !currentUser.isBlank()) {
-                    loadUserHistory(currentUser);
-                }
-            }
-        }, 0, REFRESH_RATE);
+    public void startListRefresher() {
+        listRefresher = new HistoriesListRefresher(
+                selectedUsername,
+                autoUpdate,
+                httpStatusUpdate != null ? httpStatusUpdate::updateHttpLine : s -> {},
+                this::updateUsersTable
+        );
+        timer = new Timer();
+        timer.schedule(listRefresher, REFRESH_RATE, REFRESH_RATE);
     }
 
     // stop refresher

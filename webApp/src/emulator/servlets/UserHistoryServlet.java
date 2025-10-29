@@ -1,10 +1,11 @@
 package emulator.servlets;
 
-import client.components.dashboard.userHistory.UserRunHistory;
 import com.google.gson.Gson;
 import emulator.utils.ContextUtils;
+import emulator.utils.SessionUtils;
 import emulator.utils.WebConstants;
 import execute.dto.HistoryDTO;
+import execute.dto.UserRunHistoryDTO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,27 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static emulator.utils.ServletsUtils.sendError;
 
-@WebServlet(name = "UserHistoryServlet", urlPatterns = {"/userhistory"})
+@WebServlet(name = "UserHistoryServlet", urlPatterns = {WebConstants.USERS_HISTORY_PATH})
 public class UserHistoryServlet extends HttpServlet {
 
     private static final Gson GSON = new Gson();
-    private static final String USER_HISTORY_MAP_KEY = "userHistoryMap";
-
-    @SuppressWarnings("unchecked")
-    private Map<String, List<UserRunHistory>> getOrInitUserHistoryMap() {
-        ServletContext context = getServletContext();
-        Map<String, List<UserRunHistory>> map =
-                (Map<String, List<UserRunHistory>>) context.getAttribute(USER_HISTORY_MAP_KEY);
-
-        if (map == null) {
-            map = new HashMap<>();
-            context.setAttribute(USER_HISTORY_MAP_KEY, map);
-        }
-        return map;
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -47,78 +35,43 @@ public class UserHistoryServlet extends HttpServlet {
 
         String path = request.getPathInfo();
 
-        // Handle /userhistory/run endpoint for detailed run information
-        if ("/run".equals(path)) {
+        /*
+        // Handle /userHistory/run endpoint for detailed run information
+        if (WebConstants.RUN_PATH.equals(path)) {
             handleGetRunDetails(request, response);
             return;
         }
+        */
 
-        // Handle /userhistory endpoint for user history list
-        String targetUsername = request.getParameter("username");
-        HttpSession session = request.getSession(false);
-        String currentUser = session != null ? (String) session.getAttribute("username") : null;
 
-        if (targetUsername == null || targetUsername.trim().isEmpty()) {
-            targetUsername = currentUser;
-        }
+        // Handle /userHistory endpoint for user history list
+        String targetUsername = request.getParameter(WebConstants.USERNAME);
+        Map<String, List<UserRunHistoryDTO>> userHistoryMap = ContextUtils.getUserHistoryMap(getServletContext());
+        List<UserRunHistoryDTO> history;
 
-        if (targetUsername == null) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                    "No username specified and no user logged in");
-            return;
-        }
-
-        Map<String, List<UserRunHistory>> userHistoryMap = getOrInitUserHistoryMap();
-
-        List<UserRunHistory> history;
-        synchronized (userHistoryMap) {
-            history = userHistoryMap.getOrDefault(targetUsername, new ArrayList<>());
-        }
-
-        try (PrintWriter out = response.getWriter()) {
-            out.print(GSON.toJson(history));
-        }
-    }
-
-    private void handleGetRunDetails(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("username");
-        String runNumberStr = request.getParameter("runNumber");
-
-        if (username == null || runNumberStr == null) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                    "Both username and runNumber are required");
-            return;
-        }
-
-        int runNumber;
         try {
-            runNumber = Integer.parseInt(runNumberStr);
-        } catch (NumberFormatException e) {
-            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                    "runNumber must be an integer");
-            return;
-        }
-
-        Map<String, List<UserRunHistory>> userHistoryMap = getOrInitUserHistoryMap();
-
-        HistoryDTO historyDTO = null;
-        synchronized (userHistoryMap) {
-            List<UserRunHistory> history = userHistoryMap.get(username);
-            if (history != null && runNumber > 0 && runNumber <= history.size()) {
-                UserRunHistory runHistory = history.get(runNumber - 1);
-                historyDTO = runHistory.getHistoryDTO();
-            }
-        }
-
-        if (historyDTO == null) {
-            sendError(response, HttpServletResponse.SC_NOT_FOUND,
-                    "Run not found for user " + username + " at run number " + runNumber);
-            return;
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter out = response.getWriter()) {
-            out.print(GSON.toJson(historyDTO));
+            synchronized (userHistoryMap) {
+                if (userHistoryMap != null) {
+                    if (targetUsername == null || targetUsername.isEmpty()) {
+                        if (userHistoryMap.isEmpty()) {
+                            history = new ArrayList<>();
+                        } else {
+                            history = userHistoryMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
+                        }
+                    } else {
+                        List<UserRunHistoryDTO> historyTmp = userHistoryMap.get(targetUsername);
+                        history = (historyTmp == null) ? new ArrayList<>() : historyTmp;
+                    }
+                } else {
+                    history = new ArrayList<>();
+                }
+                String jsonResponse = GSON.toJson(history);
+                PrintWriter out = response.getWriter();
+                out.println(jsonResponse);
+                out.flush();
+                }
+        } catch (Exception e) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Error retrieving history: " + e.getMessage());
         }
     }
 
@@ -136,17 +89,17 @@ public class UserHistoryServlet extends HttpServlet {
         }
 
         try {
-            UserRunHistory runEntry = GSON.fromJson(request.getReader(), UserRunHistory.class);
+            UserRunHistoryDTO runEntry = GSON.fromJson(request.getReader(), UserRunHistoryDTO.class);
 
             if (runEntry == null) {
                 sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid run history data");
                 return;
             }
 
-            Map<String, List<UserRunHistory>> userHistoryMap = getOrInitUserHistoryMap();
+            Map<String, List<UserRunHistoryDTO>> userHistoryMap = ContextUtils.getUserHistoryMap(getServletContext());
 
             synchronized (userHistoryMap) {
-                List<UserRunHistory> userHistory =
+                List<UserRunHistoryDTO> userHistory =
                         userHistoryMap.computeIfAbsent(username, k -> new ArrayList<>());
 
                 runEntry.setRunNumber(userHistory.size() + 1);
