@@ -90,7 +90,7 @@ public class RunServlet extends HttpServlet {
                     // Convert resultDto to UserRunHistory
                     UserRunHistoryDTO runEntry = new UserRunHistoryDTO();
                     runEntry.setRunNumber(resultDto.getNum());
-                    runEntry.setMainProgram(resultDto.getProgram().isMainProgram());
+                    runEntry.setMainProgram(resultDto.isMainProgram());
                     runEntry.setProgramName(resultDto.getProgram().getProgramName());
                     runEntry.setArchitectureType(arch);
                     runEntry.setRunLevel(resultDto.getDegree());

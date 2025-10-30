@@ -35,6 +35,7 @@ public class HistoryDTO {
     public VariableDTO getOutput() { return this.output; }
     public void setType(String type) { this.type = type; }
     public String getType() { return type; }
+    public boolean isMainProgram() { return (this.type.equals("Program")); }
 
 
 }

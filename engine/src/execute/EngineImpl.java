@@ -250,10 +250,7 @@ public class EngineImpl implements Engine {
         runCounter++;
 
 
-        boolean isMainProgram = false;
-        List<Program> saved = pm.getProgramAndFunctions(program);
-
-        isMainProgram = saved.get(0).getName().equals(program);
+        boolean isMainProgram = (pm.getProgramAndFunctions(program) == null) ? false : true;
         System.out.println(isMainProgram);
 
 
