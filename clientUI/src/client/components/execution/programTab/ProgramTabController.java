@@ -306,4 +306,45 @@ public class ProgramTabController {
     public TableView<InstructionDTO> getInstructionsTable() {
         return programTable;
     }
+
+
+    public void highlightIncompatibleInstructions(String selectedArch) {
+        if (selectedArch == null || selectedArch.isEmpty()) {
+            programTable.getItems().forEach(i -> i.setHighlight(false));
+            programTable.refresh();
+            return;
+        }
+
+        int selectedCost = getArchitectureCost(selectedArch);
+
+        programTable.setRowFactory(tv -> new TableRow<InstructionDTO>() {
+            @Override
+            protected void updateItem(InstructionDTO item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setStyle("");
+                } else {
+                    int instrCost = getArchitectureCost(item.getArch());
+                    if (instrCost > selectedCost) {
+                        setStyle("-fx-background-color: rgba(255, 80, 80, 0.35);"); // light red highlight
+                    } else {
+                        setStyle("");
+                    }
+                }
+            }
+        });
+
+        programTable.refresh();
+    }
+
+    private int getArchitectureCost(String arch) {
+        return switch (arch) {
+            case "I" -> 5;
+            case "II" -> 100;
+            case "III" -> 500;
+            case "IV" -> 1000;
+            default -> 0;
+        };
+    }
+
 }

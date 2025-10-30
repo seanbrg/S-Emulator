@@ -15,6 +15,7 @@ public class InstructionDTO {
     private final String name;
     private final int cycles;
     private final String arch;
+    private boolean highlight;
 
     public InstructionDTO(Instruction instr) {
         this.selfLabel = instr.getSelfLabelDTO();
@@ -25,6 +26,7 @@ public class InstructionDTO {
         this.argLabel = instr.getArgLabelDTO();
         this.cycles = instr.getCycles();
         this.arch = instr.getArch();
+        this.highlight = false;
 
         Instruction localParent = instr.getParent();
         if (localParent != null) {
@@ -45,5 +47,8 @@ public class InstructionDTO {
     public String getName() { return name; }
     public Integer getCycles() { return cycles; }
     public String getArch() {return arch;}
+
+    public boolean isHighlight() { return highlight; }
+    public void setHighlight(boolean highlight) { this.highlight = highlight; }
 
 }

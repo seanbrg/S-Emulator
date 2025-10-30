@@ -171,7 +171,6 @@ public class RunMenuController {
     }
 
     private void setupArchitectureMenu() {
-        // Set up menu items with their actions and costs
         architecturePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case "I" -> selectArchitecture("I", 5);
@@ -179,7 +178,15 @@ public class RunMenuController {
                 case "III" -> selectArchitecture("III", 500);
                 case "IV" -> selectArchitecture("IV", 1000);
             }
+
+            Platform.runLater(() -> {
+                if (mainController != null && mainController.currentTabControllerProperty().get() != null) {
+                    mainController.currentTabControllerProperty().get()
+                            .highlightIncompatibleInstructions(newValue);
+                }
+            });
         });
+
 
         Tooltip tooltip = new Tooltip(
                 "Select Architecture:\n" +
