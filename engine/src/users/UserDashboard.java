@@ -57,4 +57,5 @@ public class UserDashboard {
     public void setNumberOfRuns(int val) { this.numberOfRuns = val; }
     public void incrementNumberOfRuns() { this.numberOfRuns++; }
 
+    public void addCreditsUsed(int credits) { this.creditsUsed += credits;}
 }

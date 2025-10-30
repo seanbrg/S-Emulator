@@ -3,6 +3,7 @@ package emulator.servlets;
 import emulator.utils.ContextUtils;
 import emulator.utils.ServletsUtils;
 import com.google.gson.Gson;
+import emulator.utils.WebConstants;
 import users.UserDashboard;
 import users.UserManagerDashboard;
 
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@WebServlet(name = "UsersListServlet", urlPatterns = {"/users"})
+@WebServlet(name = "UsersListServlet", urlPatterns = {WebConstants.USERS_PATH})
 public class UsersListServlet extends HttpServlet {
 
     private static final Gson GSON = new Gson();
@@ -112,8 +113,11 @@ public class UsersListServlet extends HttpServlet {
                 return;
             }
 
-            // Add credits to the user
+            // Add credits to the user, add to used credits if negative
             userManager.addCredits(username, credits);
+            if (credits < 0) {
+                userManager.addCreditsUsed(username, -credits);
+            }
 
             // Return updated credits
             int newCredits = userManager.getCurrentCredits(username);

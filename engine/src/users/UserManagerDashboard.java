@@ -103,4 +103,9 @@ public class UserManagerDashboard {
     public synchronized void clearAll() {
         users.clear();
     }
+
+    public void addCreditsUsed(String username, int credits) {
+        UserDashboard user = users.get(username);
+        if (user != null) user.addCreditsUsed(credits);
+    }
 }
