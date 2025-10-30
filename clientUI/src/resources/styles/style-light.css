@@ -520,7 +520,7 @@
 }
 
 .table-row-cell:highlighted {
-    -fx-background-color: #ffeb3b !important;  /* Yellow highlight */
+    -fx-background-color: #716e6e !important;  /* grey highlight */
     -fx-text-fill: #000000 !important;          /* Black text */
 }
 
