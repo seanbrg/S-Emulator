@@ -26,6 +26,7 @@ public class ProgramTabController {
     @FXML private TableColumn<InstructionDTO, String> columnType;
     @FXML private TableColumn<InstructionDTO, Integer> columnNum;
     @FXML private TableColumn<InstructionDTO, Integer> columnCycles;
+    @FXML private TableColumn<InstructionDTO, String> columnArch;
 
     private String programName;
     int degree;
@@ -58,6 +59,7 @@ public class ProgramTabController {
         setupColumnType();
         setupColumnNum();
         setupColumnCycles();
+        setupColumnArch();
 
         // Make tab closable (native JavaFX close button)
         programTab.setClosable(true);
@@ -102,6 +104,31 @@ public class ProgramTabController {
         });
     }
 
+    private void setupColumnArch() {
+        columnArch.setCellValueFactory
+                (cd -> new ReadOnlyStringWrapper(cd.getValue().getArch()));
+
+        columnArch.setCellFactory(col -> new TableCell<InstructionDTO, String>() {
+            private final Tooltip tooltip = new Tooltip();
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.isEmpty()) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setStyle("-fx-text-fill: #407abd;");
+                    setText(item);
+                    tooltip.setStyle("-fx-font-size: 13;");
+                    tooltip.setShowDelay(Duration.millis(20));
+                    tooltip.setText("aRCHITECTURE " + item);
+                    setTooltip(tooltip);
+                }
+                setAlignment(Pos.CENTER);
+            }
+        });
+    }
 
 
     private void setupColumnCycles() {

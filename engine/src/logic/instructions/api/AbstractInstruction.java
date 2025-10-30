@@ -12,7 +12,7 @@ public abstract class AbstractInstruction implements Instruction {
     private final Instruction parent;
 
 
-    //TODO: create 2 new instruction objects
+
 
     public AbstractInstruction(InstructionData data) {
         this(data, FixedLabel.EMPTY);
@@ -80,5 +80,5 @@ public abstract class AbstractInstruction implements Instruction {
     public int getNum() { return num; }
 
     @Override
-    public int getArch() { return data.getArch(); }
+    public String getArch() { return data.getArch(); }
 }

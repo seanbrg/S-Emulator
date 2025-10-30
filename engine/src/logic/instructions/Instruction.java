@@ -43,5 +43,5 @@ public interface Instruction {
 
     Variable getSecondaryVar();
 
-    int getArch();
+    String getArch();
 }

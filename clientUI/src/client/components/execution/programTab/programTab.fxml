@@ -4,7 +4,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<Tab fx:id="programTab" closable="false" text="Program" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.programTab.ProgramTabController">
+<Tab fx:id="programTab" closable="false" text="Program" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="client.components.execution.programTab.ProgramTabController">
  <content>
   <TableView fx:id="programTable">
     <columns>
@@ -12,6 +12,7 @@
       <TableColumn fx:id="columnNum" minWidth="20.0" prefWidth="20.0" resizable="false" style="-fx-alignment: CENTER;" />
         <TableColumn fx:id="columnType" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" style="-fx-alignment: CENTER;" />
         <TableColumn fx:id="columnCycles" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: CENTER;" />
+            <TableColumn fx:id="columnArch" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: CENTER;" />
         <TableColumn fx:id="columnLabel" maxWidth="200.0" minWidth="35.0" prefWidth="35.0" resizable="false" style="-fx-alignment: CENTER;" />
         <TableColumn fx:id="columnInstruction" prefWidth="250.0" text="Instruction" />
     </columns>

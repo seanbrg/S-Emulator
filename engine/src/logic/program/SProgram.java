@@ -16,7 +16,7 @@ public class SProgram implements Program {
     private Set<Variable> vars;
     private Map<Integer, Variable> inputVars;
     private Variable outputVar;
-    int architectureVersion;
+    String architectureVersion;
 
     public SProgram(String name, Map<Label, Instruction> labels, String userStr) {
         this.userStr = userStr == null ? name : userStr;
@@ -49,10 +49,13 @@ public class SProgram implements Program {
     }
 
     private void calculateArch() {
+        // Get the highest architecture symbol among instructions (I, II, III, IV)
         this.architectureVersion = instructions.stream()
-                .mapToInt(Instruction::getArch)
-                .max().orElse(1);
+                .map(Instruction::getArch)
+                .max(Comparator.naturalOrder())
+                .orElse("I");
     }
+
 
     @Override
     public void run() {

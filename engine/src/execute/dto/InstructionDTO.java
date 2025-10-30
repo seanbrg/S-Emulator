@@ -14,6 +14,7 @@ public class InstructionDTO {
     private final InstructionDTO parent;
     private final String name;
     private final int cycles;
+    private final String arch;
 
     public InstructionDTO(Instruction instr) {
         this.selfLabel = instr.getSelfLabelDTO();
@@ -23,6 +24,7 @@ public class InstructionDTO {
         this.variables = instr.getVarsDTO();
         this.argLabel = instr.getArgLabelDTO();
         this.cycles = instr.getCycles();
+        this.arch = instr.getArch();
 
         Instruction localParent = instr.getParent();
         if (localParent != null) {
@@ -42,4 +44,6 @@ public class InstructionDTO {
     public InstructionDTO getParent() { return parent; }
     public String getName() { return name; }
     public Integer getCycles() { return cycles; }
+    public String getArch() {return arch;}
+
 }

@@ -77,22 +77,22 @@
          <top>
             <HBox prefHeight="48.0" prefWidth="349.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="buttonNewRun" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="New Run">
-                     <HBox.margin>
-                        <Insets left="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="buttonDebugResume" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="Resume">
+                  <Button fx:id="buttonNewRun" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="New Run">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonExpand" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="80.0" text="Expand">
+                  <Button fx:id="buttonDebugResume" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="65.0" text="Resume">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <ComboBox fx:id="architecturePicker" prefHeight="26.0" prefWidth="80.0" promptText="Arch...">
+                  <Button fx:id="buttonExpand" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="65.0" text="Expand">
+                     <HBox.margin>
+                        <Insets left="10.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <ComboBox fx:id="architecturePicker" prefHeight="26.0" prefWidth="100.0" promptText="Arcitecture">
                      <HBox.margin>
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
