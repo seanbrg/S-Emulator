@@ -49,7 +49,7 @@ public class SProgram implements Program {
     }
 
     private void calculateArch() {
-        // Get the highest architecture symbol among instructions (I, II, III, IV)
+
         this.architectureVersion = instructions.stream()
                 .map(Instruction::getArch)
                 .max(Comparator.naturalOrder())

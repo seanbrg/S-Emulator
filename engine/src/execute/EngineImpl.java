@@ -249,23 +249,32 @@ public class EngineImpl implements Engine {
         // Increment run counter
         runCounter++;
 
+
+        boolean isMainProgram = false;
+        List<Program> saved = pm.getProgramAndFunctions(program);
+
+        isMainProgram = saved.get(0).getName().equals(program);
+        System.out.println(isMainProgram);
+
+
         // Wrap program in DTO
         ProgramDTO programDTO = new ProgramDTO(pm.getFunction(program, degree));
 
         // Create history entry with actual input/output values
-        HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles, programDTO, currentInputs, outputs);
+        HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles,
+                programDTO,
+                currentInputs,
+                outputs);
 
-        // Optional print
-        if (printMode) {
-            System.out.printf("Run #%d complete: inputs: %s, outputs: %s, cycles = %d%n",
-                    runCounter, currentInputs.toString(), outputs.toString(), cycles);
-        }
+
+        result.setType(isMainProgram ? "Program" : "Function");
 
         // Add to history
         history.add(result);
 
         return result;
     }
+
 
 
 

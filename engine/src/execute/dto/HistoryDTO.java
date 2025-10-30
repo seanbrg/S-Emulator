@@ -11,6 +11,7 @@ public class HistoryDTO {
     private List<VariableDTO> inputVariables;
     private List<VariableDTO> outputAndTempVariables;
     private VariableDTO output;
+    private String type;
 
     public HistoryDTO(int num, int degree, int maxDegree, int cycles, ProgramDTO program, List<VariableDTO> inputVariables, List<VariableDTO> outputVariables) {
         this.num = num;
@@ -21,6 +22,7 @@ public class HistoryDTO {
         this.inputVariables = inputVariables;
         this.outputAndTempVariables = outputVariables;
         this.output = outputVariables.stream().filter(VariableDTO::isOutput).findFirst().orElse(null);
+        this.type = "";
     }
 
     public int getNum() { return this.num; }
@@ -31,6 +33,8 @@ public class HistoryDTO {
     public List<VariableDTO> getInputs() { return this.inputVariables; }
     public List<VariableDTO> getOutputAndTemps() { return this.outputAndTempVariables; }
     public VariableDTO getOutput() { return this.output; }
+    public void setType(String type) { this.type = type; }
+    public String getType() { return type; }
 
 
 }
