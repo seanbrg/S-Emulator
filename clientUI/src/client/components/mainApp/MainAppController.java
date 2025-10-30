@@ -4,6 +4,7 @@ import client.components.dashboard.dashboardStage.DashboardStageController;
 
 import client.components.execution.executionStage.ExecutionStageController;
 import client.components.login.LoginController;
+import execute.dto.VariableDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -135,6 +136,21 @@ public class MainAppController {
     }
     public String getCurrentUserName() {
         return currentUserName;
+    }
+    public void switchToExecuteWithRerun(List<String> programNames, List<VariableDTO> inputs, String architecture) {
+        loadExecution();
+
+        Platform.runLater(() -> {
+            Scene currentScene = primaryStage.getScene();
+            currentScene.setRoot(executionComponent);
+            executionStageController.setScene(currentScene);
+            executionStageController.setActive(programNames, currentUserName);
+
+            // Set the rerun data after the stage is active
+            executionStageController.setupRerunInputs(inputs, architecture);
+
+            primaryStage.sizeToScene();
+        });
     }
 
 }

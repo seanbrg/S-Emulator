@@ -10,6 +10,7 @@ import client.util.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.WebConstants;
+import execute.dto.VariableDTO;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -72,6 +73,7 @@ public class DashboardStageController {
             userHistoryController.selectedUsernameProperty().bind(
                     availableUsersController.selectedUsernameProperty()
             );
+            userHistoryController.setDashboardStageController(this);
         }
     }
 
@@ -115,6 +117,12 @@ public class DashboardStageController {
         if (mainAppController != null) {
             mainAppController.switchToLogin();
         }
+        // Bind user history to selected user
+        if (userHistoryController != null && availableUsersController != null) {
+            userHistoryController.selectedUsernameProperty().bind(
+                    availableUsersController.selectedUsernameProperty()
+            );
+        }
     }
 
     public void setActive(String userName) {
@@ -137,16 +145,30 @@ public class DashboardStageController {
         // Start user history refresher and bind user selection
         if (userHistoryController != null) {
             userHistoryController.startListRefresher();
+            userHistoryController.setDashboardStageController(this);
             availableFunctionsController.selectedProgramNameProperty()
                     .bind(availableProgramsController.selectedProgramNameProperty());
         }
 
-        // Show username in header
-        if (dashboardHeaderController != null) {
+        // Show username in header and bind credits
+        if (dashboardHeaderController != null && availableUsersController != null) {
             dashboardHeaderController.setUserName(userName);
             dashboardHeaderController.setDashboardController(this);
+
+            // Set up the listener to sync credits from users controller to header
             availableUsersController.currentCreditsProperty().addListener((observable, oldValue, newValue) -> {
                 dashboardHeaderController.creditsProperty().setValue(newValue);
+            });
+
+
+            Platform.runLater(() -> {
+                int currentCredits = availableUsersController.currentCreditsProperty().get();
+                dashboardHeaderController.creditsProperty().setValue(currentCredits);
+
+
+                if (availableProgramsController != null) {
+                    availableProgramsController.bindCredits(dashboardHeaderController.creditsProperty());
+                }
             });
         }
     }
@@ -224,5 +246,9 @@ public class DashboardStageController {
 
     public List<String> getDisplayedFuncNames() {
         return availableFunctionsController.getDisplayedFuncNames();
+    }
+    public void switchToExecuteWithInputs(String programName, List<VariableDTO> inputs, String architecture) {
+        List<String> programNames = List.of(programName);
+        mainAppController.switchToExecuteWithRerun(programNames, inputs, architecture);
     }
 }

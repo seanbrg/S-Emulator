@@ -466,4 +466,19 @@ public class ExecutionStageController {
     public Scene getScene() {
         return scene;
     }
+    public void setupRerunInputs(List<VariableDTO> inputs, String architecture) {
+        Platform.runLater(() -> {
+            // Wait a bit for the UI to fully initialize
+            Platform.runLater(() -> {
+                // Set the architecture
+                runMenuController.setArchitecture(architecture);
+
+                // Set the inputs
+                runMenuController.setInputVariablesForRerun(inputs);
+
+                // Prepare for new run
+                runMenuController.setPreparingNewRun(true);
+            });
+        });
+    }
 }

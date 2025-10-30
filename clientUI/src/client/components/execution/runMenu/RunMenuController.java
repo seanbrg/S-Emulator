@@ -546,4 +546,31 @@ public class RunMenuController {
     public StringProperty getSelectedArchitecture() {
         return selectedArchitecture;
     }
+    public void setArchitecture(String architecture) {
+        Platform.runLater(() -> {
+            architecturePicker.setValue(architecture);
+            selectedArchitecture.set(architecture);
+        });
+    }
+
+    public void setInputVariablesForRerun(List<VariableDTO> inputs) {
+        Platform.runLater(() -> {
+            // Clear edited values first
+            editedValues.clear();
+
+            // Set the input variables
+            inputVariablesNames.setAll(inputs);
+
+            // Also set the edited values so they show up in the table
+            for (VariableDTO var : inputs) {
+                editedValues.put(var.getName(), var.getValue());
+            }
+
+            // Rebuild the actual inputs
+            rebuildInputsFromTable();
+
+            // Refresh the table to show the values
+            Platform.runLater(() -> inputsTable.refresh());
+        });
+    }
 }

@@ -2,6 +2,7 @@ package client.components.dashboard.userHistory;
 
 import client.components.dashboard.availablePrograms.AvailableProgramsController;
 import client.components.dashboard.availableUsers.AvailableUsersController;
+import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.HttpUtils;
 import client.util.refresh.HistoriesListRefresher;
 import com.google.gson.Gson;
@@ -45,6 +46,7 @@ public class UserHistoryController {
     // Buttons
     @FXML private Button showStatusButton;
     @FXML private Button rerunButton;
+    private DashboardStageController dashboardStageController;
 
     private final ObservableList<UserRunHistoryDTO> historyList = FXCollections.observableArrayList();
     private final Gson GSON = new Gson();
@@ -84,7 +86,9 @@ public class UserHistoryController {
             rerunButton.setDisable(!hasSelection);
         });
     }
-
+    public void setDashboardStageController(DashboardStageController controller) {
+        this.dashboardStageController = controller;
+    }
     public interface HttpStatusUpdate {
         void updateHttpLine(String line);
     }
@@ -145,7 +149,21 @@ public class UserHistoryController {
 
     @FXML
     private void onRerun() {
-        // Implement re-run logic here
+        UserRunHistoryDTO selected = userHistoryTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        HistoryDTO dto = selected.getHistoryDTO();
+        if (dto == null) return;
+
+        // Get the program name, inputs, and architecture
+        String programName = selected.getProgramName();
+        List<VariableDTO> inputs = dto.getInputs();
+        String architecture = selected.getArchitectureType();
+
+        // Navigate to execution with this data
+        if (dashboardStageController != null) {
+            dashboardStageController.switchToExecuteWithInputs(programName, inputs, architecture);
+        }
     }
 
 
