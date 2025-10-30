@@ -272,6 +272,7 @@ public class RunMenuController {
                     int cycleCreditCost = cycles;
                     if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
                         log("=== Run Aborted: Insufficient credits for execution ===");
+                        deductAllCredits();
                         running.set(false);
                         return;
                     }
@@ -281,6 +282,10 @@ public class RunMenuController {
                 });
             });
         });
+    }
+
+    private void deductAllCredits() {
+        mainController.deductCredits(mainController.getAvailableCredits());
     }
 
     private void lockVarWidth() {
