@@ -8,6 +8,7 @@ import execute.dto.InstructionDTO;
 import execute.dto.ProgramMetadataDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,6 +44,7 @@ public class AvailableProgramsController {
     private StringProperty selectedProgramNameProperty;
     private AvailableUsersController.HttpStatusUpdate httpStatusUpdate;
     private DashboardStageController mainDashboardController;
+    private IntegerProperty availableCredits;
 
 
     private ObservableList<ProgramTableData> programsList = FXCollections.observableArrayList();
@@ -55,6 +57,7 @@ public class AvailableProgramsController {
         autoUpdate = new SimpleBooleanProperty(true);
         totalPrograms = new SimpleIntegerProperty(0);
         selectedProgramNameProperty = new SimpleStringProperty("");
+        availableCredits = new SimpleIntegerProperty(0);
         executeProgramButton.setOnAction(event -> onExecuteProgramClicked());
 
         Platform.runLater(() -> {
@@ -65,13 +68,28 @@ public class AvailableProgramsController {
             });
         });
 
+        // Disable button if no selection OR insufficient credits
         executeProgramButton.disableProperty().bind(
-                availableProgramsTable.getSelectionModel().selectedItemProperty().isNull()
+                Bindings.createBooleanBinding(() -> {
+                            ProgramTableData selected = availableProgramsTable.getSelectionModel().getSelectedItem();
+                            if (selected == null) {
+                                return true; // No program selected
+                            }
+                            // Check if user has enough credits
+                            double avgCost = selected.getAverageCostValue();
+                            return availableCredits.get() < avgCost;
+                        },
+                        availableProgramsTable.getSelectionModel().selectedItemProperty(),
+                        availableCredits)
         );
     }
 
     public void setMainDashboardController(DashboardStageController controller) {
         this.mainDashboardController = controller;
+    }
+
+    public void bindCredits(IntegerProperty creditsProperty) {
+        this.availableCredits.bind(creditsProperty);
     }
 
     private void setupTableColumns() {
@@ -161,6 +179,7 @@ public class AvailableProgramsController {
         private final SimpleIntegerProperty maxDegree;
         private final SimpleIntegerProperty numberOfRuns;
         private final SimpleStringProperty averageCreditCost;
+        private final double averageCostValue;
 
         public ProgramTableData(String name, String user, int numberOfInst,
                                 int maxDegree, int numberOfRuns, double avgCost) {
@@ -172,6 +191,7 @@ public class AvailableProgramsController {
             this.averageCreditCost = new SimpleStringProperty(
                     String.format("%.2f", avgCost)
             );
+            this.averageCostValue = avgCost;
         }
 
         public String getName() { return name.get(); }
@@ -191,5 +211,7 @@ public class AvailableProgramsController {
 
         public String getAverageCreditCost() { return averageCreditCost.get(); }
         public SimpleStringProperty averageCreditCostProperty() { return averageCreditCost; }
+
+        public double getAverageCostValue() { return averageCostValue; }
     }
 }
