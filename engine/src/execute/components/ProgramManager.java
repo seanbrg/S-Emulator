@@ -523,29 +523,44 @@ public class ProgramManager {
         }
     }
 
-    public boolean debugStep() {
+    public DebugStepInfo debugStep() {
         int size = programInDebug.getInstructions().size();
+        int cycles = 0;
+        boolean hasMore = false;
 
         if (debugLine <= size) {
             Instruction instr = programInDebug.getInstructions().get(debugLine - 1);
+            cycles = instr.getCycles();
             Label nextLabel = instr.execute();
 
             if (nextLabel.equals(FixedLabel.EMPTY)) {
                 debugLine++;
-                return debugLine <= size;
+                hasMore = debugLine <= size;
             } else if (nextLabel.equals(FixedLabel.EXIT)) {
                 debugLine = size;
-                return false;
+                hasMore = false;
             } else {
                 OptionalInt nextLine = programInDebug.getInstructions().stream()
                         .filter(i -> i.getSelfLabel().equals(nextLabel))
                         .mapToInt(Instruction::getNum).findFirst();
                 debugLine = nextLine.orElse(debugLine + 1);
-                return debugLine <= size;
+                hasMore = debugLine <= size;
             }
-        } else {
-            return false;
         }
+        return new DebugStepInfo(cycles, hasMore);
+    }
+
+    public class DebugStepInfo {
+        int cycles;
+        boolean hasMore;
+
+        DebugStepInfo(int cycles, boolean hasMore) {
+            this.cycles = cycles;
+            this.hasMore = hasMore;
+        }
+
+        public int getCycles() {return cycles;}
+        public boolean isHasMore() {return hasMore;}
     }
 
     public int getDebugLine() {

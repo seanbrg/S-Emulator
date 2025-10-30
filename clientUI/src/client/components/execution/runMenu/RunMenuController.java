@@ -267,18 +267,20 @@ public class RunMenuController {
 
         Platform.runLater(() -> {
             mainController.runCyclesProperty().addListener((obs, oldVal, newVal) -> {
-                int cycles = newVal.intValue();
                 Platform.runLater(() -> {
-                    int cycleCreditCost = cycles;
-                    if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
-                        log("=== Run Aborted: Insufficient credits for execution ===");
-                        deductAllCredits();
-                        running.set(false);
-                        return;
-                    }
+                    if (!debugging.get()) {
+                        int cycles = newVal.intValue();
+                        int cycleCreditCost = cycles;
+                        if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
+                            log("=== Run Aborted: Insufficient credits for execution ===");
+                            deductAllCredits();
+                            running.set(false);
+                            return;
+                        }
 
-                    log("=== Run Finished ===");
-                    log(cycles + " cycles executed: " + cycleCreditCost + " credits deducted");
+                        log("=== Run Finished ===");
+                        log(cycles + " cycles executed: " + cycleCreditCost + " credits deducted");
+                    }
                 });
             });
         });
@@ -412,19 +414,21 @@ public class RunMenuController {
     }
 
     private void handleDebugStep() {
-        // Deduct 1 credit per cycle (debug step)
-        if (!checkAndDeductCredits(1, "1 debug step")) {
+        if (!checkAndDeductCredits(1, "credits for debug step")) {
             handleDebugStop();
             return;
         }
 
         storePreviousValues();
 
-        mainController.debugStep().thenAccept(hasMore -> {
+        mainController.debugStep().thenAccept(info -> {
+            boolean hasMore = info.isHasMore();
+            int cost = info.getCycles();
             debugging.setValue(hasMore);
 
             clearLog();
-            log("Debug mode: line " + mainController.debugLineProperty().get() + " executed (1 credit deducted).");
+            log("Debug mode: line " + mainController.debugLineProperty().get() + " executed: " +
+                     cost + " credits deducted.");
             if (!debugging.get()) {
                 clearLog();
                 log("=== Debug Finished ===");

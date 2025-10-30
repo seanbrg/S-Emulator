@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import emulator.servlets.DebugServlet;
 import emulator.utils.WebConstants;
 import execute.EngineImpl;
+import execute.components.ProgramManager;
 import execute.dto.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -376,10 +377,10 @@ public class ExecutionStageController {
         });
     }
 
-    public CompletableFuture<Boolean> debugStep() {
+    public CompletableFuture<DebugServlet.DebugInfo> debugStep() {
         ProgramTabController tabController = currentTabController.get();
         if (tabController == null) {
-            return CompletableFuture.completedFuture(false);
+            return null;
         }
 
         List<VariableDTO> outputs = runMenuController.getOutputVariables();
@@ -393,21 +394,22 @@ public class ExecutionStageController {
 
                     int debugLineRes = info.getDebugLine();
                     boolean hasMore = info.isHasMore();
+                    int cycles = info.getCycles();
                     List<VariableDTO> updatedOutputs = info.getVariables();
-
                     // update UI on FX thread
                     Platform.runLater(() -> {
+                        deductCredits(cycles);
                         debugLine.set(debugLineRes);
                         replaceHighlights(List.of(debugLineRes));
                         runMenuController.setOutputVariables(updatedOutputs);
                         if (!hasMore) clearHighlights();
                     });
 
-                    return hasMore;
+                    return info;
                 })
                 .exceptionally(ex -> {
                     Platform.runLater(() -> System.err.println(ex.getMessage()));
-                    return false;
+                    return null;
                 });
     }
 

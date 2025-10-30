@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import emulator.utils.ContextUtils;
 import emulator.utils.WebConstants;
 import execute.Engine;
+import execute.components.ProgramManager;
 import execute.dto.HistoryDTO;
 import execute.dto.VariableDTO;
 import jakarta.servlet.annotation.WebServlet;
@@ -114,13 +115,15 @@ public class DebugServlet extends HttpServlet {
 
             try {
                 synchronized (engine) {
-                    boolean hasMore = engine.debugStep(programName, degree);
+                    ProgramManager.DebugStepInfo res = engine.debugStep(programName, degree);
+                    boolean hasMore = res.isHasMore();
+                    int cycles = res.getCycles();
                     int debugLine = engine.getDebugLine();
                     List<VariableDTO> variables = engine.getOutputs(programName, degree);
 
                     session.setAttribute(WebConstants.PROGRAM_VARLIST, engine.getOutputs(programName, degree));
 
-                    DebugInfo debugInfo = new DebugInfo(hasMore, debugLine, variables);
+                    DebugInfo debugInfo = new DebugInfo(hasMore, debugLine, cycles, variables);
                     String jsonResponse = GSON.toJson(debugInfo);
                     response.setStatus(HttpServletResponse.SC_OK);
                     PrintWriter out = response.getWriter();
@@ -179,11 +182,13 @@ public class DebugServlet extends HttpServlet {
     public static class DebugInfo {
         private final boolean hasMore;
         private final int debugLine;
+        private final int cycles;
         private final List<VariableDTO> variables;
 
-        public DebugInfo(boolean hasMore, int debugLine, List<VariableDTO> variables) {
+        public DebugInfo(boolean hasMore, int debugLine, int cycles, List<VariableDTO> variables) {
             this.hasMore = hasMore;
             this.debugLine = debugLine;
+            this.cycles = cycles;
             this.variables = variables;
         }
 
@@ -194,6 +199,8 @@ public class DebugServlet extends HttpServlet {
         public int getDebugLine() {
             return debugLine;
         }
+
+        public int getCycles() { return cycles; }
 
         public List<VariableDTO> getVariables() {
             return variables;

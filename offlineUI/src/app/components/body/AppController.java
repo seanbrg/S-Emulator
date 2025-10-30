@@ -8,6 +8,7 @@ import app.components.runHistory.RunHistoryController;
 import app.components.runMenu.RunMenuController;
 import execute.Engine;
 import execute.EngineImpl;
+import execute.components.ProgramManager;
 import execute.dto.HistoryDTO;
 import execute.dto.InstructionDTO;
 import execute.dto.LabelDTO;
@@ -314,7 +315,8 @@ public class AppController {
         int degree = tabController.getCurrentDegree();
         debugLine.set(engine.getDebugLine());
         replaceHighlights(List.of(debugLine.get()));
-        Boolean notDone = engine.debugStep(programName, degree);
+        ProgramManager.DebugStepInfo res = engine.debugStep(programName, degree);
+        boolean notDone = res.isHasMore();
 
         // Get ALL variables (outputs, inputs, temps) for debugging display
         List<List<VariableDTO>> varsByType = engine.getVarByType();

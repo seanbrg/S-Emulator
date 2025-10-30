@@ -1,5 +1,6 @@
 package execute;
 
+import execute.components.ProgramManager;
 import execute.dto.*;
 import logic.variables.Variable;
 
@@ -45,8 +46,8 @@ public interface Engine {
     List<InstructionDTO> getInstructionsList(String programName, int degree);
 
     void debugStart(String programName, int degree, List<VariableDTO> inputs);
-    
-    boolean debugStep(String programName, int degree);
+
+    ProgramManager.DebugStepInfo debugStep(String programName, int degree);
 
     int getDebugLine();
 

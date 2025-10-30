@@ -321,7 +321,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public boolean debugStep(String programName, int degree) {
+    public ProgramManager.DebugStepInfo debugStep(String programName, int degree) {
         return pm.debugStep();
     }
 
