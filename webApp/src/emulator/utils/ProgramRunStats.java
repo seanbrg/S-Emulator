@@ -14,6 +14,6 @@ public class ProgramRunStats {
     }
 
     public double getAverageCost() {
-        return runCount > 0 ? totalCost / runCount : 0.0;
+        return (runCount == 0) ? 0 : totalCost / runCount;
     }
 }

@@ -257,6 +257,7 @@ public class EngineImpl implements Engine {
         // Wrap program in DTO
         ProgramDTO programDTO = new ProgramDTO(pm.getFunction(program, degree));
 
+
         // Create history entry with actual input/output values
         HistoryDTO result = new HistoryDTO(runCounter, degree, maxDegree, cycles,
                 programDTO,

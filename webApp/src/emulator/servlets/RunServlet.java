@@ -1,5 +1,6 @@
 package emulator.servlets;
 
+import client.components.execution.runMenu.RunMenuController;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import emulator.utils.ContextUtils;
@@ -113,14 +114,13 @@ public class RunServlet extends HttpServlet {
                         synchronized (userRunCounts) {
                             userRunCounts.put(username, userRunCounts.getOrDefault(username, 0) + 1);
                         }
-                        System.out.println("DEBUG: Added runEntry to history for user " + username +
-                                " (total runs for user=" + userRunCounts.get(username) + ")");
+                        //System.out.println("DEBUG: Added runEntry to history for user " + username +
+                        //        " (total runs for user=" + userRunCounts.get(username) + ")");
 
                     }
 
-                    // Calculate cost (you can adjust this formula based on your requirements)
-                    // Example: cost = number of steps * degree * some multiplier
-                    double executionCost = calculateExecutionCost(resultDto, degree);
+                    double archCost = ARCHITECTURE_COSTS.get(arch);
+                    double executionCost = resultDto.getCycles() + archCost;
 
                     // Record the execution statistics
                     synchronized (programStats) {
@@ -147,17 +147,16 @@ public class RunServlet extends HttpServlet {
         }
     }
 
-    // ------------------------- Helpers -------------------------
-    private double calculateExecutionCost(HistoryDTO historyDto, int degree) {
-        final double BASE_COST = 1.0;
-        final double COST_PER_STEP = 0.5;
-        final double DEGREE_MULTIPLIER = 1.5;
-        int numberOfSteps = 1;
-        return BASE_COST + (numberOfSteps * COST_PER_STEP) + (degree * DEGREE_MULTIPLIER);
-    }
-
     public void recordRunStats(String programName, double cost, Map<String, ProgramRunStats> programStats) {
         ProgramRunStats stats = programStats.computeIfAbsent(programName, k -> new ProgramRunStats());
         stats.recordRun(cost);
     }
+
+    public static final Map<String, Integer> ARCHITECTURE_COSTS = Map.of(
+            "I", 5,
+            "II", 100,
+            "III", 500,
+            "IV", 1000
+    );
+
 }
