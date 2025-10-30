@@ -69,8 +69,6 @@ public class ProgramTabController {
                 newTP.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
             }
         });
-
-
         programTab.setOnCloseRequest(event -> {
             String nameForDialog = (programName == null ? "this tab" : programName + " (" + degree + "/" + maxDegree + ")");
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
@@ -122,7 +120,7 @@ public class ProgramTabController {
                     setText(item);
                     tooltip.setStyle("-fx-font-size: 13;");
                     tooltip.setShowDelay(Duration.millis(20));
-                    tooltip.setText("aRCHITECTURE " + item);
+                    tooltip.setText("Architecture " + item);
                     setTooltip(tooltip);
                 }
                 setAlignment(Pos.CENTER);
