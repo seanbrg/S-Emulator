@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 public interface Program {
-    public void run();
+    int run();
+
     void addInstruction(Instruction instruction);
 
     String getName();

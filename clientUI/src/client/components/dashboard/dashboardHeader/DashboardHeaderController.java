@@ -5,6 +5,8 @@ import client.util.HttpUtils;
 import emulator.utils.WebConstants;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -31,7 +33,7 @@ public class DashboardHeaderController {
     @FXML private TextField creditsTextField;
     @FXML private ProgressBar progressBar;
 
-    private int availableCredits = 50; // starting amount
+    private IntegerProperty availableCredits;
     private String currentUsername = "";
     private DashboardStageController dashboardController;
 
@@ -45,13 +47,22 @@ public class DashboardHeaderController {
         menuItemThemeLight.setOnAction(event -> handleThemeLight());
         menuItemThemeDark.setOnAction(event -> handleThemeDark());
         loadCreditsButton.setOnAction(event -> onChargeCreditsClicked());
+        availableCredits = new SimpleIntegerProperty(50);
         updateCreditLabel();
 
         progressBar.setProgress(0);
         progressBar.setVisible(false);
-        Platform.runLater(() -> progressBar.requestFocus());
         creditsTextField.setFocusTraversable(false);
+
+        Platform.runLater(() -> {
+            progressBar.requestFocus();
+            availableCredits.addListener((observable, oldValue, newValue) -> {
+                updateCreditLabel();
+            });
+        });
     }
+
+    public IntegerProperty creditsProperty() { return availableCredits; }
 
     public void setDashboardController(DashboardStageController controller) {
         this.dashboardController = controller;
@@ -104,7 +115,7 @@ public class DashboardHeaderController {
             HttpUtils.postAsync(url, RequestBody.create(new byte[0]))
                     .thenAccept(response -> {
                         Platform.runLater(() -> {
-                            availableCredits += amount;
+                            //availableCredits += amount;
                             updateCreditLabel();
                             creditsTextField.clear();
                             loadCreditsButton.setDisable(false);
@@ -198,7 +209,7 @@ public class DashboardHeaderController {
     }
 
     private void updateCreditLabel() {
-        Platform.runLater(() -> creditsLabel.setText(String.valueOf(availableCredits)));
+        Platform.runLater(() -> creditsLabel.setText(String.valueOf(availableCredits.get())));
     }
 
     public void setUserName(String userName) {

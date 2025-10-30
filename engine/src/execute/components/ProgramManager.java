@@ -43,7 +43,7 @@ public class ProgramManager {
         this.currentTemps = 0;
     }
 
-    public static long runFunction(Program function, List<Variable> argsVars) {
+    public static long runFunctionGetOutput(Program function, List<Variable> argsVars) {
         Map<Integer, Variable> inputFunctionVars = function.getInputs();
 
         for (int i = 0; i < argsVars.size(); i++) {
@@ -295,15 +295,17 @@ public class ProgramManager {
         }
     }
 
-    public void runProgram(String func, int degree) {
+    public int runProgram(String func, int degree) {
         assert 0 <= degree && degree <= maxDegrees.get(func);
+        int cycles = 0;
 
         if (!functionsExpansions.isEmpty()) {
             if (degree >= functionsExpansions.get(func).size()) {
                 expand(func, degree);
             }
-            functionsExpansions.get(func).get(degree).run();
+            cycles = functionsExpansions.get(func).get(degree).run();
         }
+        return cycles;
     }
 
     private void expand(String func, int degree) {

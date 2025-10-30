@@ -1,5 +1,6 @@
 package client.components.dashboard.availableUsers;
 
+import client.components.dashboard.dashboardStage.DashboardStageController;
 import client.util.HttpUtils;
 import client.util.refresh.UserListRefresher;
 import client.util.refresh.UserListRefresher;
@@ -42,6 +43,9 @@ public class AvailableUsersController {
     private IntegerProperty totalUsers;
     private StringProperty selectedUsernameProperty;
     private HttpStatusUpdate httpStatusUpdate;
+    private DashboardStageController dashboardStageController;
+    private String username;
+    private IntegerProperty currentCredits;
 
     private ObservableList<UserTableData> usersList = FXCollections.observableArrayList();
     private ScheduledExecutorService scheduler;
@@ -58,6 +62,7 @@ public class AvailableUsersController {
         autoUpdate = new SimpleBooleanProperty(true);
         totalUsers = new SimpleIntegerProperty(0);
         selectedUsernameProperty = new SimpleStringProperty("");
+        currentCredits = new SimpleIntegerProperty(0);
 
         Platform.runLater(() -> {
             availableUsersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -100,6 +105,23 @@ public class AvailableUsersController {
         columnNumberOfRuns.setCellValueFactory(data -> data.getValue().numberOfRunsProperty().asObject());
     }
 
+    public void setDashboardStageController(DashboardStageController dashboardStageController, String username) {
+        this.dashboardStageController = dashboardStageController;
+        this.username = username;
+    }
+
+    public void updateUserCredits() {
+        for (UserTableData u : usersList) {
+            if (username.equals(u.getUsername())) {
+                currentCredits.set(u.getCurrentCredits());
+            }
+        }
+    }
+
+    public IntegerProperty currentCreditsProperty() {
+        return currentCredits;
+    }
+
     public void updateUsersTable(List<UserDashboard> users) {
         Platform.runLater(() -> {
             String selectedUsername = null;
@@ -121,6 +143,7 @@ public class AvailableUsersController {
                 newTableData.add(tableData);
             }
             usersList.setAll(newTableData);
+            updateUserCredits();
 
             // Restore selection by matching username
             if (selectedUsername != null) {

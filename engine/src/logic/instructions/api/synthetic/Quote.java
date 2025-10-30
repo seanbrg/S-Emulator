@@ -49,7 +49,7 @@ public class Quote extends AbstractInstruction {
         for (Argument arg : args) {
             argsVars.add(arg.get());
         }
-        v.setValue(ProgramManager.runFunction(function, argsVars));
+        v.setValue(ProgramManager.runFunctionGetOutput(function, argsVars));
         return FixedLabel.EMPTY;
     }
 

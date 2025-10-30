@@ -58,13 +58,15 @@ public class SProgram implements Program {
 
 
     @Override
-    public void run() {
+    public int run() {
         Label nextLabel;
         int pc = 0;
+        int cycles = 0;
 
         while (0 <= pc && pc < instructions.size()) {
             Instruction current = instructions.get(pc);
             nextLabel = current.execute();
+            cycles += current.getCycles();
             //System.out.println("pc = " + pc); // for debugging
             if (FixedLabel.EXIT == nextLabel) {
                 break;
@@ -84,6 +86,7 @@ public class SProgram implements Program {
                 pc += 1;
             }
         }
+        return cycles;
     }
 
     @Override

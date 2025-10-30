@@ -167,6 +167,7 @@ public class RunMenuController {
                 setGraphic(tf);
             }
         });
+
     }
 
     private void setupArchitectureMenu() {
@@ -263,6 +264,23 @@ public class RunMenuController {
             previousValues.clear();
             clearLog();
         });
+
+        Platform.runLater(() -> {
+            mainController.runCyclesProperty().addListener((obs, oldVal, newVal) -> {
+                int cycles = newVal.intValue();
+                Platform.runLater(() -> {
+                    int cycleCreditCost = cycles;
+                    if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
+                        log("=== Run Aborted: Insufficient credits for execution ===");
+                        running.set(false);
+                        return;
+                    }
+
+                    log("=== Run Finished ===");
+                    log(cycles + " cycles executed: " + cycleCreditCost + " credits deducted");
+                });
+            });
+        });
     }
 
     private void lockVarWidth() {
@@ -306,27 +324,6 @@ public class RunMenuController {
 
             log("=== Run Started (Architecture " + selectedArch + ") ===");
             log("Architecture cost: " + archCost + " credits deducted");
-        });
-
-        // Wait for the run to complete and get cycles
-        runProgram(selectedArch);
-    }
-
-    private void runProgram(String arch) {
-        mainController.runCyclesProperty().addListener((obs, oldVal, newVal) -> {
-            if (!running.get() || newVal.intValue() <= 0) return;
-
-            int cycles = newVal.intValue();
-
-            int cycleCreditCost = cycles;
-            if (!checkAndDeductCredits(cycleCreditCost, cycles + " cycles")) {
-                log("=== Run Aborted: Insufficient credits for execution ===");
-                running.set(false);
-                return;
-            }
-
-            log("=== Run Finished ===");
-            log(cycles + " cycles executed (" + cycleCreditCost + " credits deducted)");
         });
     }
 

@@ -121,6 +121,7 @@ public class DashboardStageController {
         // Start users refresher
         if (availableUsersController != null) {
             availableUsersController.startListRefresher();
+            availableUsersController.setDashboardStageController(this, userName);
         }
 
         // Start programs refresher
@@ -143,6 +144,10 @@ public class DashboardStageController {
         // Show username in header
         if (dashboardHeaderController != null) {
             dashboardHeaderController.setUserName(userName);
+            dashboardHeaderController.setDashboardController(this);
+            availableUsersController.currentCreditsProperty().addListener((observable, oldValue, newValue) -> {
+                dashboardHeaderController.creditsProperty().setValue(newValue);
+            });
         }
     }
 
@@ -220,6 +225,4 @@ public class DashboardStageController {
     public List<String> getDisplayedFuncNames() {
         return availableFunctionsController.getDisplayedFuncNames();
     }
-
-
 }

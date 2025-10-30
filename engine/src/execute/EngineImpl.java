@@ -221,8 +221,7 @@ public class EngineImpl implements Engine {
                 .stream()
                 .filter(Objects::nonNull)
                 .forEach(v -> v.setValue(0));
-        pm.runProgram(programName, degree);
-        return outputVar.getValue();
+        return pm.runProgram(programName, degree); // retunrs cycles
     }
 
     @Override
@@ -242,13 +241,10 @@ public class EngineImpl implements Engine {
         int maxDegree = pm.maxDegree(program);
 
         // Run the program
-        pm.runProgram(program, degree);
+        int cycles = pm.runProgram(program, degree);
 
         // Capture output variables
         List<VariableDTO> outputs = getOutputs(program, degree);
-
-        // Get cycles
-        int cycles = pm.getProgramCycles(program, degree);
 
         // Increment run counter
         runCounter++;
