@@ -34,6 +34,8 @@ public class ProgramTabController {
     private ListProperty<InstructionDTO> instructions;
     private ListProperty<VariableDTO> variables;
     private ListProperty<LabelDTO> labels;
+    private BooleanProperty hasIncompatibleInstructions;
+
 
     private static final javafx.css.PseudoClass HIGHLIGHTED =
             javafx.css.PseudoClass.getPseudoClass("highlighted");
@@ -45,6 +47,8 @@ public class ProgramTabController {
         this.labels = new SimpleListProperty<>(FXCollections.observableArrayList());
 
         programTable.itemsProperty().bind(instructions);
+        this.hasIncompatibleInstructions = new SimpleBooleanProperty(false);
+
 
         programTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         fitColumns();
@@ -93,13 +97,16 @@ public class ProgramTabController {
 
 
             if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
-                event.consume(); // cancel close
+                event.consume();
                 return;
             }
 
 
 
         });
+    }
+    public ReadOnlyBooleanProperty hasIncompatibleInstructionsProperty() {
+        return hasIncompatibleInstructions;
     }
 
     private void setupColumnArch() {
@@ -312,10 +319,22 @@ public class ProgramTabController {
         if (selectedArch == null || selectedArch.isEmpty()) {
             programTable.getItems().forEach(i -> i.setHighlight(false));
             programTable.refresh();
+            hasIncompatibleInstructions.set(false);
             return;
         }
 
         int selectedCost = getArchitectureCost(selectedArch);
+        boolean hasIncompatible = false;
+
+        for (InstructionDTO item : programTable.getItems()) {
+            int instrCost = getArchitectureCost(item.getArch());
+            if (instrCost > selectedCost) {
+                hasIncompatible = true;
+                break;
+            }
+        }
+
+        hasIncompatibleInstructions.set(hasIncompatible);
 
         programTable.setRowFactory(tv -> new TableRow<InstructionDTO>() {
             @Override
@@ -326,7 +345,7 @@ public class ProgramTabController {
                 } else {
                     int instrCost = getArchitectureCost(item.getArch());
                     if (instrCost > selectedCost) {
-                        setStyle("-fx-background-color: rgba(255, 80, 80, 0.35);"); // light red highlight
+                        setStyle("-fx-background-color: rgba(255, 80, 80, 0.35);");
                     } else {
                         setStyle("");
                     }

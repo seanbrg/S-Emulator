@@ -46,9 +46,9 @@ public class RunMenuController {
     private BooleanProperty running;
     private BooleanProperty debugging;
     private Map<String, Long> previousValues;
-    private StringProperty selectedArchitecture; // Default
+    private StringProperty selectedArchitecture;
 
-    // Architecture costs(moove to utils later)
+
     private static final Map<String, Integer> ARCHITECTURE_COSTS = Map.of(
             "I", 5,
             "II", 100,
@@ -257,6 +257,22 @@ public class RunMenuController {
                 mainController.currentTabControllerProperty().isNull().or(debugging).or(preparingNewRun)
                         .or(selectedArchitecture.isEmpty())
         );
+
+        mainController.currentTabControllerProperty().addListener((obs, oldTab, newTab) -> {
+            if (oldTab != null && oldTab.hasIncompatibleInstructionsProperty() != null) {
+                buttonNewRun.disableProperty().unbind();
+            }
+
+            if (newTab != null) {
+                buttonNewRun.disableProperty().bind(
+                        mainController.currentTabControllerProperty().isNull()
+                                .or(debugging)
+                                .or(preparingNewRun)
+                                .or(selectedArchitecture.isEmpty())
+                                .or(newTab.hasIncompatibleInstructionsProperty())
+                );
+            }
+        });
 
         buttonDebugStep.disableProperty().bind(debugging.not());
         buttonDebugStop.disableProperty().bind(debugging.not());
