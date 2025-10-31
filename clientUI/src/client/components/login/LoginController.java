@@ -46,7 +46,10 @@ public class LoginController {
             Platform.runLater(() -> mainAppController.switchToDashboard(userName));
         }).exceptionally(ex -> {
             // Login failed
-            Platform.runLater(() -> errorMessageProperty.set("Login failed: failed to connect to host."));
+            Platform.runLater(() -> {
+                errorMessageProperty.set("Login failed: failed to connect to host.");
+                System.err.println(ex.getMessage());
+            });
             return null;
         });
     }

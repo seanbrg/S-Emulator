@@ -81,7 +81,7 @@ public class MainAppController {
 
     private void loadExecution() {
         try {
-            URL fxmlUrl = getClass().getResource("/client/components/execution/executionStage/ExecutionStage.fxml");
+            URL fxmlUrl = getClass().getResource("/client/components/execution/executionStage/executionStage.fxml");
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
             executionComponent = fxmlLoader.load();
             executionStageController = fxmlLoader.getController();

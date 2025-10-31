@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: client.AppMain
+Class-Path: engine.jar webApp.war javafx-base.jar javafx-controls.jar ja
+ vafx-fxml.jar javafx-graphics.jar
 

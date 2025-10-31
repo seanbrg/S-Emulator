@@ -263,8 +263,9 @@ public class ExecutionStageController {
 
     public void expandProgram() {
         try {
-            FXMLLoader fx = new FXMLLoader(getClass().getResource(
-                    "../expandWindow/expandWindow.fxml"));
+            URL fxmlUrl = getClass().getResource("/client/components/execution/expandWindow/expandWindow.fxml");
+            FXMLLoader fx = new FXMLLoader(fxmlUrl);
+
 
             Parent root = fx.load();
             ExpandWindowController c = fx.getController();
@@ -290,7 +291,7 @@ public class ExecutionStageController {
                 s.setTitle("Choose Expansion Degree");
                 Scene dialogScene = new Scene(root);
                 dialogScene.getStylesheets().addAll(scene.getStylesheets()); // inherit theme
-                s.getIcons().add(new Image(getClass().getResourceAsStream("../../../../resources/images/icon.png")));
+                s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/resources/images/icon.png"))));
                 s.setScene(dialogScene);
                 s.setResizable(false);
                 s.showAndWait();

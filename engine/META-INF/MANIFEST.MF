@@ -1,2 +1,4 @@
 Manifest-Version: 1.0
+Class-Path: javafx-base.jar javafx-controls.jar javafx-fxml.jar javafx-g
+ raphics.jar
 

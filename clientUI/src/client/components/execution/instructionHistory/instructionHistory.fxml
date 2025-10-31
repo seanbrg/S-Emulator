@@ -3,7 +3,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 
-<TableView fx:id="instructionHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/24.0.1" fx:controller="client.components.execution.instructionHistory.InstructionHistoryController">
+<TableView fx:id="instructionHistory" maxHeight="Infinity" maxWidth="Infinity" prefHeight="200.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.components.execution.instructionHistory.InstructionHistoryController">
     <columns>
         <TableColumn fx:id="columnNum" minWidth="20.0" prefWidth="20.0" resizable="false" style="-fx-alignment: CENTER;" />
         <TableColumn fx:id="columnType" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" style="-fx-alignment: CENTER;" />
