@@ -34,6 +34,7 @@ public class ProgramTabController {
     private ListProperty<InstructionDTO> instructions;
     private ListProperty<VariableDTO> variables;
     private ListProperty<LabelDTO> labels;
+    private IntegerProperty selectedArchitectureCost;
     private BooleanProperty hasIncompatibleInstructions;
 
 
@@ -48,6 +49,7 @@ public class ProgramTabController {
 
         programTable.itemsProperty().bind(instructions);
         this.hasIncompatibleInstructions = new SimpleBooleanProperty(false);
+        this.selectedArchitectureCost = new SimpleIntegerProperty(0);
 
 
         programTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -247,31 +249,45 @@ public class ProgramTabController {
 
     public void setMainController(ExecutionStageController mainController) {
         this.mainController = mainController;
-        enableRowHighlighting(mainController);
+        enableRowHighlighting();
     }
 
-    public void enableRowHighlighting(ExecutionStageController dashboardController) {
-        var sharedHighlights = dashboardController.getHighlightedRows();
+    public void enableRowHighlighting() {
+        final javafx.collections.ObservableSet<Integer> sharedHighlights = mainController.getHighlightedRows();
 
         programTable.setRowFactory(tv -> {
-            var row = new javafx.scene.control.TableRow<InstructionDTO>();
+            TableRow<InstructionDTO> row = new TableRow<>();
 
             Runnable apply = () -> {
-                var item = row.getItem();
-                boolean on = false;
-                if (item != null && !row.isEmpty()) {
-                    int line = item.getNum();
-                    on = sharedHighlights.contains(line);
+                InstructionDTO it = row.getItem();
+                boolean empty = row.isEmpty() || it == null;
+
+                // Highlight current debug line if its line number is in the shared set
+                boolean isHighlighted = !empty && sharedHighlights.contains(it.getNum()); // adjust +1 if needed
+                row.pseudoClassStateChanged(HIGHLIGHTED, isHighlighted);
+
+                // Architecture shading (clear when not applicable)
+                if (!empty) {
+                    int instrCost = getArchitectureCost(it.getArch());
+                    row.setStyle(instrCost > selectedArchitectureCost.get()
+                            ? "-fx-background-color: rgba(255,80,80,0.35);"
+                            : "");
+                } else {
+                    row.setStyle("");
                 }
-                row.pseudoClassStateChanged(HIGHLIGHTED, on);
             };
 
-            row.itemProperty().addListener((obs, oldV, newV) -> apply.run());
+            // Listen ONLY to relevant changes:
+            row.itemProperty().addListener((o, ov, nv) -> apply.run());
+            row.emptyProperty().addListener((o, ov, nv) -> apply.run());
+            selectedArchitectureCost.addListener((o, ov, nv) -> apply.run());
+            mainController.debugLineProperty().addListener((o, ov, nv) -> apply.run());
             sharedHighlights.addListener((javafx.collections.SetChangeListener<Integer>) ch -> apply.run());
 
             return row;
         });
     }
+
 
     public void setProgram(String programName, int degree, int maxDegree) {
         this.programName = programName;
@@ -316,42 +332,24 @@ public class ProgramTabController {
 
 
     public void highlightIncompatibleInstructions(String selectedArch) {
+        selectedArchitectureCost.set(getArchitectureCost(selectedArch));
+
         if (selectedArch == null || selectedArch.isEmpty()) {
-            programTable.getItems().forEach(i -> i.setHighlight(false));
             programTable.refresh();
             hasIncompatibleInstructions.set(false);
             return;
         }
-
-        int selectedCost = getArchitectureCost(selectedArch);
         boolean hasIncompatible = false;
 
         for (InstructionDTO item : programTable.getItems()) {
             int instrCost = getArchitectureCost(item.getArch());
-            if (instrCost > selectedCost) {
+            if (instrCost > selectedArchitectureCost.get()) {
                 hasIncompatible = true;
                 break;
             }
         }
 
         hasIncompatibleInstructions.set(hasIncompatible);
-
-        programTable.setRowFactory(tv -> new TableRow<InstructionDTO>() {
-            @Override
-            protected void updateItem(InstructionDTO item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setStyle("");
-                } else {
-                    int instrCost = getArchitectureCost(item.getArch());
-                    if (instrCost > selectedCost) {
-                        setStyle("-fx-background-color: rgba(255, 80, 80, 0.35);");
-                    } else {
-                        setStyle("");
-                    }
-                }
-            }
-        });
 
         programTable.refresh();
     }
